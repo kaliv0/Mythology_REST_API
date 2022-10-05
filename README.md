@@ -1,1 +1,1 @@
-# Greek_mythology_REST_API
+# Mythology_REST_API

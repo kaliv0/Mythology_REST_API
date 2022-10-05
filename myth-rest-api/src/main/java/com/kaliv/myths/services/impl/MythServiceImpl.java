@@ -1,6 +1,7 @@
 package com.kaliv.myths.services.impl;
 
-import com.kaliv.myths.dtos.mythsDtos.GetMythDto;
+import com.kaliv.myths.dtos.mythsDtos.CreateMythDto;
+import com.kaliv.myths.dtos.mythsDtos.MythDto;
 import com.kaliv.myths.entities.Myth;
 import com.kaliv.myths.exceptions.ResourceNotFoundException;
 import com.kaliv.myths.mappers.MythMapper;
@@ -21,7 +22,7 @@ public class MythServiceImpl implements MythService {
     }
 
     @Override
-    public List<GetMythDto> getAllMyths() {
+    public List<MythDto> getAllMyths() {
         return mythRepository
                 .findAll()
                 .stream()
@@ -30,11 +31,16 @@ public class MythServiceImpl implements MythService {
     }
 
     @Override
-    public GetMythDto getMythById(long id) {
+    public MythDto getMythById(long id) {
         Myth myth = mythRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         return MythMapper.INSTANCE.entityToDto(myth);
+    }
+
+    @Override
+    public MythDto createMyth(CreateMythDto dto) {
+        return null;
     }
 
     @Override

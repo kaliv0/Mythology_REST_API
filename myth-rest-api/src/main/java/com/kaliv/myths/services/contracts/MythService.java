@@ -1,13 +1,16 @@
 package com.kaliv.myths.services.contracts;
 
-import com.kaliv.myths.dtos.mythsDtos.GetMythDto;
+import com.kaliv.myths.dtos.mythsDtos.CreateMythDto;
+import com.kaliv.myths.dtos.mythsDtos.MythDto;
 
 import java.util.List;
 
 public interface MythService {
-    List<GetMythDto> getAllMyths();
+    List<MythDto> getAllMyths();
 
-    GetMythDto getMythById(long id);
+    MythDto getMythById(long id);
+
+    MythDto createMyth(CreateMythDto dto);
 
     void deleteMyth(long id);
 }

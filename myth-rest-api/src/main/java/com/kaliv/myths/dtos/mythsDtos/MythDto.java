@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class GetMythDto extends BaseDto {
+public class MythDto extends BaseDto {
     private String plot;
     private Nationality nationality;
     private Set<Character> characters = new HashSet<>();

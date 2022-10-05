@@ -13,8 +13,8 @@ public abstract class Artwork {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    @Column(name = "title", nullable = false)
+    private String title;
 
     @ManyToOne(cascade = CascadeType.ALL) //TODO: check cascade type
     private Author author;

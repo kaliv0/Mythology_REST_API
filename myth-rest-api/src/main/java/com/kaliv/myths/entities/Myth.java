@@ -14,8 +14,8 @@ public class Myth {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    @Column(name = "title", nullable = false, unique = true)
+    private String title;
 
     @Column(name = "plot", nullable = false)
     private String plot;

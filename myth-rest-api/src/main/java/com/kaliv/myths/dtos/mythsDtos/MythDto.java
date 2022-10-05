@@ -1,6 +1,5 @@
 package com.kaliv.myths.dtos.mythsDtos;
 
-import com.kaliv.myths.dtos.baseDtos.BaseDto;
 import com.kaliv.myths.entities.Character;
 import com.kaliv.myths.entities.Nationality;
 import lombok.Getter;
@@ -11,7 +10,9 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class MythDto extends BaseDto {
+public class MythDto {
+    private long id;
+    private String title;
     private String plot;
     private Nationality nationality;
     private Set<Character> characters = new HashSet<>();

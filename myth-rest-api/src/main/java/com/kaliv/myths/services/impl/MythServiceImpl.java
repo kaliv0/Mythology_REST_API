@@ -2,10 +2,10 @@ package com.kaliv.myths.services.impl;
 
 import com.kaliv.myths.common.PaginationCriteria;
 import com.kaliv.myths.common.SortCriteria;
-import com.kaliv.myths.dtos.mythsDtos.CreateMythDto;
-import com.kaliv.myths.dtos.mythsDtos.MythDto;
-import com.kaliv.myths.dtos.mythsDtos.MythResponseDto;
-import com.kaliv.myths.dtos.mythsDtos.UpdateMythDto;
+import com.kaliv.myths.dtos.mythDtos.CreateMythDto;
+import com.kaliv.myths.dtos.mythDtos.MythDto;
+import com.kaliv.myths.dtos.mythDtos.MythResponseDto;
+import com.kaliv.myths.dtos.mythDtos.UpdateMythDto;
 import com.kaliv.myths.entities.Myth;
 import com.kaliv.myths.exceptions.ResourceNotFoundException;
 import com.kaliv.myths.mappers.MythMapper;

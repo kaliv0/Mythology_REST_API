@@ -1,6 +1,6 @@
 package com.kaliv.myths.mappers;
 
-import com.kaliv.myths.dtos.mythsDtos.MythDto;
+import com.kaliv.myths.dtos.mythDtos.MythDto;
 import com.kaliv.myths.entities.Myth;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

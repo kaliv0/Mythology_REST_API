@@ -1,4 +1,4 @@
-package com.kaliv.myths.dtos.mythsDtos;
+package com.kaliv.myths.dtos.mythDtos;
 
 import com.kaliv.myths.entities.Character;
 import com.kaliv.myths.entities.Nationality;

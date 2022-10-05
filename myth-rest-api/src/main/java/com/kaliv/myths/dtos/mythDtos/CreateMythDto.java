@@ -1,4 +1,4 @@
-package com.kaliv.myths.dtos.mythsDtos;
+package com.kaliv.myths.dtos.mythDtos;
 
 import com.kaliv.myths.constants.ValidationMessages;
 import lombok.Data;

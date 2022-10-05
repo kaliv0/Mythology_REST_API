@@ -1,4 +1,4 @@
-package com.kaliv.myths.dtos.mythsDtos;
+package com.kaliv.myths.dtos.mythDtos;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

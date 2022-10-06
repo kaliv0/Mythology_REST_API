@@ -1,12 +1,11 @@
-package com.kaliv.myths.dtos.mythDtos;
+package com.kaliv.myths.dtos.timePeriodDtos;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateMythDto extends CreateMythDto {
+public class UpdateTimePeriodDto extends CreateTimePeriodDto {
 }

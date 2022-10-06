@@ -41,7 +41,7 @@ public class MythController {
     }
 
     @PutMapping("/{id}")
-    public MythDto update(@PathVariable("id") Long id, @Valid @RequestBody UpdateMythDto dto) {
+    public MythDto updateMyth(@PathVariable("id") Long id, @Valid @RequestBody UpdateMythDto dto) {
         return mythService.updateMyth(id, dto);
     }
 

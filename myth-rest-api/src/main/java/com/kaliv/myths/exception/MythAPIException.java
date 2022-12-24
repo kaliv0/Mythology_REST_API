@@ -1,5 +1,6 @@
 package com.kaliv.myths.exception;
 
+import static com.kaliv.myths.constant.ExceptionMessages.RESOURCE_ALREADY_EXISTS;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -15,7 +16,7 @@ public class MythAPIException extends RuntimeException {
     private final String fieldValue;
 
     public MythAPIException(String resourceName, String fieldName, String fieldValue) {
-        super(String.format("%s with %s '%s' already exists", resourceName, fieldName, fieldValue));
+        super(String.format(RESOURCE_ALREADY_EXISTS, resourceName, fieldName, fieldValue));
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;

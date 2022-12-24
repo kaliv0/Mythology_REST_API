@@ -1,5 +1,15 @@
 package com.kaliv.myths.service.myth;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import com.kaliv.myths.common.PaginationCriteria;
 import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
@@ -10,16 +20,6 @@ import com.kaliv.myths.exception.ResourceNotFoundException;
 import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.persistence.MythRepository;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MythServiceImpl implements MythService {
@@ -56,8 +56,9 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public MythDto getMythById(long id) {
-        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
-        return MythMapper.mythToDto(myth);
+        Myth mythInDb = mythRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+        return MythMapper.mythToDto(mythInDb);
     }
 
     @Override
@@ -77,7 +78,8 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public MythDto updateMyth(long id, CreateUpdateMythDto dto) {
-        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+        Myth myth = mythRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
 
 //        check if myth with the same name already exists
         String newTitle = dto.getTitle();
@@ -92,7 +94,8 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public void deleteMyth(long id) {
-        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+        Myth myth = mythRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         mythRepository.delete(myth);
     }
 }

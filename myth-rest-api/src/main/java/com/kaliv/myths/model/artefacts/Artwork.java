@@ -1,6 +1,6 @@
 package com.kaliv.myths.model.artefacts;
 
-import com.kaliv.myths.model.Character;
+import com.kaliv.myths.model.MythCharacter;
 import com.kaliv.myths.model.Myth;
 
 import javax.persistence.*;
@@ -28,5 +28,5 @@ public abstract class Artwork {
     private Myth myth;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private Set<Character> characters = new HashSet<>();
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

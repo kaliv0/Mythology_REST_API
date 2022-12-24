@@ -30,7 +30,7 @@ public class Myth {
                     name = "character_id", referencedColumnName = "id"
             )
     )
-    private Set<Character> characters = new HashSet<>();
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")

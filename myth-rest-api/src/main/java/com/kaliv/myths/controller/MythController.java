@@ -8,6 +8,7 @@ import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
 import com.kaliv.myths.dto.mythDtos.UpdateMythDto;
 import com.kaliv.myths.service.myth.MythService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +30,6 @@ public class MythController {
                                                        SortCriteria sortCriteria) {
         return ResponseEntity.ok(mythService.getAllMyths(paginationCriteria, sortCriteria));
     }
-
-//    @GetMapping
-//    public ResponseEntity<MythResponseDto> getAllMyths() {
-//        return ResponseEntity.ok(mythService.getAllMyths());
-//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MythDto> getMythById(@PathVariable(name = "id") long id) {

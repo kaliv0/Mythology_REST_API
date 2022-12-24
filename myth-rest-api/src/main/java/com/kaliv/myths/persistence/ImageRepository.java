@@ -1,7 +1,8 @@
 package com.kaliv.myths.persistence;
 
-import com.kaliv.myths.model.artefacts.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.kaliv.myths.model.artefacts.Image;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 }

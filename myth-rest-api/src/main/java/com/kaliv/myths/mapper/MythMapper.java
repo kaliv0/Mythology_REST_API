@@ -1,6 +1,7 @@
 package com.kaliv.myths.mapper;
 
 import org.modelmapper.ModelMapper;
+
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.dto.mythDtos.CreateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;

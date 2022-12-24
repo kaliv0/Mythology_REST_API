@@ -1,13 +1,14 @@
 package com.kaliv.myths.dto.mythDtos;
 
-import com.kaliv.myths.model.Character;
-import com.kaliv.myths.model.Nationality;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.kaliv.myths.model.Nationality;
+import com.kaliv.myths.model.MythCharacter;
 
 @Getter
 @Setter
@@ -17,5 +18,5 @@ public class MythDto {
     private String title;
     private String plot;
     private Nationality nationality;
-    private Set<Character> characters = new HashSet<>();
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

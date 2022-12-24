@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "characters")
-public class Character {
+public class MythCharacter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,12 +23,12 @@ public class Character {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "father_id", referencedColumnName = "id")
-    private Character father;
+    private MythCharacter father;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
-    private Character mother;
+    private MythCharacter mother;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "characters")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "mythCharacters")
     private Set<Myth> myths = new HashSet<>();
 }

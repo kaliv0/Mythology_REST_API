@@ -16,5 +16,5 @@ public class Category {
     private String name;
 
     @OneToOne(mappedBy = "category")
-    private Character character;
+    private MythCharacter mythCharacter;
 }

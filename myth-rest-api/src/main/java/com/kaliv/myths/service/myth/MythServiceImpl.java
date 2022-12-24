@@ -6,10 +6,13 @@ import com.kaliv.myths.dto.mythDtos.CreateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
 import com.kaliv.myths.dto.mythDtos.UpdateMythDto;
+import com.kaliv.myths.exception.MythAPIException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
+
 import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.persistence.MythRepository;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,8 +43,7 @@ public class MythServiceImpl implements MythService {
         Page<Myth> myths = mythRepository.findAll(pageable);
         List<Myth> listOfMyths = myths.getContent(); //TODO:check if redundant
 
-        List<MythDto> content = listOfMyths.stream()
-                .map(MythMapper::mythToDto).collect(Collectors.toList());
+        List<MythDto> content = listOfMyths.stream().map(MythMapper::mythToDto).collect(Collectors.toList());
 
         MythResponseDto mythResponseDto = new MythResponseDto();
         mythResponseDto.setContent(content);
@@ -54,27 +56,19 @@ public class MythServiceImpl implements MythService {
         return mythResponseDto;
     }
 
-//    @Override
-//    public MythResponseDto getAllMyths() {
-//        List<MythDto> myths = mythRepository.findAll().stream()
-//                .map(MythMapper::mythToDto).collect(Collectors.toList());
-//
-//        MythResponseDto mythResponseDto = new MythResponseDto();
-//        mythResponseDto.setContent(myths);
-//        return mythResponseDto;
-//    }
-
     @Override
     public MythDto getMythById(long id) {
-        Myth myth = mythRepository
-                .findById(id)
+        Myth myth = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         return MythMapper.mythToDto(myth);
     }
 
     @Override
     public MythDto createMyth(CreateMythDto dto) {
-        //TODO: check if a myth with the same name already exists
+        String title = dto.getTitle();
+        if (mythRepository.findByTitle(title).isPresent()) {
+            throw new MythAPIException("Myth", "title", title);
+        }
 
         //TODO: how to fill in the list of characters?
 
@@ -86,14 +80,14 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public MythDto updateMyth(long id, UpdateMythDto dto) {
-        Myth myth = mythRepository
-                .findById(id)
+        Myth myth = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
 
-        //check if myth with the same name already exists
-//        if (myth.getTitle().equals(dto.getTitle())) {
-//            throw new MythApiException("Title already exist!");
-//        }
+//        check if myth with the same name already exists
+        String newTitle = dto.getTitle();
+        if (mythRepository.findByTitle(newTitle).isPresent()) {
+            throw new MythAPIException("Myth", "title", newTitle);
+        }
 
         BeanUtils.copyProperties(dto, myth);
         mythRepository.save(myth);
@@ -102,8 +96,7 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public void deleteMyth(long id) {
-        Myth myth = mythRepository
-                .findById(id)
+        Myth myth = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         mythRepository.delete(myth);
     }

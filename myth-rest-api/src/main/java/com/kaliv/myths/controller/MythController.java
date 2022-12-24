@@ -30,6 +30,11 @@ public class MythController {
         return ResponseEntity.ok(mythService.getAllMyths(paginationCriteria, sortCriteria));
     }
 
+//    @GetMapping
+//    public ResponseEntity<MythResponseDto> getAllMyths() {
+//        return ResponseEntity.ok(mythService.getAllMyths());
+//    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MythDto> getMythById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(mythService.getMythById(id));

@@ -81,10 +81,16 @@
             <version>1.6.10</version>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>org.mapstruct</groupId>-->
+        <!--            <artifactId>mapstruct</artifactId>-->
+        <!--            <version>1.5.2.Final</version>-->
+        <!--        </dependency>-->
+
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.5.2.Final</version>
+            <groupId>org.modelmapper.extensions</groupId>
+            <artifactId>modelmapper-spring</artifactId>
+            <version>3.0.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.devskiller.jpa2ddl/jpa2ddl-maven-plugin -->
@@ -120,7 +126,7 @@
                     <outputPath>${basedir}/src/main/resources/migrations/</outputPath>
                     <packages>
                         <package>com.kaliv.myths.model</package>
-<!--                        <package>com.test.entities</package>-->
+                        <!--                        <package>com.test.entities</package>-->
                     </packages>
                     <jpaProperties>
                         <property>

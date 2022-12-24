@@ -1,17 +1,20 @@
 package com.kaliv.myths.mapper;
 
-import com.kaliv.myths.dto.mythDtos.MythDto;
+import org.modelmapper.ModelMapper;
 import com.kaliv.myths.model.Myth;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import com.kaliv.myths.dto.mythDtos.CreateMythDto;
+import com.kaliv.myths.dto.mythDtos.MythDto;
 
-@Mapper
-public interface MythMapper {
 
-    MythMapper INSTANCE = Mappers.getMapper(MythMapper.class);
+public class MythMapper {
 
-    @Mapping(target = "myth.characters", ignore = true)
-    MythDto entityToDto(Myth myth);
-    Myth dtoToEntity(MythDto dto);
+    final private static ModelMapper mapper = new ModelMapper();
+
+    public static MythDto mythToDto(Myth myth) {
+        return mapper.map(myth, MythDto.class);
+    }
+
+    public static Myth dtoToMyth(CreateMythDto mythDto) {
+        return mapper.map(mythDto, Myth.class);
+    }
 }

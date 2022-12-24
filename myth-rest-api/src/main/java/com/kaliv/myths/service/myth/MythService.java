@@ -9,6 +9,7 @@ import com.kaliv.myths.dto.mythDtos.UpdateMythDto;
 
 public interface MythService {
     MythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria);
+//    MythResponseDto getAllMyths();
 
     MythDto getMythById(long id);
 

@@ -18,6 +18,7 @@ import com.kaliv.myths.dto.mythDtos.MythResponseDto;
 import com.kaliv.myths.exception.MythAPIException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
 import com.kaliv.myths.mapper.MythMapper;
+import com.kaliv.myths.mapper.MythMapperOpt;
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.persistence.MythRepository;
 
@@ -25,9 +26,11 @@ import com.kaliv.myths.persistence.MythRepository;
 public class MythServiceImpl implements MythService {
 
     private final MythRepository mythRepository;
+    private final MythMapperOpt mythMapper;
 
-    public MythServiceImpl(MythRepository mythRepository) {
+    public MythServiceImpl(MythRepository mythRepository, MythMapperOpt mythMapper) {
         this.mythRepository = mythRepository;
+        this.mythMapper = mythMapper;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class MythServiceImpl implements MythService {
     public MythDto getMythById(long id) {
         Myth mythInDb = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
-        return MythMapper.mythToDto(mythInDb);
+        return mythMapper.entityToDto(mythInDb, MythDto.class);
     }
 
     @Override

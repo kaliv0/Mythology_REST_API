@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import lombok.Getter;
 
 @Getter
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class MythAPIException extends RuntimeException {
 
     private final String resourceName;
@@ -21,10 +21,4 @@ public class MythAPIException extends RuntimeException {
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
     }
-
-    //TODO=> check if necessary
-//    public MythAPIException(String message, String message1) {
-//        super(message);
-//        this.message = message1;
-//    }
 }

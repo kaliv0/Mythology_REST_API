@@ -21,6 +21,7 @@ public class SwaggerConfig {
                         .version("1.0")
                         .contact(new Contact().name("Kaloyan Ivanov").email("kaloyan.ivanov88@gmail.com"))
                         .description("Myth API Wiki Documentation")
-                        .license(new License().name("License of API").url("API License URL")));
+//                        .license(new License().name("License of API").url("API License URL"))
+                );
     }
 }

@@ -1,7 +1,7 @@
 package com.kaliv.myths.controller;
 
 import com.kaliv.myths.constant.ResponseMessages;
-import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.service.timePeriod.TimePeriodService;
@@ -33,7 +33,7 @@ public class TimePeriodController {
     }
 
     @PostMapping
-    public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateTimePeriodDto dto) {
+    public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateUpdateTimePeriodDto dto) {
         return new ResponseEntity<>(timePeriodService.createTimePeriod(dto), HttpStatus.CREATED);
     }
 

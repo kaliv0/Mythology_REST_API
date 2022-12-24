@@ -3,7 +3,7 @@ package com.kaliv.myths.mapper;
 import org.modelmapper.ModelMapper;
 
 import com.kaliv.myths.model.Myth;
-import com.kaliv.myths.dto.mythDtos.CreateMythDto;
+import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 
 
@@ -15,7 +15,7 @@ public class MythMapper {
         return mapper.map(myth, MythDto.class);
     }
 
-    public static Myth dtoToMyth(CreateMythDto mythDto) {
+    public static Myth dtoToMyth(CreateUpdateMythDto mythDto) {
         return mapper.map(mythDto, Myth.class);
     }
 }

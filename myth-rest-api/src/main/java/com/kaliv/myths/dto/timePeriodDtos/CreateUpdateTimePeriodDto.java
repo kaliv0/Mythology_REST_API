@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateTimePeriodDto {
+public class CreateUpdateTimePeriodDto {
     @NotBlank
     private String name;
 

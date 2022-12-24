@@ -1,6 +1,6 @@
 package com.kaliv.myths.service.timePeriod;
 
-import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 
@@ -22,7 +22,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     }
 
     @Override
-    public TimePeriodDto createTimePeriod(CreateTimePeriodDto dto) {
+    public TimePeriodDto createTimePeriod(CreateUpdateTimePeriodDto dto) {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package com.kaliv.myths.dto.timePeriodDtos;
 
 import com.kaliv.myths.model.artefacts.Author;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

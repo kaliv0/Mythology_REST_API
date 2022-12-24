@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateTimePeriodDto extends CreateTimePeriodDto {
+public class UpdateTimePeriodDto extends CreateUpdateTimePeriodDto {
 }

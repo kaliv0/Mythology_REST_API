@@ -1,6 +1,6 @@
 package com.kaliv.myths.service.timePeriod;
 
-import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 
@@ -11,7 +11,7 @@ public interface TimePeriodService {
 
     TimePeriodDto getTimePeriodById(long id);
 
-    TimePeriodDto createTimePeriod(CreateTimePeriodDto dto);
+    TimePeriodDto createTimePeriod(CreateUpdateTimePeriodDto dto);
 
     TimePeriodDto updateTimePeriod(long id, UpdateTimePeriodDto dto);
 

@@ -3,10 +3,9 @@ package com.kaliv.myths.controller;
 import com.kaliv.myths.common.PaginationCriteria;
 import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.constant.ResponseMessages;
-import com.kaliv.myths.dto.mythDtos.CreateMythDto;
+import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
-import com.kaliv.myths.dto.mythDtos.UpdateMythDto;
 import com.kaliv.myths.service.myth.MythService;
 
 import org.springframework.http.HttpStatus;
@@ -37,12 +36,12 @@ public class MythController {
     }
 
     @PostMapping
-    public ResponseEntity<MythDto> createMyth(@Valid @RequestBody CreateMythDto dto) {
+    public ResponseEntity<MythDto> createMyth(@Valid @RequestBody CreateUpdateMythDto dto) {
         return new ResponseEntity<>(mythService.createMyth(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public MythDto updateMyth(@PathVariable("id") Long id, @Valid @RequestBody UpdateMythDto dto) {
+    public MythDto updateMyth(@PathVariable("id") Long id, @Valid @RequestBody CreateUpdateMythDto dto) {
         return mythService.updateMyth(id, dto);
     }
 

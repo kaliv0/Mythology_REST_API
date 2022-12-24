@@ -2,13 +2,11 @@ package com.kaliv.myths.service.myth;
 
 import com.kaliv.myths.common.PaginationCriteria;
 import com.kaliv.myths.common.SortCriteria;
-import com.kaliv.myths.dto.mythDtos.CreateMythDto;
+import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
-import com.kaliv.myths.dto.mythDtos.UpdateMythDto;
 import com.kaliv.myths.exception.MythAPIException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
-
 import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.persistence.MythRepository;
@@ -58,13 +56,12 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public MythDto getMythById(long id) {
-        Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         return MythMapper.mythToDto(myth);
     }
 
     @Override
-    public MythDto createMyth(CreateMythDto dto) {
+    public MythDto createMyth(CreateUpdateMythDto dto) {
         String title = dto.getTitle();
         if (mythRepository.findByTitle(title).isPresent()) {
             throw new MythAPIException("Myth", "title", title);
@@ -79,9 +76,8 @@ public class MythServiceImpl implements MythService {
     }
 
     @Override
-    public MythDto updateMyth(long id, UpdateMythDto dto) {
-        Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+    public MythDto updateMyth(long id, CreateUpdateMythDto dto) {
+        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
 
 //        check if myth with the same name already exists
         String newTitle = dto.getTitle();
@@ -96,8 +92,7 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public void deleteMyth(long id) {
-        Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+        Myth myth = mythRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
         mythRepository.delete(myth);
     }
 }

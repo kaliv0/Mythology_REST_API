@@ -10,7 +10,7 @@ public class MythMapperOpt
 
     final private ModelMapper mapper = new ModelMapper();
 
-//    @Override
+    //    @Override
     public <T, E> E entityToDto(T entity, Class<E> clazz) {
         return clazz.cast(mapper.map(entity, clazz));
     }

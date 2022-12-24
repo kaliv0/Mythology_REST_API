@@ -44,7 +44,10 @@ public class MythServiceImpl implements MythService {
         Page<Myth> myths = mythRepository.findAll(pageable);
         List<Myth> listOfMyths = myths.getContent(); //TODO:check if redundant
 
-        List<MythDto> content = listOfMyths.stream().map(MythMapper::mythToDto).collect(Collectors.toList());
+        List<MythDto> content = listOfMyths.stream()
+//                .map(MythMapper::mythToDto)
+                .map(myth -> mythMapper.entityToDto(myth, MythDto.class))
+                .collect(Collectors.toList());
 
         MythResponseDto mythResponseDto = new MythResponseDto();
         mythResponseDto.setContent(content);
@@ -61,6 +64,7 @@ public class MythServiceImpl implements MythService {
     public MythDto getMythById(long id) {
         Myth mythInDb = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+//        return MythMapper.mythToDto(mythInDb);
         return mythMapper.entityToDto(mythInDb, MythDto.class);
     }
 

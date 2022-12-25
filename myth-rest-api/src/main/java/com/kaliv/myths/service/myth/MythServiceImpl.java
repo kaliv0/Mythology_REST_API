@@ -17,8 +17,7 @@ import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
 import com.kaliv.myths.exception.MythAPIException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
-import com.kaliv.myths.mapper.MythMapper;
-import com.kaliv.myths.mapper.MythMapperOpt;
+import com.kaliv.myths.mapper.GenericMapper;
 import com.kaliv.myths.model.Myth;
 import com.kaliv.myths.persistence.MythRepository;
 
@@ -26,11 +25,11 @@ import com.kaliv.myths.persistence.MythRepository;
 public class MythServiceImpl implements MythService {
 
     private final MythRepository mythRepository;
-    private final MythMapperOpt mythMapper;
+    private final GenericMapper mapper;
 
-    public MythServiceImpl(MythRepository mythRepository, MythMapperOpt mythMapper) {
+    public MythServiceImpl(MythRepository mythRepository, GenericMapper mapper) {
         this.mythRepository = mythRepository;
-        this.mythMapper = mythMapper;
+        this.mapper = mapper;
     }
 
     @Override
@@ -45,8 +44,7 @@ public class MythServiceImpl implements MythService {
         List<Myth> listOfMyths = myths.getContent(); //TODO:check if redundant
 
         List<MythDto> content = listOfMyths.stream()
-//                .map(MythMapper::mythToDto)
-                .map(myth -> mythMapper.entityToDto(myth, MythDto.class))
+                .map(myth -> mapper.entityToDto(myth, MythDto.class))
                 .collect(Collectors.toList());
 
         MythResponseDto mythResponseDto = new MythResponseDto();
@@ -64,8 +62,7 @@ public class MythServiceImpl implements MythService {
     public MythDto getMythById(long id) {
         Myth mythInDb = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
-//        return MythMapper.mythToDto(mythInDb);
-        return mythMapper.entityToDto(mythInDb, MythDto.class);
+        return mapper.entityToDto(mythInDb, MythDto.class);
     }
 
     @Override
@@ -77,10 +74,9 @@ public class MythServiceImpl implements MythService {
 
         //TODO: how to fill in the list of characters?
 
-        Myth myth = MythMapper.dtoToMyth(dto);
-
+        Myth myth = mapper.dtoToEntity(dto, Myth.class);
         mythRepository.save(myth);
-        return MythMapper.mythToDto(myth);
+        return mapper.entityToDto(myth, MythDto.class);
     }
 
     @Override
@@ -96,7 +92,7 @@ public class MythServiceImpl implements MythService {
 
         BeanUtils.copyProperties(dto, myth);
         mythRepository.save(myth);
-        return MythMapper.mythToDto(myth);
+        return mapper.entityToDto(myth, MythDto.class);
     }
 
     @Override

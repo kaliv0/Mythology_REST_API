@@ -10,5 +10,5 @@ import lombok.Setter;
 public class AuthorDto {
     private long id;
     private String name;
-    private long authorId;
+    private long timePeriodId;
 }

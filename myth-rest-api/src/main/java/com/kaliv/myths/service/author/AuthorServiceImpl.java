@@ -7,19 +7,24 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.dto.authorDtos.AuthorDto;
 import com.kaliv.myths.dto.authorDtos.CreateUpdateAuthorDto;
+import com.kaliv.myths.exception.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
 import com.kaliv.myths.mapper.GenericMapper;
-import com.kaliv.myths.model.artefacts.Author;
+import com.kaliv.myths.entity.TimePeriod;
+import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.persistence.AuthorRepository;
+import com.kaliv.myths.persistence.TimePeriodRepository;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
+    private final TimePeriodRepository timePeriodRepository;
     private final GenericMapper mapper;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository, GenericMapper mapper) {
+    public AuthorServiceImpl(AuthorRepository authorRepository, TimePeriodRepository timePeriodRepository, GenericMapper mapper) {
         this.authorRepository = authorRepository;
+        this.timePeriodRepository = timePeriodRepository;
         this.mapper = mapper;
     }
 
@@ -39,7 +44,22 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDto createAuthor(CreateUpdateAuthorDto dto) {
-        return null;
+        String name = dto.getName();
+        if (authorRepository.findByName(name).isPresent()) {
+            throw new ResourceAlreadyExistsException("Author", "name", name);
+        }
+
+        long timePeriodId = dto.getTimePeriodId();
+        TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
+                .orElseThrow(() -> new ResourceNotFoundException("TimePeriod", "id", timePeriodId));
+
+
+        Author author = mapper.dtoToEntity(dto, Author.class);
+        Author savedAuthor = authorRepository.save(author);
+
+        timePeriodInDb.getAuthors().add(savedAuthor);
+        timePeriodRepository.saveAndFlush(timePeriodInDb);
+        return mapper.entityToDto(savedAuthor, AuthorDto.class);
     }
 
     @Override

@@ -12,5 +12,5 @@ import lombok.Setter;
 public class CreateUpdateAuthorDto {
     @NotBlank
     private String name;
-    private long authorId;
+    private long timePeriodId;
 }

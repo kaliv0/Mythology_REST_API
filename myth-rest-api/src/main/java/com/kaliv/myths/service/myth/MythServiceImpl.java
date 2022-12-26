@@ -15,10 +15,10 @@ import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
-import com.kaliv.myths.exception.MythAPIException;
+import com.kaliv.myths.exception.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
 import com.kaliv.myths.mapper.GenericMapper;
-import com.kaliv.myths.model.Myth;
+import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.persistence.MythRepository;
 
 @Service
@@ -69,7 +69,7 @@ public class MythServiceImpl implements MythService {
     public MythDto createMyth(CreateUpdateMythDto dto) {
         String title = dto.getTitle();
         if (mythRepository.findByTitle(title).isPresent()) {
-            throw new MythAPIException("Myth", "title", title);
+            throw new ResourceAlreadyExistsException("Myth", "title", title);
         }
 
         //TODO: how to fill in the list of characters?
@@ -87,7 +87,7 @@ public class MythServiceImpl implements MythService {
 //        check if myth with the same name already exists
         String newTitle = dto.getTitle();
         if (mythRepository.findByTitle(newTitle).isPresent()) {
-            throw new MythAPIException("Myth", "title", newTitle);
+            throw new ResourceAlreadyExistsException("Myth", "title", newTitle);
         }
 
         BeanUtils.copyProperties(dto, myth);

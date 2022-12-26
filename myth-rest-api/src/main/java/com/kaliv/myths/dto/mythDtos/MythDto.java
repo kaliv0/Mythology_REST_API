@@ -7,8 +7,8 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kaliv.myths.model.Nationality;
-import com.kaliv.myths.model.MythCharacter;
+import com.kaliv.myths.entity.Nationality;
+import com.kaliv.myths.entity.MythCharacter;
 
 @Getter
 @Setter

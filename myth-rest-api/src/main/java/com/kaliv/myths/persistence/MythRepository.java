@@ -2,7 +2,7 @@ package com.kaliv.myths.persistence;
 
 import java.util.Optional;
 
-import com.kaliv.myths.model.Myth;
+import com.kaliv.myths.entity.Myth;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

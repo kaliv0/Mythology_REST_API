@@ -1,19 +1,22 @@
-package com.kaliv.myths.model.artefacts;
-
-import lombok.Data;
+package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+import com.kaliv.myths.entity.BaseEntity;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "museums")
-public class Museum {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+public class Museum extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 

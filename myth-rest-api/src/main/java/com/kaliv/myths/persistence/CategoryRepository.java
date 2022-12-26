@@ -1,6 +1,6 @@
 package com.kaliv.myths.persistence;
 
-import com.kaliv.myths.model.Category;
+import com.kaliv.myths.entity.Category;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

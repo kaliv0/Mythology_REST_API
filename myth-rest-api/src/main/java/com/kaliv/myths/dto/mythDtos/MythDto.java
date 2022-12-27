@@ -15,7 +15,7 @@ import com.kaliv.myths.entity.MythCharacter;
 @NoArgsConstructor
 public class MythDto {
     private long id;
-    private String title;
+    private String name;
     private String plot;
     private Nationality nationality;
     private Set<MythCharacter> mythCharacters = new HashSet<>();

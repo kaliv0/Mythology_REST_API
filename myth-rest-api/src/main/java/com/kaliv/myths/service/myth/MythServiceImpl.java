@@ -67,9 +67,9 @@ public class MythServiceImpl implements MythService {
 
     @Override
     public MythDto createMyth(CreateUpdateMythDto dto) {
-        String title = dto.getTitle();
-        if (mythRepository.findByTitle(title).isPresent()) {
-            throw new ResourceAlreadyExistsException("Myth", "title", title);
+        String name = dto.getName();
+        if (mythRepository.findByName(name).isPresent()) {
+            throw new ResourceAlreadyExistsException("Myth", "title", name);
         }
 
         //TODO: how to fill in the list of characters?
@@ -84,12 +84,13 @@ public class MythServiceImpl implements MythService {
         Myth myth = mythRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
 
-//        check if myth with the same name already exists
-        String newTitle = dto.getTitle();
-        if (mythRepository.findByTitle(newTitle).isPresent()) {
-            throw new ResourceAlreadyExistsException("Myth", "title", newTitle);
+//        check if myth with the same name already exists=> TODO: unnecessary?
+        String newName= dto.getName();
+        if (mythRepository.findByName(newName).isPresent()) {
+            throw new ResourceAlreadyExistsException("Myth", "title", newName);
         }
 
+        //TODO: add ignoreProperties
         BeanUtils.copyProperties(dto, myth);
         mythRepository.save(myth);
         return mapper.entityToDto(myth, MythDto.class);

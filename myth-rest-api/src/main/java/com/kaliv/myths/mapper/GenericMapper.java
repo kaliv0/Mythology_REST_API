@@ -18,6 +18,8 @@ public class GenericMapper {
     }
 
     public <T, U extends BaseEntity> U dtoToEntity(T dto, Class<U> entityClass) {
+//        mapper.getConfiguration().setSkipNullEnabled(true);
+
         mapper.emptyTypeMap(dto.getClass(), entityClass)
                 .addMappings(m -> m.skip(BaseEntity::setId))
                 .implicitMappings();

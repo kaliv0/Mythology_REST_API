@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 public class CreateUpdateMythDto {
     @NotBlank
     @Size(min = 2, message = ValidationMessages.INVALID_MYTH_TITLE)
-    private String title;
+    private String name;
 
     @NotBlank
     @Size(min = 30, message = ValidationMessages.INVALID_MYTH_PLOT)

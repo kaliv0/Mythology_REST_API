@@ -17,9 +17,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "time_periods")
 public class TimePeriod extends BaseEntity {
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
     private String years;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "timePeriod")

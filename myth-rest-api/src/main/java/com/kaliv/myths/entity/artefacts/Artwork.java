@@ -10,10 +10,8 @@ import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 
 @MappedSuperclass
+@AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
 public abstract class Artwork extends BaseEntity {
-    @Column(name = "title", nullable = false)
-    private String title;
-
     @ManyToOne(cascade = CascadeType.ALL) //TODO: check cascade type
     private Author author;
 

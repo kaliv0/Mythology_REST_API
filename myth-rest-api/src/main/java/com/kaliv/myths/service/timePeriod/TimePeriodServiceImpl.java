@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
-import com.kaliv.myths.exception.ResourceAlreadyExistsException;
-import com.kaliv.myths.exception.ResourceNotFoundException;
-import com.kaliv.myths.mapper.GenericMapper;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
+import com.kaliv.myths.exception.ResourceAlreadyExistsException;
+import com.kaliv.myths.exception.ResourceNotFoundException;
+import com.kaliv.myths.mapper.TimePeriodMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.TimePeriodRepository;
 
@@ -21,9 +21,11 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
     private final TimePeriodRepository timePeriodRepository;
     private final AuthorRepository authorRepository;
-    private final GenericMapper mapper;
+    private final TimePeriodMapper mapper;
 
-    public TimePeriodServiceImpl(TimePeriodRepository timePeriodRepository, AuthorRepository authorRepository, GenericMapper mapper) {
+    public TimePeriodServiceImpl(TimePeriodRepository timePeriodRepository,
+                                 AuthorRepository authorRepository,
+                                 TimePeriodMapper mapper) {
         this.timePeriodRepository = timePeriodRepository;
         this.authorRepository = authorRepository;
         this.mapper = mapper;
@@ -32,11 +34,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     @Override
     public List<TimePeriodDto> getAllTimePeriods() {
         return timePeriodRepository.findAll()
-                .stream().map(timePeriod -> {
-                    TimePeriodDto timePeriodDto = mapper.entityToDto(timePeriod, TimePeriodDto.class);
-                    timePeriodDto.setAuthorIds(mapper.mapNestedEntities(timePeriod.getAuthors()));
-                    return timePeriodDto;
-                })
+                .stream().map(mapper::timePeriodToDto)
                 .collect(Collectors.toList());
     }
 
@@ -44,9 +42,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     public TimePeriodDto getTimePeriodById(long id) {
         TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", id));
-        TimePeriodDto timePeriodDto = mapper.entityToDto(timePeriodInDb, TimePeriodDto.class);
-        timePeriodDto.setAuthorIds(mapper.mapNestedEntities(timePeriodInDb.getAuthors()));
-        return timePeriodDto;
+        return mapper.timePeriodToDto(timePeriodInDb);
     }
 
     @Override
@@ -56,27 +52,45 @@ public class TimePeriodServiceImpl implements TimePeriodService {
             throw new ResourceAlreadyExistsException("TimePeriod", "name", name);
         }
 
-        TimePeriod timePeriod = mapper.dtoToEntity(dto, TimePeriod.class);
-
-        final TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
+        TimePeriod timePeriod = mapper.dtoToTimePeriod(dto);
+        TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
 
         //add timePeriod to authors
         List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
-        List<Author> autors = authorRepository.findAllById(authorIds);
-        if (autors.size() != authorIds.size()) {
+        List<Author> authors = authorRepository.findAllById(authorIds);
+
+        //ACID transaction => successful only if all given values are valid ??
+        if (authors.size() != authorIds.size()) {
             throw new ResourceNotFoundException("Authors", "id", 0);
         }
 
-        autors.forEach(a -> a.setTimePeriod(savedTimePeriod));
-        authorRepository.saveAllAndFlush(autors);
-
-
-        return mapper.entityToDto(timePeriod, TimePeriodDto.class);
+        authors.forEach(a -> a.setTimePeriod(savedTimePeriod));
+        authorRepository.saveAll(authors);
+        return mapper.timePeriodToDto(timePeriod);
     }
 
     @Override
     public TimePeriodDto updateTimePeriod(long id, CreateUpdateTimePeriodDto dto) {
-        return null;
+        String name = dto.getName();
+        if (timePeriodRepository.findByName(name).isPresent()) {
+            throw new ResourceAlreadyExistsException("TimePeriod", "name", name);
+        }
+
+        TimePeriod timePeriod = mapper.dtoToTimePeriod(dto);
+        TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
+
+        //add timePeriod to authors
+        List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
+        List<Author> authors = authorRepository.findAllById(authorIds);
+
+        //ACID transaction => successful only if all given values are valid
+        if (authors.size() != authorIds.size()) {
+            throw new ResourceNotFoundException("Authors", "id", 0);
+        }
+
+        authors.forEach(a -> a.setTimePeriod(savedTimePeriod));
+        authorRepository.saveAll(authors);
+        return mapper.timePeriodToDto(timePeriod);
     }
 
     @Override

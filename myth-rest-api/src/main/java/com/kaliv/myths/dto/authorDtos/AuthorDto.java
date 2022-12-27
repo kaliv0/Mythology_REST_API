@@ -1,6 +1,4 @@
-package com.kaliv.myths.dto.timePeriodDtos;
-
-import java.util.Set;
+package com.kaliv.myths.dto.authorDtos;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TimePeriodDto {
+public class AuthorDto {
     private long id;
     private String name;
-    private String years;
-    private Set<Long> authorIds;
+    private long timePeriodId;
 }

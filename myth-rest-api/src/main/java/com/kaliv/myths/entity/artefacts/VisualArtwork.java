@@ -1,4 +1,4 @@
-package com.kaliv.myths.model.artefacts;
+package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
 import java.util.HashSet;

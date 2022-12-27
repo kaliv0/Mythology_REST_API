@@ -9,13 +9,13 @@ import lombok.Getter;
 
 @Getter
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class MythAPIException extends RuntimeException {
+public class ResourceAlreadyExistsException extends RuntimeException {
 
     private final String resourceName;
     private final String fieldName;
     private final String fieldValue;
 
-    public MythAPIException(String resourceName, String fieldName, String fieldValue) {
+    public ResourceAlreadyExistsException(String resourceName, String fieldName, String fieldValue) {
         super(String.format(RESOURCE_ALREADY_EXISTS, resourceName, fieldName, fieldValue));
         this.resourceName = resourceName;
         this.fieldName = fieldName;

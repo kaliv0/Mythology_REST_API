@@ -22,6 +22,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.13.Final</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -125,7 +130,7 @@
                 <configuration>
                     <outputPath>${basedir}/src/main/resources/migrations/</outputPath>
                     <packages>
-                        <package>com.kaliv.myths.model</package>
+                        <package>com.kaliv.myths.entity</package>
                         <!--                        <package>com.test.entities</package>-->
                     </packages>
                     <jpaProperties>

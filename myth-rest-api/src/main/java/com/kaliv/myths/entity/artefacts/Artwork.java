@@ -1,21 +1,17 @@
-package com.kaliv.myths.model.artefacts;
-
-import com.kaliv.myths.model.MythCharacter;
-import com.kaliv.myths.model.Myth;
+package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
+import com.kaliv.myths.entity.BaseEntity;
+import com.kaliv.myths.entity.Myth;
+import com.kaliv.myths.entity.MythCharacter;
+
 @MappedSuperclass
-public abstract class Artwork {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "title", nullable = false)
-    private String title;
-
+@AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
+public abstract class Artwork extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL) //TODO: check cascade type
     private Author author;
 

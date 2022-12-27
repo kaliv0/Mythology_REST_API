@@ -1,5 +1,9 @@
 package com.kaliv.myths.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.kaliv.myths.common.PaginationCriteria;
 import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.constant.ResponseMessages;
@@ -7,10 +11,6 @@ import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
 import com.kaliv.myths.service.myth.MythService;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -25,8 +25,7 @@ public class MythController {
     }
 
     @GetMapping
-    public ResponseEntity<MythResponseDto> getAllMyths(PaginationCriteria paginationCriteria,
-                                                       SortCriteria sortCriteria) {
+    public ResponseEntity<MythResponseDto> getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria) {
         return ResponseEntity.ok(mythService.getAllMyths(paginationCriteria, sortCriteria));
     }
 

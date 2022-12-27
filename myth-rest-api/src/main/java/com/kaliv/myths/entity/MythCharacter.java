@@ -1,22 +1,20 @@
-package com.kaliv.myths.model;
-
-import lombok.Data;
+package com.kaliv.myths.entity;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "characters")
-public class MythCharacter {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
+public class MythCharacter extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;

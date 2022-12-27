@@ -1,16 +1,17 @@
 package com.kaliv.myths.controller;
 
-import com.kaliv.myths.constant.ResponseMessages;
-import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
-import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
-import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
-import com.kaliv.myths.service.timePeriod.TimePeriodService;
+import javax.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.List;
+import com.kaliv.myths.constant.ResponseMessages;
+import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
+import com.kaliv.myths.service.timePeriod.TimePeriodService;
 
 @RestController
 @RequestMapping("/api/v1/time-periods")
@@ -38,7 +39,7 @@ public class TimePeriodController {
     }
 
     @PutMapping("/{id}")
-    public TimePeriodDto updateTimePeriod(@PathVariable("id") Long id, @Valid @RequestBody UpdateTimePeriodDto dto) {
+    public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody CreateUpdateTimePeriodDto dto) {
         return timePeriodService.updateTimePeriod(id, dto);
     }
 
@@ -47,5 +48,4 @@ public class TimePeriodController {
         timePeriodService.deleteTimePeriod(id);
         return new ResponseEntity<>(ResponseMessages.TIME_PERIOD_DELETED, HttpStatus.OK);
     }
-
 }

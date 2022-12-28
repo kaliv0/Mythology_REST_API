@@ -1,6 +1,7 @@
 package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,4 @@ public abstract class VisualArtwork extends Artwork {
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Image> images = new HashSet<>();
-//    @ElementCollection
-//    private Set<String> imageUrls;
 }

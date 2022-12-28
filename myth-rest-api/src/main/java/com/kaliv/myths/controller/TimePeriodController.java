@@ -9,7 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.ResponseMessages;
-import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
 import com.kaliv.myths.service.timePeriod.TimePeriodService;
 
@@ -34,12 +35,12 @@ public class TimePeriodController {
     }
 
     @PostMapping
-    public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateUpdateTimePeriodDto dto) {
+    public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateTimePeriodDto dto) {
         return new ResponseEntity<>(timePeriodService.createTimePeriod(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody CreateUpdateTimePeriodDto dto) {
+    public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody UpdateTimePeriodDto dto) {
         return timePeriodService.updateTimePeriod(id, dto);
     }
 

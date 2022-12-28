@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.authorDtos;
 
-import com.kaliv.myths.dto.BaseDto;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AuthorDto extends BaseDto {
-    private Long timePeriodId;
-    private Long nationalityId;
+public class CreateAuthorDto extends UpdateAuthorDto {
+    @NotEmpty
+    private String name;
 }

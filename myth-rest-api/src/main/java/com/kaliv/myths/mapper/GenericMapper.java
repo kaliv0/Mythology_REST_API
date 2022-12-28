@@ -26,7 +26,9 @@ public class GenericMapper {
         return entityClass.cast(mapper.map(dto, entityClass));
     }
 
-    public <T extends BaseEntity> Set<Long> mapNestedEntities(Collection<T> entities) {
-        return entities.stream().map(BaseEntity::getId).collect(Collectors.toSet());
+    public <T extends BaseEntity, U> Set<U> mapNestedEntities(Collection<T> entities, Class<U> dtoClass) {
+        return entities.stream()
+                .map(entity -> this.entityToDto(entity, dtoClass)).
+                collect(Collectors.toSet());
     }
 }

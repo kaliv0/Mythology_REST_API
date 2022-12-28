@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.dto.authorDtos.AuthorResponseDto;
 import com.kaliv.myths.dto.authorDtos.AuthorDto;
-import com.kaliv.myths.dto.authorDtos.CreateUpdateAuthorDto;
+import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
+import com.kaliv.myths.dto.authorDtos.UpdateAuthorDto;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
@@ -35,83 +37,71 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorDto> getAllAuthors() {
+    public List<AuthorResponseDto> getAllAuthors() {
         return authorRepository.findAll()
-                .stream().map(author -> mapper.entityToDto(author, AuthorDto.class))
+                .stream().map(author -> mapper.entityToDto(author, AuthorResponseDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AuthorDto getAuthorById(long id) {
+    public AuthorResponseDto getAuthorById(long id) {
         Author authorInDb = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author", "id", id));
-        return mapper.entityToDto(authorInDb, AuthorDto.class);
+        return mapper.entityToDto(authorInDb, AuthorResponseDto.class);
     }
 
     @Override
-    public AuthorDto createAuthor(CreateUpdateAuthorDto dto) {
+    public AuthorDto createAuthor(CreateAuthorDto dto) {
         String name = dto.getName();
+        //TODO=> rewrite as existsByName
         if (authorRepository.findByName(name).isPresent()) {
             throw new ResourceAlreadyExistsException("Author", "name", name);
         }
 
-        long timePeriodId = dto.getTimePeriodId();
-        TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
-                .orElseThrow(() -> new ResourceNotFoundException("TimePeriod", "id", timePeriodId));
+        Long timePeriodId = dto.getTimePeriodId();
+        if (timePeriodId != null && !timePeriodRepository.existsById(timePeriodId)) {
+            throw new ResourceNotFoundException("Time period", "id", timePeriodId);
+        }
 
-        long nationalityId = dto.getNationalityId();
-        Nationality nationalityInDb = nationalityRepository.findById(nationalityId)
-                .orElseThrow(() -> new ResourceNotFoundException("Nationality", "id", nationalityId));
+        Long nationalityId = dto.getNationalityId();
+        if (nationalityId != null && !nationalityRepository.existsById(nationalityId)) {
+            throw new ResourceNotFoundException("Nationality", "id", nationalityId);
+        }
 
         Author author = mapper.dtoToEntity(dto, Author.class);
         Author savedAuthor = authorRepository.save(author);
 
-        timePeriodInDb.getAuthors().add(savedAuthor);
-        timePeriodRepository.save(timePeriodInDb);
-        nationalityInDb.getAuthors().add(savedAuthor);
-        nationalityRepository.save(nationalityInDb);
         return mapper.entityToDto(savedAuthor, AuthorDto.class);
     }
 
     @Override
-    public AuthorDto updateAuthor(long id, CreateUpdateAuthorDto dto) {
+    public AuthorDto updateAuthor(long id, UpdateAuthorDto dto) {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author", "id", id));
 
-        String name = dto.getName();
-        //authors must have unique names
-        if (!name.equals(author.getName()) && authorRepository.findByName(name).isPresent()) {
-            throw new ResourceAlreadyExistsException("Author", "name", name);
-        }
-
-        long timePeriodId = dto.getTimePeriodId();
-        TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
-                .orElseThrow(() -> new ResourceNotFoundException("TimePeriod", "id", timePeriodId));
-
-        long nationalityId = dto.getNationalityId();
-        Nationality nationalityInDb = nationalityRepository.findById(nationalityId)
-                .orElseThrow(() -> new ResourceNotFoundException("Nationality", "id", nationalityId));
-
-        //patch update => only new value is given ??
-        //TODO: merge with previous check
-        if (!dto.getName().equals(author.getName())) {
+        if (Optional.ofNullable(dto.getName()).isPresent()) {
+            String name = dto.getName();
+            if (!name.equals(author.getName()) && authorRepository.findByName(name).isPresent()) {
+                throw new ResourceAlreadyExistsException("Author", "name", name);
+            }
             author.setName(dto.getName());
         }
-        if (dto.getTimePeriodId() != author.getTimePeriod().getId()) {
-            author.getTimePeriod().setId(dto.getTimePeriodId());
-        }
-//        if (dto.getNationalityId() != author.getNationality().getId()) {
-//            author.getNationality().setId(dto.getNationalityId());
-//        }
 
-        Optional.of(dto.getNationalityId()).ifPresent(author.getNationality()::setId);
+        if (Optional.ofNullable(dto.getTimePeriodId()).isPresent()) {
+            long timePeriodId = dto.getTimePeriodId();
+            TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", timePeriodId));
+            author.setTimePeriod(timePeriodInDb);
+        }
+
+        if (Optional.ofNullable(dto.getNationalityId()).isPresent()) {
+            long nationalityId = dto.getNationalityId();
+            Nationality nationalityInDb = nationalityRepository.findById(nationalityId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Nationality", "id", nationalityId));
+            author.setNationality(nationalityInDb);
+        }
 
         Author savedAuthor = authorRepository.save(author);
-
-        timePeriodInDb.getAuthors().add(savedAuthor);
-        timePeriodRepository.save(timePeriodInDb);
-        nationalityInDb.getAuthors().add(savedAuthor);
-        nationalityRepository.save(nationalityInDb);
         return mapper.entityToDto(savedAuthor, AuthorDto.class);
     }
 

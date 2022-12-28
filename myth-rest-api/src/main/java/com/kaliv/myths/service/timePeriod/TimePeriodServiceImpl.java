@@ -1,16 +1,18 @@
 package com.kaliv.myths.service.timePeriod;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.dto.timePeriodDtos.CreateUpdateTimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
+import com.kaliv.myths.exception.DuplicateEntriesException;
 import com.kaliv.myths.exception.ResourceAlreadyExistsException;
+import com.kaliv.myths.exception.ResourceListNotFoundException;
 import com.kaliv.myths.exception.ResourceNotFoundException;
 import com.kaliv.myths.mapper.TimePeriodMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
@@ -46,51 +48,70 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     }
 
     @Override
-    public TimePeriodDto createTimePeriod(CreateUpdateTimePeriodDto dto) {
+    public TimePeriodDto createTimePeriod(CreateTimePeriodDto dto) {
         String name = dto.getName();
         if (timePeriodRepository.findByName(name).isPresent()) {
-            throw new ResourceAlreadyExistsException("TimePeriod", "name", name);
+            throw new ResourceAlreadyExistsException("Time period", "name", name);
+        }
+
+        //ACID transaction => successful only if all given values are valid
+        List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
+        List<Author> authors = authorRepository.findAllById(authorIds);
+
+        if (authors.size() != authorIds.size()) {
+            throw new ResourceListNotFoundException("Authors", "ids");
         }
 
         TimePeriod timePeriod = mapper.dtoToTimePeriod(dto);
         TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
 
-        //add timePeriod to authors
-        List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
-        List<Author> authors = authorRepository.findAllById(authorIds);
-
-        //ACID transaction => successful only if all given values are valid ??
-        if (authors.size() != authorIds.size()) {
-            throw new ResourceNotFoundException("Authors", "id", 0);
-        }
-
         authors.forEach(a -> a.setTimePeriod(savedTimePeriod));
         authorRepository.saveAll(authors);
-        return mapper.timePeriodToDto(timePeriod);
+        return mapper.timePeriodToDto(savedTimePeriod);
     }
 
     @Override
-    public TimePeriodDto updateTimePeriod(long id, CreateUpdateTimePeriodDto dto) {
-        String name = dto.getName();
-        if (timePeriodRepository.findByName(name).isPresent()) {
-            throw new ResourceAlreadyExistsException("TimePeriod", "name", name);
+    public TimePeriodDto updateTimePeriod(long id, UpdateTimePeriodDto dto) {
+        TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", id));
+
+        if (Optional.ofNullable(dto.getName()).isPresent()) {
+            String name = dto.getName();
+            if (!name.equals(timePeriodInDb.getName()) && authorRepository.findByName(name).isPresent()) {
+                throw new ResourceAlreadyExistsException("Time period", "name", name);
+            }
+            timePeriodInDb.setName(dto.getName());
         }
 
-        TimePeriod timePeriod = mapper.dtoToTimePeriod(dto);
-        TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
+        Optional.ofNullable(dto.getYears()).ifPresent(timePeriodInDb::setYears);
 
-        //add timePeriod to authors
-        List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
-        List<Author> authors = authorRepository.findAllById(authorIds);
+        List<Long> authorsToAddIds = new ArrayList<>(dto.getAuthorsToAdd());
+        List<Long> authorsToRemoveIds = new ArrayList<>(dto.getAuthorsToRemove());
 
-        //ACID transaction => successful only if all given values are valid
-        if (authors.size() != authorIds.size()) {
-            throw new ResourceNotFoundException("Authors", "id", 0);
+        if (!Collections.disjoint(authorsToAddIds, authorsToRemoveIds)) {
+            throw new DuplicateEntriesException("authorsToAdd", "authorsToRemove");
         }
 
-        authors.forEach(a -> a.setTimePeriod(savedTimePeriod));
-        authorRepository.saveAll(authors);
-        return mapper.timePeriodToDto(timePeriod);
+        List<Author> authorsToAdd = authorRepository.findAllById(authorsToAddIds);
+        List<Author> authorsToRemove = authorRepository.findAllById(authorsToRemoveIds);
+
+        if (authorsToAddIds.size() != authorsToAdd.size()
+                || authorsToRemoveIds.size() != authorsToRemove.size()) {
+            throw new ResourceListNotFoundException("Authors", "ids");
+        }
+
+        timePeriodInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
+        timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
+
+        timePeriodRepository.save(timePeriodInDb);
+
+        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
+        authorRepository.saveAll(authorsToAdd);
+
+        authorsToRemove.forEach(a -> a.setTimePeriod(null));
+        authorRepository.saveAll(authorsToRemove);
+
+        return mapper.timePeriodToDto(timePeriodInDb);
     }
 
     @Override

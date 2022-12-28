@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AuthorDto extends BaseDto {
-    private Long timePeriodId;
-    private Long nationalityId;
+public class AuthorResponseDto extends BaseDto{
+    private BaseDto timePeriod;
+    private BaseDto nationality;
 }

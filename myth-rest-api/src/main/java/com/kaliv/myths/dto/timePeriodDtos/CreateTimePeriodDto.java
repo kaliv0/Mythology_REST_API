@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.timePeriodDtos;
 
+import javax.validation.constraints.NotBlank;
+
 import java.util.Collection;
 
 import lombok.Getter;
@@ -10,10 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CreateTimePeriodDto {
-//    @NotBlank
+    @NotBlank
     private String name;
 
-//    @NotBlank
+    @NotBlank
     //TODO: add validation for years
     private String years;
 

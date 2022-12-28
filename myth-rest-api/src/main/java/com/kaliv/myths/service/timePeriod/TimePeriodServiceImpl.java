@@ -50,7 +50,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     @Override
     public TimePeriodDto createTimePeriod(CreateTimePeriodDto dto) {
         String name = dto.getName();
-        if (timePeriodRepository.findByName(name).isPresent()) {
+        if (timePeriodRepository.existsByName(name)) {
             throw new ResourceAlreadyExistsException("Time period", "name", name);
         }
 
@@ -77,7 +77,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String name = dto.getName();
-            if (!name.equals(timePeriodInDb.getName()) && authorRepository.findByName(name).isPresent()) {
+            if (!name.equals(timePeriodInDb.getName()) && authorRepository.existsByName(name)) {
                 throw new ResourceAlreadyExistsException("Time period", "name", name);
             }
             timePeriodInDb.setName(dto.getName());

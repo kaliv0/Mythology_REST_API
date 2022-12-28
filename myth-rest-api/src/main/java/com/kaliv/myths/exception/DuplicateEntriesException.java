@@ -8,7 +8,7 @@ import lombok.Getter;
 import static com.kaliv.myths.constant.ExceptionMessages.DUPLICATE_ENTRIES;
 
 @Getter
-@ResponseStatus(value = HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 public class DuplicateEntriesException extends RuntimeException {
     private final String firstFieldName;
     private final String secondFieldName;

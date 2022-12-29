@@ -7,13 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.TimePeriodResponseDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
+import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.exception.DuplicateEntriesException;
-import com.kaliv.myths.exception.ResourceAlreadyExistsException;
-import com.kaliv.myths.exception.ResourceListNotFoundException;
-import com.kaliv.myths.exception.ResourceNotFoundException;
+import com.kaliv.myths.exception.*;
 import com.kaliv.myths.mapper.TimePeriodMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.TimePeriodRepository;
@@ -34,24 +33,24 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     }
 
     @Override
-    public List<TimePeriodDto> getAllTimePeriods() {
+    public List<TimePeriodResponseDto> getAllTimePeriods() {
         return timePeriodRepository.findAll()
-                .stream().map(mapper::timePeriodToDto)
+                .stream().map(mapper::timePeriodToResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public TimePeriodDto getTimePeriodById(long id) {
+    public TimePeriodResponseDto getTimePeriodById(long id) {
         TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", id));
-        return mapper.timePeriodToDto(timePeriodInDb);
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", id));
+        return mapper.timePeriodToResponseDto(timePeriodInDb);
     }
 
     @Override
     public TimePeriodDto createTimePeriod(CreateTimePeriodDto dto) {
         String name = dto.getName();
         if (timePeriodRepository.existsByName(name)) {
-            throw new ResourceAlreadyExistsException("Time period", "name", name);
+            throw new ResourceWithGivenValuesExistsException("Time period", "name", name);
         }
 
         //ACID transaction => successful only if all given values are valid
@@ -73,12 +72,12 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     @Override
     public TimePeriodDto updateTimePeriod(long id, UpdateTimePeriodDto dto) {
         TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String name = dto.getName();
             if (!name.equals(timePeriodInDb.getName()) && authorRepository.existsByName(name)) {
-                throw new ResourceAlreadyExistsException("Time period", "name", name);
+                throw new ResourceWithGivenValuesExistsException("Time period", "name", name);
             }
             timePeriodInDb.setName(dto.getName());
         }
@@ -88,8 +87,22 @@ public class TimePeriodServiceImpl implements TimePeriodService {
         List<Long> authorsToAddIds = new ArrayList<>(dto.getAuthorsToAdd());
         List<Long> authorsToRemoveIds = new ArrayList<>(dto.getAuthorsToRemove());
 
+        //check if user tries to add and remove same author
         if (!Collections.disjoint(authorsToAddIds, authorsToRemoveIds)) {
             throw new DuplicateEntriesException("authorsToAdd", "authorsToRemove");
+        }
+        //check if user tries to add author that is already in the list
+        if (timePeriodInDb.getAuthors().stream()
+                .map(BaseEntity::getId)
+                .anyMatch(authorsToAddIds::contains)) {
+            throw new ResourceAlreadyExistsException("Author");
+        }
+        //check if user tries to remove author that is not in the list
+        if (!timePeriodInDb.getAuthors().stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet())
+                .containsAll(authorsToRemoveIds)) {
+            throw new ResourceNotFoundException("Author");
         }
 
         List<Author> authorsToAdd = authorRepository.findAllById(authorsToAddIds);
@@ -117,7 +130,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
     @Override
     public void deleteTimePeriod(long id) {
         TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Time period", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", id));
         timePeriodRepository.delete(timePeriodInDb);
     }
 }

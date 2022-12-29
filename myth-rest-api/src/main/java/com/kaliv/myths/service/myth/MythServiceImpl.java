@@ -15,8 +15,8 @@ import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
-import com.kaliv.myths.exception.ResourceAlreadyExistsException;
-import com.kaliv.myths.exception.ResourceNotFoundException;
+import com.kaliv.myths.exception.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.GenericMapper;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.persistence.MythRepository;
@@ -61,7 +61,7 @@ public class MythServiceImpl implements MythService {
     @Override
     public MythDto getMythById(long id) {
         Myth mythInDb = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", id));
         return mapper.entityToDto(mythInDb, MythDto.class);
     }
 
@@ -69,7 +69,7 @@ public class MythServiceImpl implements MythService {
     public MythDto createMyth(CreateUpdateMythDto dto) {
         String name = dto.getName();
         if (mythRepository.findByName(name).isPresent()) {
-            throw new ResourceAlreadyExistsException("Myth", "title", name);
+            throw new ResourceWithGivenValuesExistsException("Myth", "title", name);
         }
 
         //TODO: how to fill in the list of characters?
@@ -82,12 +82,12 @@ public class MythServiceImpl implements MythService {
     @Override
     public MythDto updateMyth(long id, CreateUpdateMythDto dto) {
         Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", id));
 
 //        check if myth with the same name already exists=> TODO: unnecessary?
         String newName= dto.getName();
         if (mythRepository.findByName(newName).isPresent()) {
-            throw new ResourceAlreadyExistsException("Myth", "title", newName);
+            throw new ResourceWithGivenValuesExistsException("Myth", "title", newName);
         }
 
         //TODO: add ignoreProperties
@@ -99,7 +99,7 @@ public class MythServiceImpl implements MythService {
     @Override
     public void deleteMyth(long id) {
         Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Myth", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", id));
         mythRepository.delete(myth);
     }
 }

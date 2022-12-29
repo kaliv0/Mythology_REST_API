@@ -11,13 +11,9 @@ import static com.kaliv.myths.constant.ExceptionMessages.RESOURCE_NOT_FOUND;
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
     private final String resourceName;
-    private final String fieldName;
-    private final long fieldValue;
 
-    public ResourceNotFoundException(String resourceName, String fieldName, long fieldValue) {
-        super(String.format(RESOURCE_NOT_FOUND, resourceName, fieldName, fieldValue));
+    public ResourceNotFoundException(String resourceName) {
+        super(String.format(RESOURCE_NOT_FOUND, resourceName));
         this.resourceName = resourceName;
-        this.fieldName = fieldName;
-        this.fieldValue = fieldValue;
     }
 }

@@ -18,17 +18,17 @@ import java.util.Map;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handle specific exceptions
-    @ExceptionHandler(ResourceNotFoundException.class)
+    @ExceptionHandler(ResourceWithGivenValuesNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(
-            ResourceNotFoundException exception, WebRequest webRequest) {
+            ResourceWithGivenValuesNotFoundException exception, WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    @ExceptionHandler(ResourceWithGivenValuesExistsException.class)
     public ResponseEntity<ErrorDetails> handleResourceAlreadyExistsException(
-            ResourceAlreadyExistsException exception, WebRequest webRequest) {
+            ResourceWithGivenValuesExistsException exception, WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);

@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.ResponseMessages;
 import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
-import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.dto.timePeriodDtos.TimePeriodDto;
+import com.kaliv.myths.dto.timePeriodDtos.TimePeriodResponseDto;
+import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.service.timePeriod.TimePeriodService;
 
 @RestController
@@ -25,12 +26,12 @@ public class TimePeriodController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TimePeriodDto>> getAllTimePeriods() {
+    public ResponseEntity<List<TimePeriodResponseDto>> getAllTimePeriods() {
         return ResponseEntity.ok(timePeriodService.getAllTimePeriods());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TimePeriodDto> getTimePeriodById(@PathVariable(name = "id") long id) {
+    public ResponseEntity<TimePeriodResponseDto> getTimePeriodById(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(timePeriodService.getTimePeriodById(id));
     }
 

@@ -28,8 +28,10 @@ public class AuthorServiceImpl implements AuthorService {
     private final NationalityRepository nationalityRepository;
     private final GenericMapper mapper;
 
-    public AuthorServiceImpl(AuthorRepository authorRepository, TimePeriodRepository timePeriodRepository,
-                             NationalityRepository nationalityRepository, GenericMapper mapper) {
+    public AuthorServiceImpl(AuthorRepository authorRepository,
+                             TimePeriodRepository timePeriodRepository,
+                             NationalityRepository nationalityRepository,
+                             GenericMapper mapper) {
         this.authorRepository = authorRepository;
         this.timePeriodRepository = timePeriodRepository;
         this.nationalityRepository = nationalityRepository;

@@ -15,10 +15,10 @@ import com.kaliv.myths.common.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
+import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.GenericMapper;
-import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.persistence.MythRepository;
 
 @Service
@@ -68,7 +68,7 @@ public class MythServiceImpl implements MythService {
     @Override
     public MythDto createMyth(CreateUpdateMythDto dto) {
         String name = dto.getName();
-        if (mythRepository.findByName(name).isPresent()) {
+        if (mythRepository.existsByName(name)) {
             throw new ResourceWithGivenValuesExistsException("Myth", "title", name);
         }
 
@@ -85,8 +85,8 @@ public class MythServiceImpl implements MythService {
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", id));
 
 //        check if myth with the same name already exists=> TODO: unnecessary?
-        String newName= dto.getName();
-        if (mythRepository.findByName(newName).isPresent()) {
+        String newName = dto.getName();
+        if (mythRepository.existsByName(newName)) {
             throw new ResourceWithGivenValuesExistsException("Myth", "title", newName);
         }
 

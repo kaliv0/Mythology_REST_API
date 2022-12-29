@@ -78,9 +78,9 @@ public class AuthorServiceImpl implements AuthorService {
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Author", "id", id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
-            String dtoName = dto.getName();
-            if (!dtoName.equals(authorInDb.getName()) && authorRepository.existsByName(dtoName)) {
-                throw new ResourceWithGivenValuesExistsException("Author", "name", dtoName);
+            String newName = dto.getName();
+            if (!newName.equals(authorInDb.getName()) && authorRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException("Author", "name", newName);
             }
             authorInDb.setName(dto.getName());
         }

@@ -58,10 +58,8 @@ public class TimePeriodServiceImpl implements TimePeriodService {
             throw new ResourceWithGivenValuesExistsException("Time period", "name", name);
         }
 
-        //ACID transaction => successful only if all given values are valid
         List<Long> authorIds = new ArrayList<>(dto.getAuthorIds());
         List<Author> authors = authorRepository.findAllById(authorIds);
-
         if (authors.size() != authorIds.size()) {
             throw new ResourceListNotFoundException("Authors", "ids");
         }
@@ -80,9 +78,9 @@ public class TimePeriodServiceImpl implements TimePeriodService {
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
-            String name = dto.getName();
-            if (!name.equals(timePeriodInDb.getName()) && authorRepository.existsByName(name)) {
-                throw new ResourceWithGivenValuesExistsException("Time period", "name", name);
+            String newName = dto.getName();
+            if (!newName.equals(timePeriodInDb.getName()) && authorRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException("Time period", "name", newName);
             }
             timePeriodInDb.setName(dto.getName());
         }
@@ -91,7 +89,6 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         List<Long> authorsToAddIds = new ArrayList<>(dto.getAuthorsToAdd());
         List<Long> authorsToRemoveIds = new ArrayList<>(dto.getAuthorsToRemove());
-
         //check if user tries to add and remove same author
         if (!Collections.disjoint(authorsToAddIds, authorsToRemoveIds)) {
             throw new DuplicateEntriesException("authorsToAdd", "authorsToRemove");
@@ -112,7 +109,6 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         List<Author> authorsToAdd = authorRepository.findAllById(authorsToAddIds);
         List<Author> authorsToRemove = authorRepository.findAllById(authorsToRemoveIds);
-
         if (authorsToAddIds.size() != authorsToAdd.size()
                 || authorsToRemoveIds.size() != authorsToRemove.size()) {
             throw new ResourceListNotFoundException("Authors", "ids");
@@ -120,12 +116,10 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         timePeriodInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
         timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
-
         timePeriodRepository.save(timePeriodInDb);
 
         authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
         authorRepository.saveAll(authorsToAdd);
-
         authorsToRemove.forEach(a -> a.setTimePeriod(null));
         authorRepository.saveAll(authorsToRemove);
 

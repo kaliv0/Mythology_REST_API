@@ -11,10 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateTimePeriodDto {
     private String name;
-
-    //TODO: add validation for years
     private String years;
-
     private Collection<Long> authorsToAdd;
     private Collection<Long> authorsToRemove;
 }

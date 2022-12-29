@@ -69,7 +69,6 @@ public class AuthorServiceImpl implements AuthorService {
 
         Author author = mapper.dtoToEntity(dto, Author.class);
         Author savedAuthor = authorRepository.save(author);
-
         return mapper.entityToDto(savedAuthor, AuthorDto.class);
     }
 

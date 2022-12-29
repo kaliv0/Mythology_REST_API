@@ -16,7 +16,6 @@ public class CreateTimePeriodDto {
     private String name;
 
     @NotBlank
-    //TODO: add validation for years
     private String years;
 
     private Collection<Long> authorIds;

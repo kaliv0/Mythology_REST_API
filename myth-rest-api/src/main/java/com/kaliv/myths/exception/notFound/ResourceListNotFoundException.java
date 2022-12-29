@@ -1,4 +1,4 @@
-package com.kaliv.myths.exception;
+package com.kaliv.myths.exception.notFound;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

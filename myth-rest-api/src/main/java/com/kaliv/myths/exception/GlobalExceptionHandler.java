@@ -14,6 +14,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 

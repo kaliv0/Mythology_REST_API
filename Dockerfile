@@ -10,4 +10,5 @@
 FROM openjdk:11
 ADD myth-rest-api/target/myth-rest-api-0.0.1-SNAPSHOT.jar myth-rest-api-0.0.1-SNAPSHOT.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-Dspring.profiles.active=dockerembbed", "-jar", "myth-rest-api-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "myth-rest-api-0.0.1-SNAPSHOT.jar"]
+#ENTRYPOINT ["java", "-Dspring.profiles.active=dockerembbed", "-jar", "myth-rest-api-0.0.1-SNAPSHOT.jar"]

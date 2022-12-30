@@ -68,4 +68,5 @@ services:
     depends_on:
       - mysql_db
     environment:
-      - SLEEP_LENGTH=5
+      - "SPRING_PROFILES_ACTIVE=test"
+#      - SLEEP_LENGTH=5

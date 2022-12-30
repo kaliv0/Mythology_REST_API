@@ -134,93 +134,48 @@
     ) engine=InnoDB;
 
     alter table authors 
-       drop index UK_9mhkwvnfaarcalo4noabrin5j;
-
-    alter table authors 
        add constraint UK_9mhkwvnfaarcalo4noabrin5j unique (name);
-
-    alter table character_categories 
-       drop index UK_lxm17i9hcwg61227nxwtqmhy9;
 
     alter table character_categories 
        add constraint UK_lxm17i9hcwg61227nxwtqmhy9 unique (name);
 
-    alter table characters 
-       drop index UK_r3m7dafrtn7gkievcf8fw7nt5;
-
-    alter table characters 
+    alter table characters
        add constraint UK_r3m7dafrtn7gkievcf8fw7nt5 unique (name);
 
-    alter table images 
-       drop index UK_ck6sqeo1ibsbqabe9c03d3hfj;
-
-    alter table images 
+    alter table images
        add constraint UK_ck6sqeo1ibsbqabe9c03d3hfj unique (image_url);
 
-    alter table images 
-       drop index UK_s1hn0flcjavvrkvbn1pd8dts2;
-
-    alter table images 
+    alter table images
        add constraint UK_s1hn0flcjavvrkvbn1pd8dts2 unique (name);
 
-    alter table museums 
-       drop index UK_6ay3aycieh9he1g5mb1i7owkw;
-
-    alter table museums 
+    alter table museums
        add constraint UK_6ay3aycieh9he1g5mb1i7owkw unique (name);
 
-    alter table music_characters 
-       drop index UK_bx55guiysb1h4m5igvvdwp87b;
-
-    alter table music_characters 
+    alter table music_characters
        add constraint UK_bx55guiysb1h4m5igvvdwp87b unique (characters_id);
 
-    alter table myths 
-       drop index UK_26xgkyg29duuyjxne8y9udmqb;
-
-    alter table myths 
+    alter table myths
        add constraint UK_26xgkyg29duuyjxne8y9udmqb unique (title);
 
-    alter table nationalities 
-       drop index UK_6u84h6rense2otflksidln5f4;
-
-    alter table nationalities 
+    alter table nationalities
        add constraint UK_6u84h6rense2otflksidln5f4 unique (name);
 
-    alter table paintings_characters 
-       drop index UK_a45ocnx3iqqhm29aeb8g0fsjo;
-
-    alter table paintings_characters 
+    alter table paintings_characters
        add constraint UK_a45ocnx3iqqhm29aeb8g0fsjo unique (characters_id);
 
-    alter table paintings_images 
-       drop index UK_h5gl73krlnk8fkl4xg77520vl;
-
-    alter table paintings_images 
+    alter table paintings_images
        add constraint UK_h5gl73krlnk8fkl4xg77520vl unique (images_id);
 
-    alter table poems_characters 
-       drop index UK_l7kiqjeciyywmf06blhh8qu87;
-
-    alter table poems_characters 
+    alter table poems_characters
        add constraint UK_l7kiqjeciyywmf06blhh8qu87 unique (characters_id);
 
-    alter table statues_characters 
-       drop index UK_ch6m82iw1gm94uia8gaag5tr8;
-
-    alter table statues_characters 
+    alter table statues_characters
        add constraint UK_ch6m82iw1gm94uia8gaag5tr8 unique (characters_id);
 
-    alter table statues_images 
-       drop index UK_qy14l2poljldryi9atl3qlt67;
-
-    alter table statues_images 
+    alter table statues_images
        add constraint UK_qy14l2poljldryi9atl3qlt67 unique (images_id);
 
-    alter table time_periods 
-       drop index UK_571jxmwxgsw7qeskmta5fjw3k;
-
-    alter table time_periods 
+    alter table time_periods
        add constraint UK_571jxmwxgsw7qeskmta5fjw3k unique (name);
 
     alter table authors 

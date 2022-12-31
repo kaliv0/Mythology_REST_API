@@ -20,4 +20,4 @@ services:
     depends_on:
       - mysql_db
     environment:
-      - "SPRING_PROFILES_ACTIVE=test"
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES}

@@ -15,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "characters")
 public class MythCharacter extends BaseEntity {
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 

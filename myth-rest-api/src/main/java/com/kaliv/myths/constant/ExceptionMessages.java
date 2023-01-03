@@ -1,7 +1,7 @@
 package com.kaliv.myths.constant;
 
 public class ExceptionMessages {
-    public static final String RESOURCE_WITH_GIVEN_VALUE_NOT_FOUND = "%s not found with %s %s";
+    public static final String RESOURCE_WITH_GIVEN_VALUE_NOT_FOUND = "%s with %s '%s' not found";
     public static final String RESOURCE_NOT_FOUND = "%s not found";
     public static final String RESOURCE_LIST_NOT_FOUND = "%s with given %s not found";
     public static final String RESOURCE_WITH_GIVEN_VALUE_ALREADY_EXISTS = "%s with %s '%s' already exists";

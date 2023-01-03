@@ -1,0 +1,133 @@
+package com.kaliv.myths.service.category;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
+import com.kaliv.myths.dto.categoryDtos.CategoryDto;
+import com.kaliv.myths.dto.categoryDtos.CategoryResponseDto;
+import com.kaliv.myths.dto.categoryDtos.UpdateCategoryDto;
+import com.kaliv.myths.entity.BaseEntity;
+import com.kaliv.myths.entity.Category;
+import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.exception.*;
+import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
+import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
+import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
+import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
+import com.kaliv.myths.mapper.CategoryMapper;
+import com.kaliv.myths.persistence.MythCharacterRepository;
+import com.kaliv.myths.persistence.CategoryRepository;
+
+@Service
+public class CategoryServiceImpl implements CategoryService {
+
+    private final CategoryRepository categoryRepository;
+    private final MythCharacterRepository mythCharacterRepository;
+    private final CategoryMapper mapper;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository,
+                                 MythCharacterRepository mythCharacterRepository,
+                                 CategoryMapper mapper) {
+        this.categoryRepository = categoryRepository;
+        this.mythCharacterRepository = mythCharacterRepository;
+        this.mapper = mapper;
+    }
+
+    @Override
+    public List<CategoryResponseDto> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream().map(mapper::categoryToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryResponseDto getCategoryById(long id) {
+        Category categoryInDb = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+        return mapper.categoryToResponseDto(categoryInDb);
+    }
+
+    @Override
+    public CategoryDto createCategory(CreateCategoryDto dto) {
+        String name = dto.getName();
+        if (categoryRepository.existsByName(name)) {
+            throw new ResourceWithGivenValuesExistsException("Character category", "name", name);
+        }
+
+        List<Long> mythCharacterIds = new ArrayList<>(dto.getMythCharacterIds());
+        List<MythCharacter> mythCharacters = mythCharacterRepository.findAllById(mythCharacterIds);
+        if (mythCharacters.size() != mythCharacterIds.size()) {
+            throw new ResourceListNotFoundException("MythCharacters", "ids");
+        }
+
+        Category category = mapper.dtoToCategory(dto);
+        Category savedCategory = categoryRepository.save(category);
+
+        mythCharacters.forEach(a -> a.setCategory(savedCategory));
+        mythCharacterRepository.saveAll(mythCharacters);
+        return mapper.categoryToDto(savedCategory);
+    }
+
+    @Override
+    public CategoryDto updateCategory(long id, UpdateCategoryDto dto) {
+        Category categoryInDb = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+
+        if (Optional.ofNullable(dto.getName()).isPresent()) {
+            String newName = dto.getName();
+            if (!newName.equals(categoryInDb.getName()) && categoryRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException("Character category", "name", newName);
+            }
+            categoryInDb.setName(dto.getName());
+        }
+
+        List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
+        List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
+        //check if user tries to add and remove same mythCharacter
+        if (!Collections.disjoint(mythCharactersToAddIds, mythCharactersToRemoveIds)) {
+            throw new DuplicateEntriesException("mythCharactersToAdd", "mythCharactersToRemove");
+        }
+        //check if user tries to add mythCharacter that is already in the list
+        if (categoryInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .anyMatch(mythCharactersToAddIds::contains)) {
+            throw new ResourceAlreadyExistsException("MythCharacter");
+        }
+        //check if user tries to remove mythCharacter that is not in the list
+        if (!categoryInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet())
+                .containsAll(mythCharactersToRemoveIds)) {
+            throw new ResourceNotFoundException("MythCharacter");
+        }
+
+        List<MythCharacter> mythCharactersToAdd = mythCharacterRepository.findAllById(mythCharactersToAddIds);
+        List<MythCharacter> mythCharactersToRemove = mythCharacterRepository.findAllById(mythCharactersToRemoveIds);
+        if (mythCharactersToAddIds.size() != mythCharactersToAdd.size()
+                || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
+            throw new ResourceListNotFoundException("MythCharacters", "ids");
+        }
+
+        categoryInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        categoryInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        categoryRepository.save(categoryInDb);
+
+        mythCharactersToAdd.forEach(a -> a.setCategory(categoryInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.setCategory(null));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        return mapper.categoryToDto(categoryInDb);
+    }
+
+    @Override
+    public void deleteCategory(long id) {
+        Category categoryInDb = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+        categoryRepository.delete(categoryInDb);
+    }
+}

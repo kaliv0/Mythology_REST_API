@@ -5,4 +5,5 @@ public class ResponseMessages {
     public static final String AUTHOR_DELETED = "Author deleted successfully.";
     public static final String TIME_PERIOD_DELETED = "Time period deleted successfully.";
     public static final String NATIONALITY_DELETED = "Nationality deleted successfully.";
+    public static final String CATEGORY_DELETED = "Character category deleted successfully.";
 }

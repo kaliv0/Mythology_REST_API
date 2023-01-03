@@ -1,4 +1,4 @@
-package com.kaliv.myths.dto.nationalityDtos;
+package com.kaliv.myths.dto.mythCharacterDtos;
 
 import java.util.Set;
 
@@ -11,7 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NationalityDto extends BaseDto {
+public class MythCharacterDto extends BaseDto {
+    private Long categoryId;
+    private Long fatherId;
+    private Long motherId;
     private Set<Long> mythIds;
-    private Set<Long> authorIds;
 }

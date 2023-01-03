@@ -11,9 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TimePeriodResponseDto {
-    private long id;
-    private String name;
+public class TimePeriodResponseDto extends BaseDto {
     private String years;
     private Set<BaseDto> authors;
 }

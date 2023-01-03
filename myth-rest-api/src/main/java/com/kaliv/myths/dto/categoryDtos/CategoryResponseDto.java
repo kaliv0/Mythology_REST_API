@@ -11,8 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CategoryResponseDto {
-    private long id;
-    private String name;
+public class CategoryResponseDto extends BaseDto {
     private Set<BaseDto> mythCharacters;
 }

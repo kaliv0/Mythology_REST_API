@@ -1,138 +1,156 @@
+create table authors
+(
+    id             bigint       not null auto_increment,
+    name           varchar(255) not null,
+    nationality_id bigint,
+    time_period_id bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table authors (
-                         id bigint not null auto_increment,
-                         name varchar(255) not null,
-                         nationality_id bigint,
-                         time_period_id bigint,
-                         primary key (id)
-) engine=InnoDB;
+create table character_categories
+(
+    id   bigint       not null auto_increment,
+    name varchar(255) not null,
+    primary key (id)
+) engine = InnoDB;
 
-create table character_categories (
-                                      id bigint not null auto_increment,
-                                      name varchar(255) not null,
-                                      primary key (id)
-) engine=InnoDB;
+create table characters
+(
+    id          bigint       not null auto_increment,
+    name        varchar(255) not null,
+    category_id bigint,
+    father_id   bigint,
+    mother_id   bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table characters (
-                            id bigint not null auto_increment,
-                            name varchar(255) not null,
-                            category_id bigint,
-                            father_id bigint,
-                            mother_id bigint,
-                            primary key (id)
-) engine=InnoDB;
+create table images
+(
+    id        bigint       not null auto_increment,
+    name      varchar(255) not null,
+    image_url varchar(255) not null,
+    primary key (id)
+) engine = InnoDB;
 
-create table images (
-                        id bigint not null auto_increment,
-                        name varchar(255) not null,
-                        image_url varchar(255) not null,
-                        primary key (id)
-) engine=InnoDB;
+create table museums
+(
+    id   bigint       not null auto_increment,
+    name varchar(255) not null,
+    primary key (id)
+) engine = InnoDB;
 
-create table museums (
-                         id bigint not null auto_increment,
-                         name varchar(255) not null,
-                         primary key (id)
-) engine=InnoDB;
+create table music
+(
+    id        bigint       not null auto_increment,
+    name      varchar(255) not null,
+    author_id bigint,
+    myth_id   bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table music (
-                       id bigint not null auto_increment,
-                       name varchar(255) not null,
-                       author_id bigint,
-                       myth_id bigint,
-                       primary key (id)
-) engine=InnoDB;
+create table music_characters
+(
+    Music_id          bigint not null,
+    mythCharacters_id bigint not null,
+    primary key (Music_id, mythCharacters_id)
+) engine = InnoDB;
 
-create table music_characters (
-                                  Music_id bigint not null,
-                                  mythCharacters_id bigint not null,
-                                  primary key (Music_id, mythCharacters_id)
-) engine=InnoDB;
+create table myths
+(
+    id             bigint       not null auto_increment,
+    name           varchar(255) not null,
+    plot           varchar(255) not null,
+    nationality_id bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table myths (
-                       id bigint not null auto_increment,
-                       name varchar(255) not null,
-                       plot varchar(255) not null,
-                       nationality_id bigint,
-                       primary key (id)
-) engine=InnoDB;
+create table myths_characters
+(
+    myth_id      bigint not null,
+    character_id bigint not null,
+    primary key (myth_id, character_id)
+) engine = InnoDB;
 
-create table myths_characters (
-                                  myth_id bigint not null,
-                                  character_id bigint not null,
-                                  primary key (myth_id, character_id)
-) engine=InnoDB;
+create table nationalities
+(
+    id   bigint       not null auto_increment,
+    name varchar(255) not null,
+    primary key (id)
+) engine = InnoDB;
 
-create table nationalities (
-                               id bigint not null auto_increment,
-                               name varchar(255) not null,
-                               primary key (id)
-) engine=InnoDB;
+create table paintings
+(
+    id        bigint       not null auto_increment,
+    name      varchar(255) not null,
+    author_id bigint,
+    myth_id   bigint,
+    museum_id bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table paintings (
-                           id bigint not null auto_increment,
-                           name varchar(255) not null,
-                           author_id bigint,
-                           myth_id bigint,
-                           museum_id bigint,
-                           primary key (id)
-) engine=InnoDB;
+create table paintings_characters
+(
+    Painting_id       bigint not null,
+    mythCharacters_id bigint not null,
+    primary key (Painting_id, mythCharacters_id)
+) engine = InnoDB;
 
-create table paintings_characters (
-                                      Painting_id bigint not null,
-                                      mythCharacters_id bigint not null,
-                                      primary key (Painting_id, mythCharacters_id)
-) engine=InnoDB;
+create table paintings_images
+(
+    Painting_id bigint not null,
+    images_id   bigint not null,
+    primary key (Painting_id, images_id)
+) engine = InnoDB;
 
-create table paintings_images (
-                                  Painting_id bigint not null,
-                                  images_id bigint not null,
-                                  primary key (Painting_id, images_id)
-) engine=InnoDB;
+create table poems
+(
+    id            bigint       not null auto_increment,
+    name          varchar(255) not null,
+    excerpt       varchar(255),
+    full_text_url varchar(255) not null,
+    author_id     bigint,
+    myth_id       bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table poems (
-                       id bigint not null auto_increment,
-                       name varchar(255) not null,
-                       excerpt varchar(255),
-                       full_text_url varchar(255) not null,
-                       author_id bigint,
-                       myth_id bigint,
-                       primary key (id)
-) engine=InnoDB;
+create table poems_characters
+(
+    Poem_id           bigint not null,
+    mythCharacters_id bigint not null,
+    primary key (Poem_id, mythCharacters_id)
+) engine = InnoDB;
 
-create table poems_characters (
-                                  Poem_id bigint not null,
-                                  mythCharacters_id bigint not null,
-                                  primary key (Poem_id, mythCharacters_id)
-) engine=InnoDB;
+create table statues
+(
+    id        bigint       not null auto_increment,
+    name      varchar(255) not null,
+    author_id bigint,
+    myth_id   bigint,
+    museum_id bigint,
+    primary key (id)
+) engine = InnoDB;
 
-create table statues (
-                         id bigint not null auto_increment,
-                         name varchar(255) not null,
-                         author_id bigint,
-                         myth_id bigint,
-                         museum_id bigint,
-                         primary key (id)
-) engine=InnoDB;
+create table statues_characters
+(
+    Statue_id         bigint not null,
+    mythCharacters_id bigint not null,
+    primary key (Statue_id, mythCharacters_id)
+) engine = InnoDB;
 
-create table statues_characters (
-                                    Statue_id bigint not null,
-                                    mythCharacters_id bigint not null,
-                                    primary key (Statue_id, mythCharacters_id)
-) engine=InnoDB;
+create table statues_images
+(
+    Statue_id bigint not null,
+    images_id bigint not null,
+    primary key (Statue_id, images_id)
+) engine = InnoDB;
 
-create table statues_images (
-                                Statue_id bigint not null,
-                                images_id bigint not null,
-                                primary key (Statue_id, images_id)
-) engine=InnoDB;
-
-create table time_periods (
-                              id bigint not null auto_increment,
-                              name varchar(255) not null,
-                              years varchar(255),
-                              primary key (id)
-) engine=InnoDB;
+create table time_periods
+(
+    id    bigint       not null auto_increment,
+    name  varchar(255) not null,
+    years varchar(255),
+    primary key (id)
+) engine = InnoDB;
 
 alter table authors
     add constraint UK_9mhkwvnfaarcalo4noabrin5j unique (name);

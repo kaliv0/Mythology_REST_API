@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.constant.ResponseMessages;
+import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.categoryDtos.CategoryDto;
 import com.kaliv.myths.dto.categoryDtos.CategoryResponseDto;
 import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;

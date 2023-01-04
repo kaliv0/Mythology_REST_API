@@ -1,19 +1,17 @@
 package com.kaliv.myths.service.mythCharacter;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.constant.params.Fields;
+import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
 import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
 import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.entity.Nationality;
-import com.kaliv.myths.entity.TimePeriod;
-import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.MythCharacterMapper;
 import com.kaliv.myths.persistence.MythCharacterRepository;
@@ -48,7 +46,7 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     @Override
     public MythCharacterResponseDto getMythCharacterById(long id) {
         MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth character", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, id));
         return mapper.mythCharacterToResponseDto(mythCharacterInDb);
     }
 
@@ -111,7 +109,7 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     @Override
     public void deleteMythCharacter(long id) {
         MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth character", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTERS, Fields.ID, id));
         mythCharacterRepository.delete(mythCharacterInDb);
     }
 }

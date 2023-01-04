@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.Getter;
 
-import static com.kaliv.myths.constant.ExceptionMessages.DUPLICATE_ENTRIES;
+import static com.kaliv.myths.constant.messages.ExceptionMessages.DUPLICATE_ENTRIES;
 
 @Getter
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)

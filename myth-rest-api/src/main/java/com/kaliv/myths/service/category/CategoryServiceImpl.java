@@ -5,22 +5,24 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
+import com.kaliv.myths.constant.params.Fields;
+import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.categoryDtos.CategoryDto;
 import com.kaliv.myths.dto.categoryDtos.CategoryResponseDto;
+import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
 import com.kaliv.myths.dto.categoryDtos.UpdateCategoryDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Category;
 import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.exception.*;
+import com.kaliv.myths.exception.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.CategoryMapper;
-import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.CategoryRepository;
+import com.kaliv.myths.persistence.MythCharacterRepository;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -30,8 +32,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper mapper;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository,
-                                 MythCharacterRepository mythCharacterRepository,
-                                 CategoryMapper mapper) {
+                               MythCharacterRepository mythCharacterRepository,
+                               CategoryMapper mapper) {
         this.categoryRepository = categoryRepository;
         this.mythCharacterRepository = mythCharacterRepository;
         this.mapper = mapper;
@@ -47,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponseDto getCategoryById(long id) {
         Category categoryInDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, id));
         return mapper.categoryToResponseDto(categoryInDb);
     }
 
@@ -55,13 +57,13 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto createCategory(CreateCategoryDto dto) {
         String name = dto.getName();
         if (categoryRepository.existsByName(name)) {
-            throw new ResourceWithGivenValuesExistsException("Character category", "name", name);
+            throw new ResourceWithGivenValuesExistsException(Sources.CATEGORY, Fields.NAME, name);
         }
 
         List<Long> mythCharacterIds = new ArrayList<>(dto.getMythCharacterIds());
         List<MythCharacter> mythCharacters = mythCharacterRepository.findAllById(mythCharacterIds);
         if (mythCharacters.size() != mythCharacterIds.size()) {
-            throw new ResourceListNotFoundException("MythCharacters", "ids");
+            throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
 
         Category category = mapper.dtoToCategory(dto);
@@ -75,12 +77,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto updateCategory(long id, UpdateCategoryDto dto) {
         Category categoryInDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
             if (!newName.equals(categoryInDb.getName()) && categoryRepository.existsByName(newName)) {
-                throw new ResourceWithGivenValuesExistsException("Character category", "name", newName);
+                throw new ResourceWithGivenValuesExistsException(Sources.CATEGORY, Fields.NAME, newName);
             }
             categoryInDb.setName(dto.getName());
         }
@@ -89,27 +91,27 @@ public class CategoryServiceImpl implements CategoryService {
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
         //check if user tries to add and remove same mythCharacter
         if (!Collections.disjoint(mythCharactersToAddIds, mythCharactersToRemoveIds)) {
-            throw new DuplicateEntriesException("mythCharactersToAdd", "mythCharactersToRemove");
+            throw new DuplicateEntriesException(Sources.ADD_CHARACTERS, Sources.REMOVE_CHARACTERS);
         }
         //check if user tries to add mythCharacter that is already in the list
         if (categoryInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .anyMatch(mythCharactersToAddIds::contains)) {
-            throw new ResourceAlreadyExistsException("MythCharacter");
+            throw new ResourceAlreadyExistsException(Sources.CHARACTER);
         }
         //check if user tries to remove mythCharacter that is not in the list
         if (!categoryInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet())
                 .containsAll(mythCharactersToRemoveIds)) {
-            throw new ResourceNotFoundException("MythCharacter");
+            throw new ResourceNotFoundException(Sources.CHARACTER);
         }
 
         List<MythCharacter> mythCharactersToAdd = mythCharacterRepository.findAllById(mythCharactersToAddIds);
         List<MythCharacter> mythCharactersToRemove = mythCharacterRepository.findAllById(mythCharactersToRemoveIds);
         if (mythCharactersToAddIds.size() != mythCharactersToAdd.size()
                 || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
-            throw new ResourceListNotFoundException("MythCharacters", "ids");
+            throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
 
         categoryInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
@@ -127,7 +129,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(long id) {
         Category categoryInDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Character category", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, id));
         categoryRepository.delete(categoryInDb);
     }
 }

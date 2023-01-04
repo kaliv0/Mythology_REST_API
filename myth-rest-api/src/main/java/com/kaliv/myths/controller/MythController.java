@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.common.PaginationCriteria;
-import com.kaliv.myths.common.SortCriteria;
-import com.kaliv.myths.constant.ResponseMessages;
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;

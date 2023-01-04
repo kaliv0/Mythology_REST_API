@@ -1,4 +1,4 @@
-package com.kaliv.myths.constant;
+package com.kaliv.myths.constant.messages;
 
 public class ExceptionMessages {
     public static final String RESOURCE_WITH_GIVEN_VALUE_NOT_FOUND = "%s with %s '%s' not found";

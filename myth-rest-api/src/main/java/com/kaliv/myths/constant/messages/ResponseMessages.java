@@ -1,4 +1,4 @@
-package com.kaliv.myths.constant;
+package com.kaliv.myths.constant.messages;
 
 public class ResponseMessages {
     public static final String MYTH_DELETED = "Myth deleted successfully.";

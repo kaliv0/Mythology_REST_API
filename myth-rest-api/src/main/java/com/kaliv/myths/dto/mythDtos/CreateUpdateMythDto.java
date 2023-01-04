@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.mythDtos;
 
-import com.kaliv.myths.constant.ValidationMessages;
+import com.kaliv.myths.constant.messages.ValidationMessages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

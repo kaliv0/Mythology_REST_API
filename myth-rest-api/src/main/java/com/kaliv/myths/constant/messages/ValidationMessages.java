@@ -1,4 +1,4 @@
-package com.kaliv.myths.constant;
+package com.kaliv.myths.constant.messages;
 
 public class ValidationMessages {
     public static final String INVALID_MYTH_TITLE = "Myth title should have at least 2 characters.";

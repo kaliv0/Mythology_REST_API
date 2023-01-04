@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import lombok.Getter;
 
-import static com.kaliv.myths.constant.ExceptionMessages.RESOURCE_WITH_GIVEN_VALUE_ALREADY_EXISTS;
+import static com.kaliv.myths.constant.messages.ExceptionMessages.RESOURCE_WITH_GIVEN_VALUE_ALREADY_EXISTS;
 
 @Getter
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)

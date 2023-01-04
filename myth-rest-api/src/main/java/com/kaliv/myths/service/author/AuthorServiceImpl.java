@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.constant.params.Fields;
+import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.authorDtos.AuthorDto;
 import com.kaliv.myths.dto.authorDtos.AuthorResponseDto;
 import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
@@ -48,7 +50,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorResponseDto getAuthorById(long id) {
         Author authorInDb = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Author", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, id));
         return mapper.entityToDto(authorInDb, AuthorResponseDto.class);
     }
 
@@ -56,17 +58,17 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorDto createAuthor(CreateAuthorDto dto) {
         String name = dto.getName();
         if (authorRepository.existsByName(name)) {
-            throw new ResourceWithGivenValuesExistsException("Author", "name", name);
+            throw new ResourceWithGivenValuesExistsException(Sources.AUTHOR, Fields.NAME, name);
         }
 
         Long timePeriodId = dto.getTimePeriodId();
         if (timePeriodId != null && !timePeriodRepository.existsById(timePeriodId)) {
-            throw new ResourceWithGivenValuesNotFoundException("Time period", "id", timePeriodId);
+            throw new ResourceWithGivenValuesNotFoundException(Sources.TIME_PERIOD, Fields.ID, timePeriodId);
         }
 
         Long nationalityId = dto.getNationalityId();
         if (nationalityId != null && !nationalityRepository.existsById(nationalityId)) {
-            throw new ResourceWithGivenValuesNotFoundException("Nationality", "id", nationalityId);
+            throw new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, nationalityId);
         }
 
         Author author = mapper.dtoToEntity(dto, Author.class);
@@ -77,12 +79,12 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public AuthorDto updateAuthor(long id, UpdateAuthorDto dto) {
         Author authorInDb = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Author", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
             if (!newName.equals(authorInDb.getName()) && authorRepository.existsByName(newName)) {
-                throw new ResourceWithGivenValuesExistsException("Author", "name", newName);
+                throw new ResourceWithGivenValuesExistsException(Sources.AUTHOR, Fields.NAME, newName);
             }
             authorInDb.setName(dto.getName());
         }
@@ -90,14 +92,14 @@ public class AuthorServiceImpl implements AuthorService {
         if (Optional.ofNullable(dto.getTimePeriodId()).isPresent()) {
             long timePeriodId = dto.getTimePeriodId();
             TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
-                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", timePeriodId));
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.TIME_PERIOD, Fields.ID, timePeriodId));
             authorInDb.setTimePeriod(timePeriodInDb);
         }
 
         if (Optional.ofNullable(dto.getNationalityId()).isPresent()) {
             long nationalityId = dto.getNationalityId();
             Nationality nationalityInDb = nationalityRepository.findById(nationalityId)
-                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Nationality", "id", nationalityId));
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, nationalityId));
             authorInDb.setNationality(nationalityInDb);
         }
 
@@ -108,7 +110,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthor(long id) {
         Author authorInDb = authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Author", "id", id));
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, id));
         authorRepository.delete(authorInDb);
     }
 }

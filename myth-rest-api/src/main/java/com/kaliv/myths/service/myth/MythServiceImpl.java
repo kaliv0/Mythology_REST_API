@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.PaginationCriteria;
-import com.kaliv.myths.common.SortCriteria;
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;

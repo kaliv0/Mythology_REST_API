@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.common.criteria;
 
 import com.kaliv.myths.constant.CriteriaConstants;
 

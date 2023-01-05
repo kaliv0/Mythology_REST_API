@@ -2,6 +2,8 @@ package com.kaliv.myths.service.mythCharacter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -12,8 +14,10 @@ import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
 import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
+import com.kaliv.myths.entity.Category;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.exception.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -66,6 +70,27 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             throw new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, categoryId);
         }
 
+        Long fatherId = dto.getFatherId();
+        MythCharacter father = null;
+        if (fatherId != null) {
+            if (!mythCharacterRepository.existsById(fatherId)) {
+                throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, fatherId);
+            }
+            father = mythCharacterRepository.getById(fatherId);
+        }
+
+        Long motherId = dto.getMotherId();
+        MythCharacter mother = null;
+        if (motherId != null) {
+            if (!mythCharacterRepository.existsById(motherId)) {
+                throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, motherId);
+            }
+            if (Objects.equals(fatherId, motherId)) {
+                throw new DuplicateEntriesException(Fields.FATHER_ID, Fields.MOTHER_ID);
+            }
+            mother = mythCharacterRepository.getById(motherId);
+        }
+
         List<Long> mythIds = new ArrayList<>(dto.getMythIds());
         List<Myth> myths = mythRepository.findAllById(mythIds);
         if (myths.size() != mythIds.size()) {
@@ -73,22 +98,8 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         }
 
         MythCharacter mythCharacter = mapper.dtoToMythCharacter(dto);
-
-        Long fatherId = dto.getFatherId();
-        if (fatherId != null) {
-            mythCharacterRepository.findById(fatherId)
-                    .ifPresentOrElse(mythCharacter::setFather, () -> {
-                        throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, fatherId);
-                    });
-        }
-        Long motherId = dto.getMotherId();
-        if (motherId != null) {
-            mythCharacterRepository.findById(motherId)
-                    .ifPresentOrElse(mythCharacter::setMother, () -> {
-                        throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, motherId);
-                    });
-        }
-
+        mythCharacter.setFather(father);
+        mythCharacter.setMother(mother);
         MythCharacter savedMythCharacter = mythCharacterRepository.save(mythCharacter);
 
         myths.forEach(m -> m.getMythCharacters().add(savedMythCharacter));
@@ -99,35 +110,38 @@ public class MythCharacterServiceImpl implements MythCharacterService {
 
     @Override
     public MythCharacterDto updateMythCharacter(long id, UpdateMythCharacterDto dto) {
-//        MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
-//                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("MythCharacter", "id", id));
-//
-//        if (Optional.ofNullable(dto.getName()).isPresent()) {
-//            String newName = dto.getName();
-//            if (!newName.equals(mythCharacterInDb.getName()) && mythCharacterRepository.existsByName(newName)) {
-//                throw new ResourceWithGivenValuesExistsException("MythCharacter", "name", newName);
-//            }
-//            mythCharacterInDb.setName(dto.getName());
+        MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, id));
+
+        if (Optional.ofNullable(dto.getName()).isPresent()) {
+            String newName = dto.getName();
+            if (!newName.equals(mythCharacterInDb.getName()) && mythCharacterRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException(Sources.CHARACTER, Fields.NAME, newName);
+            }
+            mythCharacterInDb.setName(dto.getName());
+        }
+
+        if (Optional.ofNullable(dto.getCategoryId()).isPresent()) {
+            long categoryId = dto.getCategoryId();
+            Category categoryInDb = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, categoryId));
+            mythCharacterInDb.setCategory(categoryInDb);
+        }
+
+        //TODO: character cannot be father or mother of himself
+//        if (fatherId != mythCharacter.getId()) {
+//            throw new DuplicateEntriesException(Fields.ID, Fields.FATHER_ID);
 //        }
-//
-//        if (Optional.ofNullable(dto.getCategoryId()).isPresent()) {
-//            long categoryId = dto.getCategoryId();
-//            Category categoryInDb = categoryRepository.findById(categoryId)
-//                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Time period", "id", categoryId));
-//            mythCharacterInDb.setCategory(categoryInDb);
-//        }
-//
+
 //        if (Optional.ofNullable(dto.getMythId()).isPresent()) {
 //            long mythId = dto.getMythId();
 //            Myth mythInDb = mythRepository.findById(mythId)
 //                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", mythId));
 //            mythCharacterInDb.setMyth(mythInDb);
 //        }
-//
-//        MythCharacter savedMythCharacter = mythCharacterRepository.save(mythCharacterInDb);
-//        return mapper.entityToDto(savedMythCharacter, MythCharacterDto.class);
-        return null;
 
+        MythCharacter savedMythCharacter = mythCharacterRepository.save(mythCharacterInDb);
+        return mapper.mythCharacterToDto(savedMythCharacter);
     }
 
     @Override

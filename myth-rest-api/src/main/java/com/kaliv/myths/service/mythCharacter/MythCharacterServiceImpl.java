@@ -28,7 +28,6 @@ import com.kaliv.myths.persistence.MythRepository;
 
 @Service
 public class MythCharacterServiceImpl implements MythCharacterService {
-
     private final MythCharacterRepository mythCharacterRepository;
     private final CategoryRepository categoryRepository;
     private final MythRepository mythRepository;
@@ -73,22 +72,18 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         Long fatherId = dto.getFatherId();
         MythCharacter father = null;
         if (fatherId != null) {
-            if (!mythCharacterRepository.existsById(fatherId)) {
-                throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, fatherId);
-            }
-            father = mythCharacterRepository.getById(fatherId);
+            father = mythCharacterRepository.findById(fatherId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, fatherId));
         }
 
         Long motherId = dto.getMotherId();
         MythCharacter mother = null;
         if (motherId != null) {
-            if (!mythCharacterRepository.existsById(motherId)) {
-                throw new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, motherId);
-            }
             if (Objects.equals(fatherId, motherId)) {
                 throw new DuplicateEntriesException(Fields.FATHER_ID, Fields.MOTHER_ID);
             }
-            mother = mythCharacterRepository.getById(motherId);
+            mother = mythCharacterRepository.findById(motherId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTER, Fields.ID, motherId));
         }
 
         List<Long> mythIds = new ArrayList<>(dto.getMythIds());

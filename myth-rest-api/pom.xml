@@ -30,7 +30,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -62,51 +61,28 @@
         <!--            <groupId>org.flywaydb</groupId>-->
         <!--            <artifactId>flyway-mysql</artifactId>-->
         <!--        </dependency>-->
-<!--                <dependency>-->
-<!--                    <groupId>org.flywaydb</groupId>-->
-<!--                    <artifactId>flyway-core</artifactId>-->
-<!--                    <version>9.4.0</version>-->
-<!--                </dependency>-->
-
-        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-boot-starter -->
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-boot-starter</artifactId>-->
-        <!--            <version>3.0.0</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>io.springfox</groupId>-->
-        <!--            <artifactId>springfox-swagger-ui</artifactId>-->
-        <!--            <version>3.0.0</version>-->
-        <!--        </dependency>-->
-
+        <!--                <dependency>-->
+        <!--                    <groupId>org.flywaydb</groupId>-->
+        <!--                    <artifactId>flyway-core</artifactId>-->
+        <!--                    <version>9.4.0</version>-->
+        <!--                </dependency>-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.10</version>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.mapstruct</groupId>-->
-        <!--            <artifactId>mapstruct</artifactId>-->
-        <!--            <version>1.5.2.Final</version>-->
-        <!--        </dependency>-->
-
         <dependency>
             <groupId>org.modelmapper.extensions</groupId>
             <artifactId>modelmapper-spring</artifactId>
             <version>3.0.0</version>
         </dependency>
-
         <!-- https://mvnrepository.com/artifact/com.devskiller.jpa2ddl/jpa2ddl-maven-plugin -->
         <dependency>
             <groupId>com.devskiller.jpa2ddl</groupId>
             <artifactId>jpa2ddl-maven-plugin</artifactId>
             <version>0.9.12</version>
         </dependency>
-
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -121,7 +97,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>com.devskiller.jpa2ddl</groupId>
                 <artifactId>jpa2ddl-maven-plugin</artifactId>
@@ -146,5 +121,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

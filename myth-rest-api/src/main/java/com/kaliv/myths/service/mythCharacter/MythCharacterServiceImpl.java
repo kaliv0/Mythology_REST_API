@@ -123,7 +123,6 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             mythCharacterInDb.setCategory(categoryInDb);
         }
 
-        //TODO: character cannot be father or mother of himself
         Long fatherId = dto.getFatherId();
         MythCharacter father = null;
         if (fatherId != null) {
@@ -179,7 +178,7 @@ public class MythCharacterServiceImpl implements MythCharacterService {
 
         mythsToAdd.forEach(a -> a.getMythCharacters().add(mythCharacterInDb));
         mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(a -> a.setMythCharacters(Collections.emptySet())); //TODO: check most appropriate solution
+        mythsToRemove.forEach(a -> a.getMythCharacters().remove(mythCharacterInDb));
         mythRepository.saveAll(mythsToRemove);
 
         return mapper.mythCharacterToDto(mythCharacterInDb);

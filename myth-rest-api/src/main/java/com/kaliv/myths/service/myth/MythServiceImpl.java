@@ -1,7 +1,6 @@
 package com.kaliv.myths.service.myth;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -14,14 +13,16 @@ import com.kaliv.myths.common.criteria.PaginationCriteria;
 import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.mythDtos.CreateMythDto;
-import com.kaliv.myths.dto.mythDtos.MythDto;
-import com.kaliv.myths.dto.mythDtos.MythResponseDto;
-import com.kaliv.myths.dto.mythDtos.PaginatedMythResponseDto;
+import com.kaliv.myths.dto.mythDtos.*;
+import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.entity.Nationality;
+import com.kaliv.myths.exception.DuplicateEntriesException;
+import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
+import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.persistence.MythCharacterRepository;
@@ -104,22 +105,64 @@ public class MythServiceImpl implements MythService {
         return mapper.mythToDto(savedMyth);
     }
 
-//    @Override
-//    public MythDto updateMyth(long id, UpdateMythDto dto) {
-//        Myth myth = mythRepository.findById(id)
-//                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException("Myth", "id", id));
-//
-////        check if myth with the same name already exists=> TODO: unnecessary?
-//        String newName = dto.getName();
-//        if (mythRepository.existsByName(newName)) {
-//            throw new ResourceWithGivenValuesExistsException("Myth", "title", newName);
-//        }
-//
-//        //TODO: add ignoreProperties
-//        BeanUtils.copyProperties(dto, myth);
-//        mythRepository.save(myth);
-//        return mapper.entityToDto(myth, MythDto.class);
-//    }
+    @Override
+    public MythDto updateMyth(long id, UpdateMythDto dto) {
+        Myth mythInDb = mythRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, id));
+
+        if (Optional.ofNullable(dto.getName()).isPresent()) {
+            String newName = dto.getName();
+            if (!newName.equals(mythInDb.getName()) && mythRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException(Sources.MYTH, Fields.NAME, newName);
+            }
+            mythInDb.setName(dto.getName());
+        }
+
+        if (Optional.ofNullable(dto.getNationalityId()).isPresent()) {
+            long nationalityId = dto.getNationalityId();
+            Nationality nationalityInDb = nationalityRepository.findById(nationalityId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, nationalityId));
+            mythInDb.setNationality(nationalityInDb);
+        }
+
+        List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
+        List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythsCharactersToRemove());
+        //check if user tries to add and remove same myth character
+        if (!Collections.disjoint(mythCharactersToAddIds, mythCharactersToRemoveIds)) {
+            throw new DuplicateEntriesException(Sources.ADD_CHARACTERS, Sources.REMOVE_CHARACTERS);
+        }
+        //check if user tries to add myth character that is already in the list
+        if (mythInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .anyMatch(mythCharactersToAddIds::contains)) {
+            throw new ResourceAlreadyExistsException(Sources.CHARACTER);
+        }
+        //check if user tries to remove myth character that is not in the list
+        if (!mythInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet())
+                .containsAll(mythCharactersToRemoveIds)) {
+            throw new ResourceNotFoundException(Sources.CHARACTER);
+        }
+
+        List<MythCharacter> mythCharactersToAdd = mythCharacterRepository.findAllById(mythCharactersToAddIds);
+        List<MythCharacter> mythCharactersToRemove = mythCharacterRepository.findAllById(mythCharactersToRemoveIds);
+        if (mythCharactersToAddIds.size() != mythCharactersToAdd.size()
+                || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
+            throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
+        }
+
+        mythInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        mythInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        mythRepository.save(mythInDb);
+
+        mythCharactersToAdd.forEach(a -> a.getMyths().add(mythInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.getMyths().remove(mythInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        return mapper.mythToDto(mythInDb);
+    }
 
     @Override
     public void deleteMyth(long id) {

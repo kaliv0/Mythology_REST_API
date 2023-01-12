@@ -18,6 +18,10 @@ public class Myth extends BaseEntity {
     @Column(name = "plot", nullable = false)
     private String plot;
 
+    @ManyToOne
+    @JoinColumn(name = "nationality_id", referencedColumnName = "id")
+    private Nationality nationality;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "myths_characters",
@@ -29,8 +33,4 @@ public class Myth extends BaseEntity {
             )
     )
     private Set<MythCharacter> mythCharacters = new HashSet<>();
-
-    @ManyToOne
-    @JoinColumn(name = "nationality_id", referencedColumnName = "id")
-    private Nationality nationality;
 }

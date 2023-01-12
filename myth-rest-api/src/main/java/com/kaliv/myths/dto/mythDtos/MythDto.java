@@ -16,6 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MythDto extends BaseDto {
     private String plot;
-    private Nationality nationality;
-    private Set<MythCharacter> mythCharacters = new HashSet<>();
+    private Long nationalityId;
+    private Set<Long> mythCharacterIds = new HashSet<>();
 }

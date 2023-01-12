@@ -1,19 +1,19 @@
 package com.kaliv.myths.dto.mythDtos;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.kaliv.myths.dto.BaseDto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
-public class MythResponseDto {
-    private List<MythDto> content;
-    private int pageNumber;
-    private int pageSize;
-    private Long totalElements;
-    private int totalPages;
-    private boolean last;
+public class MythResponseDto extends BaseDto {
+    private String plot;
+    private BaseDto nationality;
+    private Set<BaseDto> mythCharacters = new HashSet<>();
 }

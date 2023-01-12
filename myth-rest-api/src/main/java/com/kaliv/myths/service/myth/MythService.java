@@ -2,18 +2,19 @@ package com.kaliv.myths.service.myth;
 
 import com.kaliv.myths.common.criteria.PaginationCriteria;
 import com.kaliv.myths.common.criteria.SortCriteria;
-import com.kaliv.myths.dto.mythDtos.CreateUpdateMythDto;
+import com.kaliv.myths.dto.mythDtos.CreateMythDto;
 import com.kaliv.myths.dto.mythDtos.MythDto;
 import com.kaliv.myths.dto.mythDtos.MythResponseDto;
+import com.kaliv.myths.dto.mythDtos.PaginatedMythResponseDto;
 
 public interface MythService {
-    MythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria);
+    PaginatedMythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria);
 
-    MythDto getMythById(long id);
+    MythResponseDto getMythById(long id);
 
-    MythDto createMyth(CreateUpdateMythDto dto);
+    MythDto createMyth(CreateMythDto dto);
 
-    MythDto updateMyth(long id, CreateUpdateMythDto dto);
+//    MythDto updateMyth(long id, UpdateMythDto dto);
 
     void deleteMyth(long id);
 }

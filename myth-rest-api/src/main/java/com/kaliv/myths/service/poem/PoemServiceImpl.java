@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.music;
+package com.kaliv.myths.service.poem;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -7,42 +7,42 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.musicDtos.CreateMusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicResponseDto;
-import com.kaliv.myths.dto.musicDtos.UpdateMusicDto;
+import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
+import com.kaliv.myths.dto.poemDtos.PoemDto;
+import com.kaliv.myths.dto.poemDtos.PoemResponseDto;
+import com.kaliv.myths.dto.poemDtos.UpdatePoemDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.Poem;
 import com.kaliv.myths.exception.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
-import com.kaliv.myths.mapper.MusicMapper;
+import com.kaliv.myths.mapper.PoemMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
-import com.kaliv.myths.persistence.MusicRepository;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
+import com.kaliv.myths.persistence.PoemRepository;
 
 @Service
-public class MusicServiceImpl implements MusicService {
+public class PoemServiceImpl implements PoemService {
 
-    private final MusicRepository musicRepository;
+    private final PoemRepository poemRepository;
     private final AuthorRepository authorRepository;
     private final MythRepository mythRepository;
     private final MythCharacterRepository mythCharacterRepository;
-    private final MusicMapper mapper;
+    private final PoemMapper mapper;
 
-    public MusicServiceImpl(MusicRepository musicRepository,
-                            AuthorRepository authorRepository,
-                            MythRepository mythRepository,
-                            MythCharacterRepository mythCharacterRepository,
-                            MusicMapper mapper) {
-        this.musicRepository = musicRepository;
+    public PoemServiceImpl(PoemRepository poemRepository,
+                           AuthorRepository authorRepository,
+                           MythRepository mythRepository,
+                           MythCharacterRepository mythCharacterRepository,
+                           PoemMapper mapper) {
+        this.poemRepository = poemRepository;
         this.authorRepository = authorRepository;
         this.mythRepository = mythRepository;
         this.mythCharacterRepository = mythCharacterRepository;
@@ -50,24 +50,24 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public List<MusicResponseDto> getAllMusic() {
-        return musicRepository.findAll()
-                .stream().map(mapper::musicToResponseDto)
+    public List<PoemResponseDto> getAllPoems() {
+        return poemRepository.findAll()
+                .stream().map(mapper::poemToResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public MusicResponseDto getMusicById(long id) {
-        Music musicInDb = musicRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
-        return mapper.musicToResponseDto(musicInDb);
+    public PoemResponseDto getPoemById(long id) {
+        Poem poemInDb = poemRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
+        return mapper.poemToResponseDto(poemInDb);
     }
 
     @Override
-    public MusicDto createMusic(CreateMusicDto dto) {
+    public PoemDto createPoem(CreatePoemDto dto) {
         String name = dto.getName();
-        if (musicRepository.existsByName(name)) {
-            throw new ResourceWithGivenValuesExistsException(Sources.MUSIC, Fields.NAME, name);
+        if (poemRepository.existsByName(name)) {
+            throw new ResourceWithGivenValuesExistsException(Sources.POEM, Fields.NAME, name);
         }
 
         Long authorId = dto.getAuthorId();
@@ -86,44 +86,40 @@ public class MusicServiceImpl implements MusicService {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
 
-        Music music = mapper.dtoToMusic(dto);
-        Music savedMusic = musicRepository.save(music);
-
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setMusic(savedMusic));
-//        mythCharacterRepository.saveAll(mythCharacters);
-        return mapper.musicToDto(savedMusic);
+        Poem poem = mapper.dtoToPoem(dto);
+        Poem savedPoem = poemRepository.save(poem);
+        return mapper.poemToDto(savedPoem);
     }
 
     @Override
-    public MusicDto updateMusic(long id, UpdateMusicDto dto) {
-        Music musicInDb = musicRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
+    public PoemDto updatePoem(long id, UpdatePoemDto dto) {
+        Poem poemInDb = poemRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
-            if (!newName.equals(musicInDb.getName()) && musicRepository.existsByName(newName)) {
-                throw new ResourceWithGivenValuesExistsException(Sources.MUSIC, Fields.NAME, newName);
+            if (!newName.equals(poemInDb.getName()) && poemRepository.existsByName(newName)) {
+                throw new ResourceWithGivenValuesExistsException(Sources.POEM, Fields.NAME, newName);
             }
-            musicInDb.setName(dto.getName());
+            poemInDb.setName(dto.getName());
         }
 
         if (Optional.ofNullable(dto.getAuthorId()).isPresent()) {
             long authorId = dto.getAuthorId();
             Author authorInDb = authorRepository.findById(authorId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, authorId));
-            musicInDb.setAuthor(authorInDb);
+            poemInDb.setAuthor(authorInDb);
         }
 
         if (Optional.ofNullable(dto.getMythId()).isPresent()) {
             long mythId = dto.getMythId();
             Myth mythInDb = mythRepository.findById(mythId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, mythId));
-            musicInDb.setMyth(mythInDb);
+            poemInDb.setMyth(mythInDb);
         }
 
-        Optional.ofNullable(dto.getRecordingUrl()).ifPresent(musicInDb::setRecordingUrl);
+        Optional.ofNullable(dto.getFullTextUrl()).ifPresent(poemInDb::setFullTextUrl);
+        Optional.ofNullable(dto.getExcerpt()).ifPresent(poemInDb::setExcerpt);
 
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
@@ -132,13 +128,13 @@ public class MusicServiceImpl implements MusicService {
             throw new DuplicateEntriesException(Sources.ADD_CHARACTERS, Sources.REMOVE_CHARACTERS);
         }
         //check if user tries to add mythCharacter that is already in the list
-        if (musicInDb.getMythCharacters().stream()
+        if (poemInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .anyMatch(mythCharactersToAddIds::contains)) {
             throw new ResourceAlreadyExistsException(Sources.CHARACTER);
         }
         //check if user tries to remove mythCharacter that is not in the list
-        if (!musicInDb.getMythCharacters().stream()
+        if (!poemInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet())
                 .containsAll(mythCharactersToRemoveIds)) {
@@ -152,22 +148,17 @@ public class MusicServiceImpl implements MusicService {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
 
-        musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-        musicRepository.save(musicInDb);
+        poemInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        poemInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        poemRepository.save(poemInDb);
 
-//        mythCharactersToAdd.forEach(a -> a.setMusic(musicInDb));
-//        mythCharacterRepository.saveAll(mythCharactersToAdd);
-//        mythCharactersToRemove.forEach(a -> a.setMusic(null));
-//        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
-        return mapper.musicToDto(musicInDb);
+        return mapper.poemToDto(poemInDb);
     }
 
     @Override
-    public void deleteMusic(long id) {
-        Music musicInDb = musicRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
-        musicRepository.delete(musicInDb);
+    public void deletePoem(long id) {
+        Poem poemInDb = poemRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
+        poemRepository.delete(poemInDb);
     }
 }

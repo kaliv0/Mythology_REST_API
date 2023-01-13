@@ -17,4 +17,5 @@ public class Sources {
     public static final String ADD_CHARACTERS = "mythCharactersToAdd";
     public static final String REMOVE_CHARACTERS = "mythCharactersToRemove";
     public static final String MUSIC = "Music";
+    public static final String POEM = "Poem";
 }

@@ -10,5 +10,5 @@ public abstract class VisualArtwork extends Artwork {
     @JoinColumn(name = "museum_id", referencedColumnName = "id")
     private Museum museum;
 
-//    private String image_url;
+    private String image;//TODO:refactor to byte[]
 }

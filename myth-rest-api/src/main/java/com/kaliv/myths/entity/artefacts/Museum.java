@@ -20,8 +20,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "museums")
 public class Museum extends BaseEntity {
-    private String image_url;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "museum")
     private Set<Statue> statues = new HashSet<>();
 

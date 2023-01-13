@@ -19,10 +19,10 @@ public abstract class Artwork extends BaseEntity {
        One could assign a statue to a certain god or hero without specifying a myth.
        On the other hand a statue of two or more characters most probably represents a particular myth.
     */
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "myth_id", referencedColumnName = "id")
     private Myth myth;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

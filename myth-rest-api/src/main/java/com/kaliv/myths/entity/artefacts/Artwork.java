@@ -9,6 +9,13 @@ import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 @MappedSuperclass
 @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
 public abstract class Artwork extends BaseEntity {

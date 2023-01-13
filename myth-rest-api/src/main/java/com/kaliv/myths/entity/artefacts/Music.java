@@ -1,5 +1,6 @@
 package com.kaliv.myths.entity.artefacts;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -13,4 +14,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "music")
 public class Music extends Artwork {
+    @Column(name = "recording_url", nullable = false)
+    private String recordingUrl;
 }

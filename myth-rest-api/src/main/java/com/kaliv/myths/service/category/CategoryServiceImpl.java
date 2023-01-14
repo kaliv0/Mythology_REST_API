@@ -14,7 +14,7 @@ import com.kaliv.myths.dto.categoryDtos.UpdateCategoryDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Category;
 import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.exception.DuplicateEntriesException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;

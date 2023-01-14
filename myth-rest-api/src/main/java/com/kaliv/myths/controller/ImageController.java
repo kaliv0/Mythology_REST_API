@@ -1,46 +1,50 @@
 package com.kaliv.myths.controller;
 
-import java.io.IOException;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kaliv.myths.common.utils.ImageHandler;
+import com.kaliv.myths.constant.ArtworkType;
+import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
+import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.service.image.ImageService;
 
 @RestController
-@RequestMapping("/api/v1/images")
+@RequestMapping("/api/v1/images/{artwork-type}")
 public class ImageController {
 
-    private ImageService imageService;
+    private final ImageService imageService;
 
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        return ResponseEntity.ok(imageService.uploadImage(file));
+    @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UploadImageResponseDto> uploadImage(
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @RequestParam("image") MultipartFile file)
+            throws Exception {
+        return ResponseEntity.ok(imageService.uploadImage(artworkType, file));
     }
 
-//    @GetMapping("/info/{name}")
-//    public ResponseEntity<?> getImageInfoByName(@PathVariable("name") String name) {
-//        ImageData image = imageDataService.getInfoByImageByName(name);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .body(image);
-//    }
-//
-//    @GetMapping("/{name}")
-//    public ResponseEntity<?> getImageByName(@PathVariable("name") String name) {
-//        byte[] image = imageDataService.getImage(name);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/png"))
-//                .body(image);
-//    }
+    @GetMapping("/download/info/{name}")
+    public ResponseEntity<ImageDetailsDto> getImageDetails(
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @PathVariable("name") String name)
+            throws Exception {
+        return ResponseEntity.ok(imageService.getImageDetails(artworkType, name));
+    }
+
+    @GetMapping("/download/{name}")
+    public ResponseEntity<?> getImageByName(
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @PathVariable("name") String name)
+            throws Exception {
+        ImageDetailsDto imageInDb = imageService.getImageDetails(artworkType, name);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(imageInDb.getType()))
+                .body(ImageHandler.decompressImage(imageInDb.getImageData()));
+    }
 }

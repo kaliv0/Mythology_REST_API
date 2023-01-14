@@ -64,11 +64,4 @@ public class ImageServiceImpl implements ImageService {
         }
         throw new InvalidArtworkTypeException();
     }
-//
-//    @Transactional
-//    public byte[] getImage(String name) {
-//        Optional<StatueImage> dbImage = statueImageRepository.findByName(name);
-//        byte[] image = ImageHandler.decompressImage(dbImage.get().getImageData());
-//        return image;
-//    }
 }

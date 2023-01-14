@@ -51,21 +51,6 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.flywaydb</groupId>-->
-        <!--            <artifactId>flyway-maven-plugin</artifactId>-->
-        <!--            <version>9.4.0</version>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.flywaydb</groupId>-->
-        <!--            <artifactId>flyway-mysql</artifactId>-->
-        <!--        </dependency>-->
-        <!--                <dependency>-->
-        <!--                    <groupId>org.flywaydb</groupId>-->
-        <!--                    <artifactId>flyway-core</artifactId>-->
-        <!--                    <version>9.4.0</version>-->
-        <!--                </dependency>-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
@@ -75,12 +60,6 @@
             <groupId>org.modelmapper.extensions</groupId>
             <artifactId>modelmapper-spring</artifactId>
             <version>3.0.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.devskiller.jpa2ddl/jpa2ddl-maven-plugin -->
-        <dependency>
-            <groupId>com.devskiller.jpa2ddl</groupId>
-            <artifactId>jpa2ddl-maven-plugin</artifactId>
-            <version>0.9.12</version>
         </dependency>
     </dependencies>
     <build>
@@ -95,28 +74,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.devskiller.jpa2ddl</groupId>
-                <artifactId>jpa2ddl-maven-plugin</artifactId>
-                <version>0.9.12</version>
-                <extensions>true</extensions> <!-- required to run automatically -->
-                <configuration>
-                    <outputPath>${basedir}/src/main/resources/migrations/</outputPath>
-                    <packages>
-                        <package>com.kaliv.myths.entity</package>
-                        <!--                        <package>com.test.entities</package>-->
-                    </packages>
-                    <jpaProperties>
-                        <property>
-                            <name>hibernate.dialect</name>
-                            <value>org.hibernate.dialect.MySQL57Dialect</value>
-                        </property>
-                    </jpaProperties>
-                    <formatOutput>true</formatOutput>
-                    <delimiter>;</delimiter>
-                    <action>UPDATE</action>
                 </configuration>
             </plugin>
         </plugins>

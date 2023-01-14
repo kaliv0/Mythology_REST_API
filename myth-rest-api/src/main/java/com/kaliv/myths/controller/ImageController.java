@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.constant.ArtworkTypes;
+import com.kaliv.myths.common.utils.ImageHandler;
+import com.kaliv.myths.constant.ArtworkType;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.service.image.ImageService;
@@ -22,24 +23,28 @@ public class ImageController {
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UploadImageResponseDto> uploadImage(
-            @PathVariable("artwork-type") ArtworkTypes artworkType,
-            @RequestParam("image") MultipartFile file) throws Exception {
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @RequestParam("image") MultipartFile file)
+            throws Exception {
         return ResponseEntity.ok(imageService.uploadImage(artworkType, file));
     }
 
     @GetMapping("/download/info/{name}")
     public ResponseEntity<ImageDetailsDto> getImageDetails(
-            @PathVariable("artwork-type") ArtworkTypes artworkType,
-            @PathVariable("name") String name) throws Exception {
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @PathVariable("name") String name)
+            throws Exception {
         return ResponseEntity.ok(imageService.getImageDetails(artworkType, name));
     }
 
-//    @GetMapping("/{name}")
-//    public ResponseEntity<?> getImageByName(@PathVariable("name") String name) {
-//        byte[] image = imageDataService.getImage(name);
-//
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/png"))
-//                .body(image);
-//    }
+    @GetMapping("/download/{name}")
+    public ResponseEntity<?> getImageByName(
+            @PathVariable("artwork-type") ArtworkType artworkType,
+            @PathVariable("name") String name)
+            throws Exception {
+        ImageDetailsDto imageInDb = imageService.getImageDetails(artworkType, name);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(imageInDb.getType()))
+                .body(ImageHandler.decompressImage(imageInDb.getImageData()));
+    }
 }

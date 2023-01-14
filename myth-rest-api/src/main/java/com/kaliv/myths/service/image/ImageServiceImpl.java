@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.constant.ArtworkTypes;
+import com.kaliv.myths.constant.ArtworkType;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
@@ -36,11 +36,11 @@ public class ImageServiceImpl implements ImageService {
         this.imageBuilder = imageBuilder;
     }
 
-    public UploadImageResponseDto uploadImage(ArtworkTypes artworkType, MultipartFile file)
+    public UploadImageResponseDto uploadImage(ArtworkType artworkType, MultipartFile file)
             throws InvalidArtworkTypeException, IOException {
-        if (artworkType.equals(ArtworkTypes.STATUE)) {
+        if (artworkType.equals(ArtworkType.STATUE)) {
             statueImageRepository.save(imageBuilder.getStatueImage(file));
-        } else if (artworkType.equals(ArtworkTypes.PAINTING)) {
+        } else if (artworkType.equals(ArtworkType.PAINTING)) {
             paintingImageRepository.save(imageBuilder.getPaintingImage(file));
         } else {
             throw new InvalidArtworkTypeException();
@@ -50,25 +50,18 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Transactional
-    public ImageDetailsDto getImageDetails(ArtworkTypes artworkType, String name)
+    public ImageDetailsDto getImageDetails(ArtworkType artworkType, String name)
             throws InvalidArtworkTypeException {
-        if (artworkType.equals(ArtworkTypes.STATUE)) {
+        if (artworkType.equals(ArtworkType.STATUE)) {
             StatueImage statueImageInDb = statueImageRepository.findByName(name)
                     .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
             return imageBuilder.getStatueImageDetails(statueImageInDb);
         }
-        if (artworkType.equals(ArtworkTypes.PAINTING)) {
+        if (artworkType.equals(ArtworkType.PAINTING)) {
             PaintingImage paintingImageInDb = paintingImageRepository.findByName(name)
                     .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
             return imageBuilder.getPaintingImageDetails(paintingImageInDb);
         }
         throw new InvalidArtworkTypeException();
     }
-//
-//    @Transactional
-//    public byte[] getImage(String name) {
-//        Optional<StatueImage> dbImage = statueImageRepository.findByName(name);
-//        byte[] image = ImageHandler.decompressImage(dbImage.get().getImageData());
-//        return image;
-//    }
 }

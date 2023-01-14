@@ -15,7 +15,7 @@ import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.exception.DuplicateEntriesException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;

@@ -1,4 +1,4 @@
-package com.kaliv.myths.dto;
+package com.kaliv.myths.dto.imageDtos;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-public class BaseDto {
-    private long id;
-    private String name;
+public class StatueImageDetailsDto extends ImageDetailsDto {
+    private Long statueId;
 }

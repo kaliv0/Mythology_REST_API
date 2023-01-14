@@ -9,6 +9,4 @@ public abstract class VisualArtwork extends Artwork {
     @ManyToOne
     @JoinColumn(name = "museum_id", referencedColumnName = "id")
     private Museum museum;
-
-    private String image;//TODO:refactor to byte[]
 }

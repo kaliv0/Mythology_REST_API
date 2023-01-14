@@ -32,4 +32,8 @@ public abstract class Artwork extends BaseEntity {
 
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<MythCharacter> mythCharacters = new HashSet<>();
+
+    protected Artwork(BaseEntityBuilder<?, ?> b) {
+        super(b);
+    }
 }

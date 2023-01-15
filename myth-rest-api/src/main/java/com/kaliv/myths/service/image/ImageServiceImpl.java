@@ -3,6 +3,7 @@ package com.kaliv.myths.service.image;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Transactional
     public ImageDetailsDto getImageDetails(ArtworkType artworkType, String name)
-            throws InvalidArtworkTypeException {
+            throws InvalidArtworkTypeException, DataFormatException, IOException {
         if (artworkType.equals(ArtworkType.STATUE)) {
             StatueImage statueImageInDb = statueImageRepository.findByName(name)
                     .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));

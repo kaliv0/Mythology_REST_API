@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @SuperBuilder
+@NoArgsConstructor
 @MappedSuperclass
 public abstract class Image extends BaseEntity {
     private String type;

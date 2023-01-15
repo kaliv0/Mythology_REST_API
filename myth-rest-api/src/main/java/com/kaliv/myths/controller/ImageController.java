@@ -5,7 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.common.utils.ImageHandler;
 import com.kaliv.myths.constant.ArtworkType;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
@@ -38,13 +37,13 @@ public class ImageController {
     }
 
     @GetMapping("/download/{name}")
-    public ResponseEntity<?> getImageByName(
+    public ResponseEntity<byte[]> getImageByName(
             @PathVariable("artwork-type") ArtworkType artworkType,
             @PathVariable("name") String name)
             throws Exception {
         ImageDetailsDto imageInDb = imageService.getImageDetails(artworkType, name);
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(imageInDb.getType()))
-                .body(ImageHandler.decompressImage(imageInDb.getImageData()));
+                .body(imageInDb.getImageData());
     }
 }

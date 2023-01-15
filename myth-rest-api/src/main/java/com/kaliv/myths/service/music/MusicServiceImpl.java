@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.musicDtos.CreateMusicDto;
@@ -16,9 +17,9 @@ import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Music;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -125,6 +126,31 @@ public class MusicServiceImpl implements MusicService {
 
         Optional.ofNullable(dto.getRecordingUrl()).ifPresent(musicInDb::setRecordingUrl);
 
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, musicInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        musicRepository.save(musicInDb);
+
+        /*TODO: check if works without inverse properties   */
+
+//        mythCharactersToAdd.forEach(a -> a.setMusic(musicInDb));
+//        mythCharacterRepository.saveAll(mythCharactersToAdd);
+//        mythCharactersToRemove.forEach(a -> a.setMusic(null));
+//        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        return mapper.musicToDto(musicInDb);
+    }
+
+    @Override
+    public void deleteMusic(long id) {
+        Music musicInDb = musicRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
+        musicRepository.delete(musicInDb);
+    }
+
+    private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdateMusicDto dto, Music musicInDb) {
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
         //check if user tries to add and remove same mythCharacter
@@ -151,23 +177,6 @@ public class MusicServiceImpl implements MusicService {
                 || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
-
-        musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-        musicRepository.save(musicInDb);
-
-//        mythCharactersToAdd.forEach(a -> a.setMusic(musicInDb));
-//        mythCharacterRepository.saveAll(mythCharactersToAdd);
-//        mythCharactersToRemove.forEach(a -> a.setMusic(null));
-//        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
-        return mapper.musicToDto(musicInDb);
-    }
-
-    @Override
-    public void deleteMusic(long id) {
-        Music musicInDb = musicRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
-        musicRepository.delete(musicInDb);
+        return new Tuple<>(mythCharactersToAdd, mythCharactersToRemove);
     }
 }

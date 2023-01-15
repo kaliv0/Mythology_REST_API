@@ -19,4 +19,13 @@ public class Sources {
     public static final String MUSIC = "Music";
     public static final String POEM = "Poem";
     public static final String IMAGE = "Image";
+    public static final String MUSEUM = "Museum";
+    public static final String STATUE = "Statue";
+    public static final String STATUES = "Statues";
+    public static final String ADD_STATUES = "statuesToAdd";
+    public static final String REMOVE_STATUES = "statuesToRemove";
+    public static final String PAINTING = "Painting";
+    public static final String PAINTINGS = "Paintings";
+    public static final String ADD_PAINTINGS = "paintingsToAdd";
+    public static final String REMOVE_PAINTINGS = "paintingsToRemove";
 }

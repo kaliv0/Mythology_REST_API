@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
@@ -14,9 +15,9 @@ import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -81,7 +82,7 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
-            if (!newName.equals(timePeriodInDb.getName()) && authorRepository.existsByName(newName)) {
+            if (!newName.equals(timePeriodInDb.getName()) && timePeriodRepository.existsByName(newName)) {
                 throw new ResourceWithGivenValuesExistsException(Sources.TIME_PERIOD, Fields.NAME, newName);
             }
             timePeriodInDb.setName(dto.getName());
@@ -89,6 +90,29 @@ public class TimePeriodServiceImpl implements TimePeriodService {
 
         Optional.ofNullable(dto.getYears()).ifPresent(timePeriodInDb::setYears);
 
+        Tuple<List<Author>, List<Author>> authorsToUpdate = this.getValidAuthors(dto, timePeriodInDb);
+        List<Author> authorsToAdd = authorsToUpdate.getFirst();
+        List<Author> authorsToRemove = authorsToUpdate.getSecond();
+        timePeriodInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
+        timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
+        timePeriodRepository.save(timePeriodInDb);
+
+        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
+        authorRepository.saveAll(authorsToAdd);
+        authorsToRemove.forEach(a -> a.setTimePeriod(null));
+        authorRepository.saveAll(authorsToRemove);
+
+        return mapper.timePeriodToDto(timePeriodInDb);
+    }
+
+    @Override
+    public void deleteTimePeriod(long id) {
+        TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.TIME_PERIOD, Fields.ID, id));
+        timePeriodRepository.delete(timePeriodInDb);
+    }
+
+    private Tuple<List<Author>, List<Author>> getValidAuthors(UpdateTimePeriodDto dto, TimePeriod timePeriodInDb) {
         List<Long> authorsToAddIds = new ArrayList<>(dto.getAuthorsToAdd());
         List<Long> authorsToRemoveIds = new ArrayList<>(dto.getAuthorsToRemove());
         //check if user tries to add and remove same author
@@ -115,23 +139,6 @@ public class TimePeriodServiceImpl implements TimePeriodService {
                 || authorsToRemoveIds.size() != authorsToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.AUTHORS, Fields.IDS);
         }
-
-        timePeriodInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
-        timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
-        timePeriodRepository.save(timePeriodInDb);
-
-        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setTimePeriod(null));
-        authorRepository.saveAll(authorsToRemove);
-
-        return mapper.timePeriodToDto(timePeriodInDb);
-    }
-
-    @Override
-    public void deleteTimePeriod(long id) {
-        TimePeriod timePeriodInDb = timePeriodRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.TIME_PERIOD, Fields.ID, id));
-        timePeriodRepository.delete(timePeriodInDb);
+        return new Tuple<>(authorsToAdd, authorsToRemove);
     }
 }

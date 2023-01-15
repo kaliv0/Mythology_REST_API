@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.categoryDtos.CategoryDto;
@@ -14,9 +15,9 @@ import com.kaliv.myths.dto.categoryDtos.UpdateCategoryDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Category;
 import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -87,6 +88,29 @@ public class CategoryServiceImpl implements CategoryService {
             categoryInDb.setName(dto.getName());
         }
 
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, categoryInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        categoryInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        categoryInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        categoryRepository.save(categoryInDb);
+
+        mythCharactersToAdd.forEach(a -> a.setCategory(categoryInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.setCategory(null));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        return mapper.categoryToDto(categoryInDb);
+    }
+
+    @Override
+    public void deleteCategory(long id) {
+        Category categoryInDb = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, id));
+        categoryRepository.delete(categoryInDb);
+    }
+
+    private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdateCategoryDto dto, Category categoryInDb) {
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
         //check if user tries to add and remove same mythCharacter
@@ -113,23 +137,6 @@ public class CategoryServiceImpl implements CategoryService {
                 || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
-
-        categoryInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        categoryInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-        categoryRepository.save(categoryInDb);
-
-        mythCharactersToAdd.forEach(a -> a.setCategory(categoryInDb));
-        mythCharacterRepository.saveAll(mythCharactersToAdd);
-        mythCharactersToRemove.forEach(a -> a.setCategory(null));
-        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
-        return mapper.categoryToDto(categoryInDb);
-    }
-
-    @Override
-    public void deleteCategory(long id) {
-        Category categoryInDb = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CATEGORY, Fields.ID, id));
-        categoryRepository.delete(categoryInDb);
+        return new Tuple<>(mythCharactersToAdd, mythCharactersToRemove);
     }
 }

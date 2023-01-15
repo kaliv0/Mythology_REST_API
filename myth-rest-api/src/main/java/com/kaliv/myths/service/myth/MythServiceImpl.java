@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.criteria.PaginationCriteria;
 import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythDtos.*;
@@ -18,9 +19,9 @@ import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.Nationality;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -125,6 +126,29 @@ public class MythServiceImpl implements MythService {
             mythInDb.setNationality(nationalityInDb);
         }
 
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, mythInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        mythInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        mythInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        mythRepository.save(mythInDb);
+
+        mythCharactersToAdd.forEach(a -> a.getMyths().add(mythInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.getMyths().remove(mythInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        return mapper.mythToDto(mythInDb);
+    }
+
+    @Override
+    public void deleteMyth(long id) {
+        Myth myth = mythRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, id));
+        mythRepository.delete(myth);
+    }
+
+    private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdateMythDto dto, Myth mythInDb) {
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythsCharactersToRemove());
         //check if user tries to add and remove same myth character
@@ -151,23 +175,6 @@ public class MythServiceImpl implements MythService {
                 || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
-
-        mythInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        mythInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-        mythRepository.save(mythInDb);
-
-        mythCharactersToAdd.forEach(a -> a.getMyths().add(mythInDb));
-        mythCharacterRepository.saveAll(mythCharactersToAdd);
-        mythCharactersToRemove.forEach(a -> a.getMyths().remove(mythInDb));
-        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
-        return mapper.mythToDto(mythInDb);
-    }
-
-    @Override
-    public void deleteMyth(long id) {
-        Myth myth = mythRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, id));
-        mythRepository.delete(myth);
+        return new Tuple<>(mythCharactersToAdd, mythCharactersToRemove);
     }
 }

@@ -1,6 +1,7 @@
 package com.kaliv.myths.mapper;
 
 import java.io.IOException;
+import java.util.zip.DataFormatException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,7 +30,8 @@ public class ImageBuilder {
                 .build();
     }
 
-    public StatueImageDetailsDto getStatueImageDetails(StatueImage statueImageInDb) {
+    public StatueImageDetailsDto getStatueImageDetails(StatueImage statueImageInDb)
+            throws DataFormatException, IOException {
         return StatueImageDetailsDto.builder()
                 .name(statueImageInDb.getName())
                 .type(statueImageInDb.getType())
@@ -38,7 +40,8 @@ public class ImageBuilder {
                 .build();
     }
 
-    public PaintingImageDetailsDto getPaintingImageDetails(PaintingImage paintingImageInDb) {
+    public PaintingImageDetailsDto getPaintingImageDetails(PaintingImage paintingImageInDb)
+            throws DataFormatException, IOException {
         return PaintingImageDetailsDto.builder()
                 .name(paintingImageInDb.getName())
                 .type(paintingImageInDb.getType())

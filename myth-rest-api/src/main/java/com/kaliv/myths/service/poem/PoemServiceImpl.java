@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
@@ -16,9 +17,9 @@ import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Poem;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -121,19 +122,37 @@ public class PoemServiceImpl implements PoemService {
         Optional.ofNullable(dto.getFullTextUrl()).ifPresent(poemInDb::setFullTextUrl);
         Optional.ofNullable(dto.getExcerpt()).ifPresent(poemInDb::setExcerpt);
 
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, poemInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        poemInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        poemInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        poemRepository.save(poemInDb);
+
+        return mapper.poemToDto(poemInDb);
+    }
+
+    @Override
+    public void deletePoem(long id) {
+        Poem poemInDb = poemRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
+        poemRepository.delete(poemInDb);
+    }
+
+    private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdatePoemDto dto, Poem poemInDb) {
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
-        //check if user tries to add and remove same mythCharacter
+        //check if user tries to add and remove same myth character
         if (!Collections.disjoint(mythCharactersToAddIds, mythCharactersToRemoveIds)) {
             throw new DuplicateEntriesException(Sources.ADD_CHARACTERS, Sources.REMOVE_CHARACTERS);
         }
-        //check if user tries to add mythCharacter that is already in the list
+        //check if user tries to add myth character that is already in the list
         if (poemInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .anyMatch(mythCharactersToAddIds::contains)) {
             throw new ResourceAlreadyExistsException(Sources.CHARACTER);
         }
-        //check if user tries to remove mythCharacter that is not in the list
+        //check if user tries to remove myth character that is not in the list
         if (!poemInDb.getMythCharacters().stream()
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet())
@@ -147,18 +166,6 @@ public class PoemServiceImpl implements PoemService {
                 || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
-
-        poemInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        poemInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-        poemRepository.save(poemInDb);
-
-        return mapper.poemToDto(poemInDb);
-    }
-
-    @Override
-    public void deletePoem(long id) {
-        Poem poemInDb = poemRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
-        poemRepository.delete(poemInDb);
+        return new Tuple<>(mythCharactersToAdd, mythCharactersToRemove);
     }
 }

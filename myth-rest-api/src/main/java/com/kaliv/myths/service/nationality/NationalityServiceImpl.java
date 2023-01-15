@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.nationalityDtos.CreateNationalityDto;
@@ -15,9 +16,9 @@ import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -95,13 +96,48 @@ public class NationalityServiceImpl implements NationalityService {
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
-            if (!newName.equals(nationalityInDb.getName()) && authorRepository.existsByName(newName)) {
+            if (!newName.equals(nationalityInDb.getName()) && nationalityRepository.existsByName(newName)) {
                 throw new ResourceWithGivenValuesExistsException(Sources.NATIONALITY, Fields.NAME, newName);
             }
             nationalityInDb.setName(dto.getName());
         }
 
-        //==================handle list of myths=====================//
+        Tuple<List<Myth>, List<Myth>> mythsToUpdate = this.getValidMyths(dto, nationalityInDb);
+        List<Myth> mythsToAdd = mythsToUpdate.getFirst();
+        List<Myth> mythsToRemove = mythsToUpdate.getSecond();
+        nationalityInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
+        nationalityInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
+
+        Tuple<List<Author>, List<Author>> authorsToUpdate = this.getValidAuthors(dto, nationalityInDb);
+        List<Author> authorsToAdd = authorsToUpdate.getFirst();
+        List<Author> authorsToRemove = authorsToUpdate.getSecond();
+        nationalityInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
+        nationalityInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
+
+        nationalityRepository.save(nationalityInDb);
+
+        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
+        mythRepository.saveAll(mythsToAdd);
+        mythsToRemove.forEach(m -> m.setNationality(null));
+        mythRepository.saveAll(mythsToRemove);
+
+        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
+        authorRepository.saveAll(authorsToAdd);
+        authorsToRemove.forEach(a -> a.setNationality(null));
+        authorRepository.saveAll(authorsToRemove);
+
+        return mapper.nationalityToDto(nationalityInDb);
+    }
+
+    @Override
+    public void deleteNationality(long id) {
+        Nationality nationalityInDb = nationalityRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, id));
+        nationalityRepository.delete(nationalityInDb);
+    }
+
+
+    private Tuple<List<Myth>, List<Myth>> getValidMyths(UpdateNationalityDto dto, Nationality nationalityInDb) {
         List<Long> mythsToAddIds = new ArrayList<>(dto.getMythsToAdd());
         List<Long> mythsToRemoveIds = new ArrayList<>(dto.getMythsToRemove());
         //check if user tries to add and remove same myth
@@ -128,11 +164,10 @@ public class NationalityServiceImpl implements NationalityService {
                 || mythsToRemoveIds.size() != mythsToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.MYTHS, Fields.IDS);
         }
+        return new Tuple<>(mythsToAdd, mythsToRemove);
+    }
 
-        nationalityInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
-        nationalityInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
-
-        //==================handle list of authors=====================//
+    private Tuple<List<Author>, List<Author>> getValidAuthors(UpdateNationalityDto dto, Nationality nationalityInDb) {
         List<Long> authorsToAddIds = new ArrayList<>(dto.getAuthorsToAdd());
         List<Long> authorsToRemoveIds = new ArrayList<>(dto.getAuthorsToRemove());
         //check if user tries to add and remove same author
@@ -159,29 +194,6 @@ public class NationalityServiceImpl implements NationalityService {
                 || authorsToRemoveIds.size() != authorsToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.AUTHORS, Fields.IDS);
         }
-
-        nationalityInDb.getAuthors().addAll(new HashSet<>(authorsToAdd));
-        nationalityInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
-
-        nationalityRepository.save(nationalityInDb);
-
-        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(m -> m.setNationality(null));
-        mythRepository.saveAll(mythsToRemove);
-
-        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setNationality(null));
-        authorRepository.saveAll(authorsToRemove);
-
-        return mapper.nationalityToDto(nationalityInDb);
-    }
-
-    @Override
-    public void deleteNationality(long id) {
-        Nationality nationalityInDb = nationalityRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, id));
-        nationalityRepository.delete(nationalityInDb);
+        return new Tuple<>(authorsToAdd, authorsToRemove);
     }
 }

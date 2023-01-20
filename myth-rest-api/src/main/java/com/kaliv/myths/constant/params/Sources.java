@@ -19,6 +19,7 @@ public class Sources {
     public static final String MUSIC = "Music";
     public static final String POEM = "Poem";
     public static final String IMAGE = "Image";
+    public static final String IMAGES = "Images";
     public static final String MUSEUM = "Museum";
     public static final String STATUE = "Statue";
     public static final String STATUES = "Statues";
@@ -28,4 +29,6 @@ public class Sources {
     public static final String PAINTINGS = "Paintings";
     public static final String ADD_PAINTINGS = "paintingsToAdd";
     public static final String REMOVE_PAINTINGS = "paintingsToRemove";
+    public static final String ADD_IMAGES = "imagesToAdd";
+    public static final String REMOVE_IMAGES = "imagesToRemove";
 }

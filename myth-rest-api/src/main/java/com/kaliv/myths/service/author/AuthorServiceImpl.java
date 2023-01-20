@@ -17,7 +17,7 @@ import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
-import com.kaliv.myths.mapper.GenericMapper;
+import com.kaliv.myths.mapper.AuthorMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.NationalityRepository;
 import com.kaliv.myths.persistence.TimePeriodRepository;
@@ -28,12 +28,12 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
     private final TimePeriodRepository timePeriodRepository;
     private final NationalityRepository nationalityRepository;
-    private final GenericMapper mapper;
+    private final AuthorMapper mapper;
 
     public AuthorServiceImpl(AuthorRepository authorRepository,
                              TimePeriodRepository timePeriodRepository,
                              NationalityRepository nationalityRepository,
-                             GenericMapper mapper) {
+                             AuthorMapper mapper) {
         this.authorRepository = authorRepository;
         this.timePeriodRepository = timePeriodRepository;
         this.nationalityRepository = nationalityRepository;
@@ -43,7 +43,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public List<AuthorResponseDto> getAllAuthors() {
         return authorRepository.findAll()
-                .stream().map(author -> mapper.entityToDto(author, AuthorResponseDto.class))
+                .stream().map(mapper::authorToResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -51,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorResponseDto getAuthorById(long id) {
         Author authorInDb = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, id));
-        return mapper.entityToDto(authorInDb, AuthorResponseDto.class);
+        return mapper.authorToResponseDto(authorInDb);
     }
 
     @Override
@@ -71,9 +71,9 @@ public class AuthorServiceImpl implements AuthorService {
             throw new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, nationalityId);
         }
 
-        Author author = mapper.dtoToEntity(dto, Author.class);
+        Author author = mapper.dtoToAuthor(dto);
         Author savedAuthor = authorRepository.save(author);
-        return mapper.entityToDto(savedAuthor, AuthorDto.class);
+        return mapper.authorToDto(savedAuthor);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class AuthorServiceImpl implements AuthorService {
         }
 
         Author savedAuthor = authorRepository.save(authorInDb);
-        return mapper.entityToDto(savedAuthor, AuthorDto.class);
+        return mapper.authorToDto(savedAuthor);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.musicDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +14,6 @@ public class UpdateMusicDto {
     private Long AuthorId;
     private Long MythId;
     private String recordingUrl;
-    private Collection<Long> mythCharactersToAdd;
-    private Collection<Long> mythCharactersToRemove;
+    private Set<Long> mythCharactersToAdd;
+    private Set<Long> mythCharactersToRemove;
 }

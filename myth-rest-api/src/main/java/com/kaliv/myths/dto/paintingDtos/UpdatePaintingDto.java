@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.paintingDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +14,8 @@ public class UpdatePaintingDto {
     private Long AuthorId;
     private Long MythId;
     private Long MuseumId;
-    private Collection<Long> mythCharactersToAdd;
-    private Collection<Long> mythCharactersToRemove;
-    private Collection<Long> paintingImagesToAdd;
-    private Collection<Long> paintingImagesToRemove;
+    private Set<Long> mythCharactersToAdd;
+    private Set<Long> mythCharactersToRemove;
+    private Set<Long> paintingImagesToAdd;
+    private Set<Long> paintingImagesToRemove;
 }

@@ -3,7 +3,7 @@ package com.kaliv.myths.dto.mythDtos;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import java.util.Collection;
+import java.util.Set;
 
 import com.kaliv.myths.constant.messages.ValidationMessages;
 
@@ -25,5 +25,5 @@ public class CreateMythDto {
 
     private Long nationalityId;
 
-    private Collection<Long> mythCharacterIds;
+    private Set<Long> mythCharacterIds;
 }

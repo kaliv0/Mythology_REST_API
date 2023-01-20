@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.mythCharacterDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +21,5 @@ public class CreateMythCharacterDto {
 
     private Long motherId;
 
-    private Collection<Long> mythIds;
+    private Set<Long> mythIds;
 }

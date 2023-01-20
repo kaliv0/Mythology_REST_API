@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.timePeriodDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,5 +18,5 @@ public class CreateTimePeriodDto {
     @NotBlank
     private String years;
 
-    private Collection<Long> authorIds;
+    private Set<Long> authorIds;
 }

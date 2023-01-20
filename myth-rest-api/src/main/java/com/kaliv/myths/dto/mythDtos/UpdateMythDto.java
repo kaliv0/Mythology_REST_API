@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.mythDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,6 @@ public class UpdateMythDto {
     private String name;
     private String plot;
     private Long nationalityId;
-    private Collection<Long> mythCharactersToAdd;
-    private Collection<Long> mythsCharactersToRemove;
+    private Set<Long> mythCharactersToAdd;
+    private Set<Long> mythsCharactersToRemove;
 }

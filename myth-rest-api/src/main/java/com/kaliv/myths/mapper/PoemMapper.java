@@ -2,7 +2,7 @@ package com.kaliv.myths.mapper;
 
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.modelmapper.ModelMapper;
 
 import com.kaliv.myths.dto.BaseDto;
 import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
@@ -11,16 +11,15 @@ import com.kaliv.myths.dto.poemDtos.PoemResponseDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.artefacts.Poem;
 
-@Component
 public class PoemMapper {
-    private final GenericMapper mapper;
+    private final ModelMapper mapper;
 
-    public PoemMapper(GenericMapper mapper) {
+    public PoemMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
     public PoemDto poemToDto(Poem poem) {
-        PoemDto poemDto = mapper.entityToDto(poem, PoemDto.class);
+        PoemDto poemDto = mapper.map(poem, PoemDto.class);
         poemDto.setMythCharacterIds(
                 poem.getMythCharacters().stream()
                         .map(BaseEntity::getId)
@@ -29,12 +28,15 @@ public class PoemMapper {
     }
 
     public PoemResponseDto poemToResponseDto(Poem poem) {
-        PoemResponseDto poemResponseDto = mapper.entityToDto(poem, PoemResponseDto.class);
-        poemResponseDto.setMythCharacters(mapper.mapNestedEntities(poem.getMythCharacters(), BaseDto.class));
+        PoemResponseDto poemResponseDto = mapper.map(poem, PoemResponseDto.class);
+        poemResponseDto.setMythCharacters(
+                poem.getMythCharacters().stream()
+                        .map(character -> mapper.map(character, BaseDto.class))
+                        .collect(Collectors.toSet()));
         return poemResponseDto;
     }
 
     public Poem dtoToPoem(CreatePoemDto dto) {
-        return mapper.dtoToEntity(dto, Poem.class);
+        return mapper.map(dto, Poem.class);
     }
 }

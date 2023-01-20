@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.museumDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateMuseumDto {
     private String name;
-    private Collection<Long> statuesToAdd;
-    private Collection<Long> statuesToRemove;
-    private Collection<Long> paintingsToAdd;
-    private Collection<Long> paintingsToRemove;
+    private Set<Long> statuesToAdd;
+    private Set<Long> statuesToRemove;
+    private Set<Long> paintingsToAdd;
+    private Set<Long> paintingsToRemove;
 }

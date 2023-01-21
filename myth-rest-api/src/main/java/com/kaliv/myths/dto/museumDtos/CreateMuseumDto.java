@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.museumDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public class CreateMuseumDto {
     @NotBlank
     private String name;
 
-    private Collection<Long> statueIds;
+    private Set<Long> statueIds;
 
-    private Collection<Long> paintingIds;
+    private Set<Long> paintingIds;
 }

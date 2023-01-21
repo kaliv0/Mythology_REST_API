@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.poemDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +15,6 @@ public class UpdatePoemDto {
     private Long MythId;
     private String fullTextUrl;
     private String excerpt;
-    private Collection<Long> mythCharactersToAdd;
-    private Collection<Long> mythCharactersToRemove;
+    private Set<Long> mythCharactersToAdd;
+    private Set<Long> mythCharactersToRemove;
 }

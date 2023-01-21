@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.nationalityDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public class CreateNationalityDto {
     @NotBlank
     private String name;
 
-    private Collection<Long> mythIds;
+    private Set<Long> mythIds;
 
-    private Collection<Long> authorIds;
+    private Set<Long> authorIds;
 }

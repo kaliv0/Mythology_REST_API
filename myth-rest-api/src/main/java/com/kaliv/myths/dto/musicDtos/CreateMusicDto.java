@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.musicDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class CreateMusicDto {
     private Long AuthorId;
     private Long MythId;
     private String recordingUrl;
-    private Collection<Long> mythCharacterIds;
+    private Set<Long> mythCharacterIds;
 }

@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.categoryDtos;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateCategoryDto {
     private String name;
-    private Collection<Long> mythCharactersToAdd;
-    private Collection<Long> mythCharactersToRemove;
+    private Set<Long> mythCharactersToAdd;
+    private Set<Long> mythCharactersToRemove;
 }

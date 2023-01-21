@@ -2,7 +2,7 @@ package com.kaliv.myths.mapper;
 
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.modelmapper.ModelMapper;
 
 import com.kaliv.myths.dto.BaseDto;
 import com.kaliv.myths.dto.museumDtos.CreateMuseumDto;
@@ -11,16 +11,15 @@ import com.kaliv.myths.dto.museumDtos.MuseumResponseDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.artefacts.Museum;
 
-@Component
 public class MuseumMapper {
-    private final GenericMapper mapper;
+    private final ModelMapper mapper;
 
-    public MuseumMapper(GenericMapper mapper) {
+    public MuseumMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
     public MuseumDto museumToDto(Museum museum) {
-        MuseumDto museumDto = mapper.entityToDto(museum, MuseumDto.class);
+        MuseumDto museumDto = mapper.map(museum, MuseumDto.class);
         museumDto.setStatueIds(
                 museum.getStatues().stream()
                         .map(BaseEntity::getId)
@@ -33,13 +32,19 @@ public class MuseumMapper {
     }
 
     public MuseumResponseDto museumToResponseDto(Museum museum) {
-        MuseumResponseDto museumResponseDto = mapper.entityToDto(museum, MuseumResponseDto.class);
-        museumResponseDto.setStatues(mapper.mapNestedEntities(museum.getStatues(), BaseDto.class));
-        museumResponseDto.setPaintings(mapper.mapNestedEntities(museum.getPaintings(), BaseDto.class));
+        MuseumResponseDto museumResponseDto = mapper.map(museum, MuseumResponseDto.class);
+        museumResponseDto.setStatues(
+                museum.getStatues().stream()
+                        .map(statue -> mapper.map(statue, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        museumResponseDto.setPaintings(
+                museum.getPaintings().stream()
+                        .map(painting -> mapper.map(painting, BaseDto.class))
+                        .collect(Collectors.toSet()));
         return museumResponseDto;
     }
 
     public Museum dtoToMuseum(CreateMuseumDto dto) {
-        return mapper.dtoToEntity(dto, Museum.class);
+        return mapper.map(dto, Museum.class);
     }
 }

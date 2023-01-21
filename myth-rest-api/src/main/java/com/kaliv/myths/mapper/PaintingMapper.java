@@ -2,7 +2,7 @@ package com.kaliv.myths.mapper;
 
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Component;
+import org.modelmapper.ModelMapper;
 
 import com.kaliv.myths.dto.BaseDto;
 import com.kaliv.myths.dto.paintingDtos.CreatePaintingDto;
@@ -11,16 +11,15 @@ import com.kaliv.myths.dto.paintingDtos.PaintingResponseDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.artefacts.Painting;
 
-@Component
 public class PaintingMapper {
-    private final GenericMapper mapper;
+    private final ModelMapper mapper;
 
-    public PaintingMapper(GenericMapper mapper) {
+    public PaintingMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
     public PaintingDto paintingToDto(Painting painting) {
-        PaintingDto paintingDto = mapper.entityToDto(painting, PaintingDto.class);
+        PaintingDto paintingDto = mapper.map(painting, PaintingDto.class);
         paintingDto.setMythCharacterIds(
                 painting.getMythCharacters().stream()
                         .map(BaseEntity::getId)
@@ -33,13 +32,19 @@ public class PaintingMapper {
     }
 
     public PaintingResponseDto paintingToResponseDto(Painting painting) {
-        PaintingResponseDto paintingResponseDto = mapper.entityToDto(painting, PaintingResponseDto.class);
-        paintingResponseDto.setMythCharacters(mapper.mapNestedEntities(painting.getMythCharacters(), BaseDto.class));
-        paintingResponseDto.setPaintingImages(mapper.mapNestedEntities(painting.getPaintingImages(), BaseDto.class));
+        PaintingResponseDto paintingResponseDto = mapper.map(painting, PaintingResponseDto.class);
+        paintingResponseDto.setMythCharacters(
+                painting.getMythCharacters()
+                        .stream().map(character -> mapper.map(character, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        paintingResponseDto.setPaintingImages(
+                painting.getPaintingImages().stream()
+                        .map(image -> mapper.map(image, BaseDto.class))
+                        .collect(Collectors.toSet()));
         return paintingResponseDto;
     }
 
     public Painting dtoToPainting(CreatePaintingDto dto) {
-        return mapper.dtoToEntity(dto, Painting.class);
+        return mapper.map(dto, Painting.class);
     }
 }

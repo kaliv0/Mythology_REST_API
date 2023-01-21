@@ -2,7 +2,6 @@ package com.kaliv.myths.entity;
 
 import javax.persistence.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Getter;
@@ -32,5 +31,5 @@ public class Myth extends BaseEntity {
                     name = "character_id", referencedColumnName = "id"
             )
     )
-    private Set<MythCharacter> mythCharacters = new HashSet<>();
+    private Set<MythCharacter> mythCharacters;
 }

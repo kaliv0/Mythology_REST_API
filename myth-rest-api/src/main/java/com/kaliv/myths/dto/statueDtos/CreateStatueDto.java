@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.statueDtos;
 
 import javax.validation.constraints.NotBlank;
 
-import java.util.Collection;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,6 @@ public class CreateStatueDto {
     private Long AuthorId;
     private Long MythId;
     private Long MuseumId;
-    private Collection<Long> mythCharacterIds;
-    private Collection<Long> statueImageIds;
+    private Set<Long> mythCharacterIds;
+    private Set<Long> statueImageIds;
 }

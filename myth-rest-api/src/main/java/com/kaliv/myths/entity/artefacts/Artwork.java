@@ -2,7 +2,6 @@ package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.BaseEntity;
@@ -31,5 +30,5 @@ public abstract class Artwork extends BaseEntity {
     private Myth myth;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    private Set<MythCharacter> mythCharacters = new HashSet<>();
+    private Set<MythCharacter> mythCharacters;
 }

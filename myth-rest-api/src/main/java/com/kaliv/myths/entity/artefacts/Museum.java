@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.BaseEntity;
@@ -21,8 +20,8 @@ import lombok.Setter;
 @Table(name = "museums")
 public class Museum extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "museum")
-    private Set<Statue> statues = new HashSet<>();
+    private Set<Statue> statues;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "museum")
-    private Set<Painting> paintings = new HashSet<>();
+    private Set<Painting> paintings;
 }

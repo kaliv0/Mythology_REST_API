@@ -1,10 +1,8 @@
 package com.kaliv.myths.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.artefacts.Author;
@@ -22,5 +20,5 @@ public class TimePeriod extends BaseEntity {
     private String years;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "timePeriod")
-    private Set<Author> authors;
+    private Set<Author> authors = new HashSet<>();
 }

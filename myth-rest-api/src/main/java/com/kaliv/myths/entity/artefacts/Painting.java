@@ -5,7 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
@@ -21,5 +20,5 @@ import lombok.Setter;
 @Table(name = "paintings")
 public class Painting extends VisualArtwork {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "painting")
-    private Set<PaintingImage> paintingImages = new HashSet<>();
+    private Set<PaintingImage> paintingImages;
 }

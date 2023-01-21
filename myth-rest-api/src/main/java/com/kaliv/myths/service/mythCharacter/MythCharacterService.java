@@ -8,7 +8,7 @@ import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
 import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
 
 public interface MythCharacterService {
-    List<MythCharacterResponseDto> getAllMythCharacters();
+    List<MythCharacterResponseDto> getAllMythCharacters(String fatherName);
 
     MythCharacterResponseDto getMythCharacterById(long id);
 

@@ -26,8 +26,9 @@ public class MythCharacterController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MythCharacterResponseDto>> getAllMythCharacters() {
-        return ResponseEntity.ok(mythCharacterService.getAllMythCharacters());
+    public ResponseEntity<List<MythCharacterResponseDto>> getAllMythCharacters(
+            @RequestParam(required = false) String fatherName) {
+        return ResponseEntity.ok(mythCharacterService.getAllMythCharacters(fatherName));
     }
 
     @GetMapping("/{id}")

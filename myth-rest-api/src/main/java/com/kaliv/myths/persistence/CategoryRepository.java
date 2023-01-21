@@ -1,9 +1,9 @@
 package com.kaliv.myths.persistence;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.kaliv.myths.entity.Category;
 
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+public interface CategoryRepository extends CrudRepository<Category, Long> {
     boolean existsByName(String name);
 }

@@ -99,10 +99,11 @@ public class MythServiceImpl implements MythService {
         }
 
         Myth myth = mapper.dtoToMyth(dto);
+        myth.getMythCharacters().addAll(mythCharacters);
         Myth savedMyth = mythRepository.save(myth);
-
-        mythCharacters.forEach(ch -> ch.getMyths().add(savedMyth));
-        mythCharacterRepository.saveAll(mythCharacters);
+//
+//        mythCharacters.forEach(ch -> ch.getMyths().add(savedMyth));
+//        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.mythToDto(savedMyth);
     }
 

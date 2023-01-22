@@ -45,11 +45,23 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     }
 
     @Override
-    public List<MythCharacterResponseDto> getAllMythCharacters(String fatherName) {
+    public List<MythCharacterResponseDto> getAllMythCharacters(String fatherName,
+                                                               String motherName,
+                                                               String categoryName,
+                                                               String mythName) {
         QMythCharacter qMythCharacter = QMythCharacter.mythCharacter;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (fatherName != null) {
-            booleanBuilder.and(qMythCharacter.father.name.eq(fatherName));
+            booleanBuilder.and(qMythCharacter.father.name.equalsIgnoreCase(fatherName));
+        }
+        if (motherName != null) {
+            booleanBuilder.and(qMythCharacter.mother.name.equalsIgnoreCase(motherName));
+        }
+        if (categoryName != null) {
+            booleanBuilder.and(qMythCharacter.category.name.equalsIgnoreCase(categoryName));
+        }
+        if (mythName != null) {
+            booleanBuilder.and(qMythCharacter.myths.any().name.equalsIgnoreCase(mythName));
         }
 
         return StreamSupport.stream(mythCharacterRepository.findAll(booleanBuilder).spliterator(), false)

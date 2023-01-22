@@ -27,8 +27,12 @@ public class MythCharacterController {
 
     @GetMapping
     public ResponseEntity<List<MythCharacterResponseDto>> getAllMythCharacters(
-            @RequestParam(required = false) String fatherName) {
-        return ResponseEntity.ok(mythCharacterService.getAllMythCharacters(fatherName));
+            @RequestParam(name = "father", required = false) String fatherName,
+            @RequestParam(name = "mother", required = false) String motherName,
+            @RequestParam(name = "category", required = false) String categoryName,
+            @RequestParam(name = "myth", required = false) String mythName) {
+        return ResponseEntity.ok(mythCharacterService.getAllMythCharacters(
+                fatherName, motherName, categoryName, mythName));
     }
 
     @GetMapping("/{id}")

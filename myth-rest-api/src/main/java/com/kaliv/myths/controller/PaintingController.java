@@ -2,17 +2,14 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.paintingDtos.CreatePaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingResponseDto;
-import com.kaliv.myths.dto.paintingDtos.UpdatePaintingDto;
+import com.kaliv.myths.dto.paintingDtos.*;
 import com.kaliv.myths.service.painting.PaintingService;
 
 @RestController
@@ -26,8 +23,15 @@ public class PaintingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PaintingResponseDto>> getAllPaintings() {
-        return ResponseEntity.ok(paintingService.getAllPaintings());
+    public ResponseEntity<PaginatedPaintingResponseDto> getAllPaintings(
+            @RequestParam(name = "author", required = false) String authorName,
+            @RequestParam(name = "myth", required = false) String mythName,
+            @RequestParam(name = "museum", required = false) String museumName,
+            @RequestParam(name = "character", required = false) String characterName,
+            PaginationCriteria paginationCriteria,
+            SortCriteria sortCriteria) {
+        return ResponseEntity.ok(paintingService.getAllPaintings(
+                authorName, mythName, museumName, characterName, paginationCriteria, sortCriteria));
     }
 
     @GetMapping("/{id}")

@@ -3,21 +3,25 @@ package com.kaliv.myths.service.painting;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.paintingDtos.CreatePaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingResponseDto;
-import com.kaliv.myths.dto.paintingDtos.UpdatePaintingDto;
+import com.kaliv.myths.dto.paintingDtos.*;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Museum;
 import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.QPainting;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
@@ -27,6 +31,7 @@ import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.PaintingMapper;
 import com.kaliv.myths.persistence.*;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class PaintingServiceImpl implements PaintingService {
@@ -39,7 +44,13 @@ public class PaintingServiceImpl implements PaintingService {
     private final PaintingImageRepository paintingImageRepository;
     private final PaintingMapper mapper;
 
-    public PaintingServiceImpl(PaintingRepository paintingRepository, AuthorRepository authorRepository, MythRepository mythRepository, MuseumRepository museumRepository, MythCharacterRepository mythCharacterRepository, PaintingImageRepository paintingImageRepository, PaintingMapper mapper) {
+    public PaintingServiceImpl(PaintingRepository paintingRepository,
+                               AuthorRepository authorRepository,
+                               MythRepository mythRepository,
+                               MuseumRepository museumRepository,
+                               MythCharacterRepository mythCharacterRepository,
+                               PaintingImageRepository paintingImageRepository,
+                               PaintingMapper mapper) {
         this.paintingRepository = paintingRepository;
         this.authorRepository = authorRepository;
         this.mythRepository = mythRepository;
@@ -50,8 +61,49 @@ public class PaintingServiceImpl implements PaintingService {
     }
 
     @Override
-    public List<PaintingResponseDto> getAllPaintings() {
-        return paintingRepository.findAll().stream().map(mapper::paintingToResponseDto).collect(Collectors.toList());
+    public PaginatedPaintingResponseDto getAllPaintings(String authorName,
+                                                        String mythName,
+                                                        String museumName,
+                                                        String characterName,
+                                                        PaginationCriteria paginationCriteria,
+                                                        SortCriteria sortCriteria) {
+        QPainting qPainting = QPainting.painting;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (authorName != null) {
+            booleanBuilder.and(qPainting.author.name.equalsIgnoreCase(authorName));
+        }
+        if (mythName != null) {
+            booleanBuilder.and(qPainting.myth.name.equalsIgnoreCase(mythName));
+        }
+        if (museumName != null) {
+            booleanBuilder.and(qPainting.museum.name.equalsIgnoreCase(authorName));
+        }
+        if (characterName != null) {
+            booleanBuilder.and(qPainting.mythCharacters.any().name.equalsIgnoreCase(characterName));
+        }
+
+        int page = paginationCriteria.getPage();
+        int size = paginationCriteria.getSize();
+        String sortDir = sortCriteria.getSortOrder();
+        String sortAttr = sortCriteria.getSortAttribute();
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortAttr);
+        Page<Painting> paintings = paintingRepository.findAll(booleanBuilder, pageable);
+
+        List<PaintingResponseDto> content = paintings
+                .getContent() //TODO:check if redundant
+                .stream()
+                .map(mapper::paintingToResponseDto)
+                .collect(Collectors.toList());
+
+        PaginatedPaintingResponseDto paintingResponseDto = new PaginatedPaintingResponseDto();
+        paintingResponseDto.setContent(content);
+        paintingResponseDto.setPageNumber(paintings.getNumber());
+        paintingResponseDto.setPageSize(paintings.getSize());
+        paintingResponseDto.setTotalElements(paintings.getTotalElements());
+        paintingResponseDto.setTotalPages(paintings.getTotalPages());
+        paintingResponseDto.setLast(paintings.isLast());
+
+        return paintingResponseDto;
     }
 
     @Override

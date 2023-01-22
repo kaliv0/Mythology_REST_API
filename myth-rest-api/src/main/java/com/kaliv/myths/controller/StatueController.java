@@ -2,17 +2,14 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueResponseDto;
-import com.kaliv.myths.dto.statueDtos.UpdateStatueDto;
+import com.kaliv.myths.dto.statueDtos.*;
 import com.kaliv.myths.service.statue.StatueService;
 
 @RestController
@@ -26,8 +23,15 @@ public class StatueController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StatueResponseDto>> getAllStatues() {
-        return ResponseEntity.ok(statueService.getAllStatues());
+    public ResponseEntity<PaginatedStatueResponseDto> getAllStatues(
+            @RequestParam(name = "author", required = false) String authorName,
+            @RequestParam(name = "myth", required = false) String mythName,
+            @RequestParam(name = "museum", required = false) String museumName,
+            @RequestParam(name = "character", required = false) String characterName,
+            PaginationCriteria paginationCriteria,
+            SortCriteria sortCriteria) {
+        return ResponseEntity.ok(statueService.getAllStatues(
+                authorName, mythName, museumName, characterName, paginationCriteria, sortCriteria));
     }
 
     @GetMapping("/{id}")

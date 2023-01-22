@@ -1,14 +1,16 @@
 package com.kaliv.myths.service.statue;
 
-import java.util.List;
-
-import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueResponseDto;
-import com.kaliv.myths.dto.statueDtos.UpdateStatueDto;
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.dto.statueDtos.*;
 
 public interface StatueService {
-    List<StatueResponseDto> getAllStatues();
+    PaginatedStatueResponseDto getAllStatues(String authorName,
+                                             String mythName,
+                                             String museumName,
+                                             String characterName,
+                                             PaginationCriteria paginationCriteria,
+                                             SortCriteria sortCriteria);
 
     StatueResponseDto getStatueById(long id);
 

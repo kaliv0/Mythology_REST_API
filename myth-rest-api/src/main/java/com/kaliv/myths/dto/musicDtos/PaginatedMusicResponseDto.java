@@ -1,4 +1,4 @@
-package com.kaliv.myths.dto.mythDtos;
+package com.kaliv.myths.dto.musicDtos;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PaginatedMythResponseDto extends PaginatedResponseDto {
-    private List<MythResponseDto> content;
+public class PaginatedMusicResponseDto extends PaginatedResponseDto {
+    private List<MusicResponseDto> content;
 }

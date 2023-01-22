@@ -1,14 +1,15 @@
 package com.kaliv.myths.service.music;
 
-import java.util.List;
-
-import com.kaliv.myths.dto.musicDtos.CreateMusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicResponseDto;
-import com.kaliv.myths.dto.musicDtos.UpdateMusicDto;
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.dto.musicDtos.*;
 
 public interface MusicService {
-    List<MusicResponseDto> getAllMusic();
+    PaginatedMusicResponseDto getAllMusic(String authorName,
+                                          String mythName,
+                                          String characterName,
+                                          PaginationCriteria paginationCriteria,
+                                          SortCriteria sortCriteria);
 
     MusicResponseDto getMusicById(long id);
 

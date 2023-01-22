@@ -63,7 +63,6 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         if (mythName != null) {
             booleanBuilder.and(qMythCharacter.myths.any().name.equalsIgnoreCase(mythName));
         }
-
         return StreamSupport.stream(mythCharacterRepository.findAll(booleanBuilder).spliterator(), false)
                 .map(mapper::mythCharacterToResponseDto)
                 .collect(Collectors.toList());

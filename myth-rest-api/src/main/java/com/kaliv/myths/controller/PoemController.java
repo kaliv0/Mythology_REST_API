@@ -2,17 +2,14 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemResponseDto;
-import com.kaliv.myths.dto.poemDtos.UpdatePoemDto;
+import com.kaliv.myths.dto.poemDtos.*;
 import com.kaliv.myths.service.poem.PoemService;
 
 @RestController
@@ -26,8 +23,14 @@ public class PoemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PoemResponseDto>> getAllPoems() {
-        return ResponseEntity.ok(poemService.getAllPoems());
+    public ResponseEntity<PaginatedPoemResponseDto> getAllPoems(
+            @RequestParam(name = "author", required = false) String authorName,
+            @RequestParam(name = "myth", required = false) String mythName,
+            @RequestParam(name = "character", required = false) String characterName,
+            PaginationCriteria paginationCriteria,
+            SortCriteria sortCriteria) {
+        return ResponseEntity.ok(poemService.getAllPoems(
+                authorName, mythName, characterName, paginationCriteria, sortCriteria));
     }
 
     @GetMapping("/{id}")

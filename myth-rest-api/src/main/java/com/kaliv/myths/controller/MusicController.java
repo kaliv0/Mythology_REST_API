@@ -2,17 +2,14 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.musicDtos.CreateMusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicResponseDto;
-import com.kaliv.myths.dto.musicDtos.UpdateMusicDto;
+import com.kaliv.myths.dto.musicDtos.*;
 import com.kaliv.myths.service.music.MusicService;
 
 @RestController
@@ -26,8 +23,14 @@ public class MusicController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MusicResponseDto>> getAllMusic() {
-        return ResponseEntity.ok(musicService.getAllMusic());
+    public ResponseEntity<PaginatedMusicResponseDto> getAllMusic(
+            @RequestParam(name = "author", required = false) String authorName,
+            @RequestParam(name = "myth", required = false) String mythName,
+            @RequestParam(name = "character", required = false) String characterName,
+            PaginationCriteria paginationCriteria,
+            SortCriteria sortCriteria) {
+        return ResponseEntity.ok(musicService.getAllMusic(
+                authorName, mythName, characterName, paginationCriteria, sortCriteria));
     }
 
     @GetMapping("/{id}")

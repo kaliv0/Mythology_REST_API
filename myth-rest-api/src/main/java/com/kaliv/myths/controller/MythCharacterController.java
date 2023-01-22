@@ -2,17 +2,14 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
-import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
+import com.kaliv.myths.dto.mythCharacterDtos.*;
 import com.kaliv.myths.service.mythCharacter.MythCharacterService;
 
 @RestController
@@ -26,13 +23,15 @@ public class MythCharacterController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MythCharacterResponseDto>> getAllMythCharacters(
+    public ResponseEntity<PaginatedMythCharacterResponseDto> getAllMythCharacters(
             @RequestParam(name = "father", required = false) String fatherName,
             @RequestParam(name = "mother", required = false) String motherName,
             @RequestParam(name = "category", required = false) String categoryName,
-            @RequestParam(name = "myth", required = false) String mythName) {
+            @RequestParam(name = "myth", required = false) String mythName,
+            PaginationCriteria paginationCriteria,
+            SortCriteria sortCriteria) {
         return ResponseEntity.ok(mythCharacterService.getAllMythCharacters(
-                fatherName, motherName, categoryName, mythName));
+                fatherName, motherName, categoryName, mythName, paginationCriteria, sortCriteria));
     }
 
     @GetMapping("/{id}")

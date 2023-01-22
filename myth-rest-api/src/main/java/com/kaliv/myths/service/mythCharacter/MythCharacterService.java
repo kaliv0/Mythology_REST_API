@@ -1,17 +1,16 @@
 package com.kaliv.myths.service.mythCharacter;
 
-import java.util.List;
-
-import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
-import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.dto.mythCharacterDtos.*;
 
 public interface MythCharacterService {
-    List<MythCharacterResponseDto> getAllMythCharacters(String fatherName,
-                                                        String motherName,
-                                                        String categoryName,
-                                                        String mythName);
+    PaginatedMythCharacterResponseDto getAllMythCharacters(String fatherName,
+                                                           String motherName,
+                                                           String categoryName,
+                                                           String mythName,
+                                                           PaginationCriteria paginationCriteria,
+                                                           SortCriteria sortCriteria);
 
     MythCharacterResponseDto getMythCharacterById(long id);
 

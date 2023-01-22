@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PaginationCriteria {
-    //default values TODO:check if overriding works
+    //TODO:check if overriding works for default values
     private int page = CriteriaConstants.DEFAULT_PAGE;
     private int size = CriteriaConstants.DEFAULT_SIZE;
 }

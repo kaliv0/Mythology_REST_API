@@ -2,17 +2,19 @@ package com.kaliv.myths.service.mythCharacter;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.criteria.PaginationCriteria;
+import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.common.utils.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
-import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
-import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
+import com.kaliv.myths.dto.mythCharacterDtos.*;
 import com.kaliv.myths.entity.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
@@ -45,10 +47,12 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     }
 
     @Override
-    public List<MythCharacterResponseDto> getAllMythCharacters(String fatherName,
-                                                               String motherName,
-                                                               String categoryName,
-                                                               String mythName) {
+    public PaginatedMythCharacterResponseDto getAllMythCharacters(String fatherName,
+                                                                  String motherName,
+                                                                  String categoryName,
+                                                                  String mythName,
+                                                                  PaginationCriteria paginationCriteria,
+                                                                  SortCriteria sortCriteria) {
         QMythCharacter qMythCharacter = QMythCharacter.mythCharacter;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (fatherName != null) {
@@ -63,9 +67,29 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         if (mythName != null) {
             booleanBuilder.and(qMythCharacter.myths.any().name.equalsIgnoreCase(mythName));
         }
-        return StreamSupport.stream(mythCharacterRepository.findAll(booleanBuilder).spliterator(), false)
+
+        int page = paginationCriteria.getPage();
+        int size = paginationCriteria.getSize();
+        String sortDir = sortCriteria.getSortOrder();
+        String sortAttr = sortCriteria.getSortAttribute();
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortAttr);
+        Page<MythCharacter> mythCharacters = mythCharacterRepository.findAll(booleanBuilder, pageable);
+
+        List<MythCharacterResponseDto> content = mythCharacters
+                .getContent() //TODO:check if redundant
+                .stream()
                 .map(mapper::mythCharacterToResponseDto)
                 .collect(Collectors.toList());
+
+        PaginatedMythCharacterResponseDto mythCharacterResponseDto = new PaginatedMythCharacterResponseDto();
+        mythCharacterResponseDto.setContent(content);
+        mythCharacterResponseDto.setPageNumber(mythCharacters.getNumber());
+        mythCharacterResponseDto.setPageSize(mythCharacters.getSize());
+        mythCharacterResponseDto.setTotalElements(mythCharacters.getTotalElements());
+        mythCharacterResponseDto.setTotalPages(mythCharacters.getTotalPages());
+        mythCharacterResponseDto.setLast(mythCharacters.isLast());
+
+        return mythCharacterResponseDto;
     }
 
     @Override

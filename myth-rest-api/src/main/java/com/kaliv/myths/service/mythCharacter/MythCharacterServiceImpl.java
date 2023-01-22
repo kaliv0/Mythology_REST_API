@@ -2,6 +2,7 @@ package com.kaliv.myths.service.mythCharacter;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,7 @@ import com.kaliv.myths.dto.mythCharacterDtos.CreateMythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterDto;
 import com.kaliv.myths.dto.mythCharacterDtos.MythCharacterResponseDto;
 import com.kaliv.myths.dto.mythCharacterDtos.UpdateMythCharacterDto;
-import com.kaliv.myths.entity.BaseEntity;
-import com.kaliv.myths.entity.Category;
-import com.kaliv.myths.entity.Myth;
-import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.entity.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -27,6 +25,7 @@ import com.kaliv.myths.mapper.MythCharacterMapper;
 import com.kaliv.myths.persistence.CategoryRepository;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class MythCharacterServiceImpl implements MythCharacterService {
@@ -46,9 +45,15 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     }
 
     @Override
-    public List<MythCharacterResponseDto> getAllMythCharacters() {
-        return mythCharacterRepository.findAll()
-                .stream().map(mapper::mythCharacterToResponseDto)
+    public List<MythCharacterResponseDto> getAllMythCharacters(String fatherName) {
+        QMythCharacter qMythCharacter = QMythCharacter.mythCharacter;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (fatherName != null) {
+            booleanBuilder.and(qMythCharacter.father.name.eq(fatherName));
+        }
+
+        return StreamSupport.stream(mythCharacterRepository.findAll(booleanBuilder).spliterator(), false)
+                .map(mapper::mythCharacterToResponseDto)
                 .collect(Collectors.toList());
     }
 

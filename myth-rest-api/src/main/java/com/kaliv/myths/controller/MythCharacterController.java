@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.mythCharacterDtos.*;
 import com.kaliv.myths.service.mythCharacter.MythCharacterService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Mythological characters")
 @RestController
 @RequestMapping("/api/v1/myth-characters")
 public class MythCharacterController {

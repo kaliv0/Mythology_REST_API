@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.statueDtos.*;
 import com.kaliv.myths.service.statue.StatueService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Statues")
 @RestController
 @RequestMapping("/api/v1/statues")
 public class StatueController {

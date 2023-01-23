@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.musicDtos.*;
 import com.kaliv.myths.service.music.MusicService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Music")
 @RestController
 @RequestMapping("/api/v1/music")
 public class MusicController {

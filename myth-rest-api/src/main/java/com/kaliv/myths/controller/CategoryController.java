@@ -15,6 +15,9 @@ import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
 import com.kaliv.myths.dto.categoryDtos.UpdateCategoryDto;
 import com.kaliv.myths.service.category.CategoryService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Categories")
 @RestController
 @RequestMapping("/api/v1/character-categories")
 public class CategoryController {

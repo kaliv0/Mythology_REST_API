@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.paintingDtos.*;
 import com.kaliv.myths.service.painting.PaintingService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Paintings")
 @RestController
 @RequestMapping("/api/v1/paintings")
 public class PaintingController {

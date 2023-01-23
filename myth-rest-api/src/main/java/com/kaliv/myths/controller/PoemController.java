@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.poemDtos.*;
 import com.kaliv.myths.service.poem.PoemService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Poems")
 @RestController
 @RequestMapping("/api/v1/poems")
 public class PoemController {

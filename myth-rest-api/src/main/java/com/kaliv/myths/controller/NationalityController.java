@@ -15,6 +15,9 @@ import com.kaliv.myths.dto.nationalityDtos.NationalityResponseDto;
 import com.kaliv.myths.dto.nationalityDtos.UpdateNationalityDto;
 import com.kaliv.myths.service.nationality.NationalityService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Nationalities")
 @RestController
 @RequestMapping("/api/v1/nationalities")
 public class NationalityController {

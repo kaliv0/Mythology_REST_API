@@ -15,6 +15,9 @@ import com.kaliv.myths.dto.museumDtos.MuseumResponseDto;
 import com.kaliv.myths.dto.museumDtos.UpdateMuseumDto;
 import com.kaliv.myths.service.museum.MuseumService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Museums")
 @RestController
 @RequestMapping("/api/v1/museums")
 public class MuseumController {

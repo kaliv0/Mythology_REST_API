@@ -11,6 +11,9 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.authorDtos.*;
 import com.kaliv.myths.service.author.AuthorService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@Tag(name = "Authors")
 @RestController
 @RequestMapping("/api/v1/authors")
 public class AuthorController {

@@ -39,15 +39,16 @@ public class ImageServiceImpl implements ImageService {
 
     public UploadImageResponseDto uploadImage(ArtworkType artworkType, MultipartFile file)
             throws InvalidArtworkTypeException, IOException {
+        PaintingImage savedImage = null;
         if (artworkType.equals(ArtworkType.STATUE)) {
             statueImageRepository.save(imageBuilder.getStatueImage(file));
         } else if (artworkType.equals(ArtworkType.PAINTING)) {
-            paintingImageRepository.save(imageBuilder.getPaintingImage(file));
+            savedImage = paintingImageRepository.save(imageBuilder.getPaintingImage(file));
         } else {
             throw new InvalidArtworkTypeException();
         }
-        return new UploadImageResponseDto(
-                String.format(ResponseMessages.IMAGE_UPLOADED, file.getOriginalFilename()));
+        return imageBuilder.geUploadImageResponseDto(savedImage.getId(),
+                ResponseMessages.IMAGE_UPLOADED, savedImage.getName());
     }
 
     @Transactional

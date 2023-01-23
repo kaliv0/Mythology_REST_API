@@ -3,20 +3,22 @@ package com.kaliv.myths.service.poem;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemResponseDto;
-import com.kaliv.myths.dto.poemDtos.UpdatePoemDto;
+import com.kaliv.myths.dto.poemDtos.*;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.QPoem;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -28,6 +30,7 @@ import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
 import com.kaliv.myths.persistence.PoemRepository;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class PoemServiceImpl implements PoemService {
@@ -51,10 +54,46 @@ public class PoemServiceImpl implements PoemService {
     }
 
     @Override
-    public List<PoemResponseDto> getAllPoems() {
-        return poemRepository.findAll()
-                .stream().map(mapper::poemToResponseDto)
+    public PaginatedPoemResponseDto getAllPoems(String authorName,
+                                                String mythName,
+                                                String characterName,
+                                                int pageNumber,
+                                                int pageSize,
+                                                String sortBy,
+                                                String sortOrder) {
+        QPoem qPoem = QPoem.poem;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (authorName != null) {
+            booleanBuilder.and(qPoem.author.name.equalsIgnoreCase(authorName));
+        }
+        if (mythName != null) {
+            booleanBuilder.and(qPoem.myth.name.equalsIgnoreCase(mythName));
+        }
+        if (characterName != null) {
+            booleanBuilder.and(qPoem.mythCharacters.any().name.equalsIgnoreCase(characterName));
+        }
+
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
+        Page<Poem> poems = poemRepository.findAll(booleanBuilder, pageable);
+
+        List<PoemResponseDto> content = poems
+                .getContent() //TODO:check if redundant
+                .stream()
+                .map(mapper::poemToResponseDto)
                 .collect(Collectors.toList());
+
+        PaginatedPoemResponseDto poemResponseDto = new PaginatedPoemResponseDto();
+        poemResponseDto.setContent(content);
+        poemResponseDto.setPageNumber(poems.getNumber());
+        poemResponseDto.setPageSize(poems.getSize());
+        poemResponseDto.setTotalElements(poems.getTotalElements());
+        poemResponseDto.setTotalPages(poems.getTotalPages());
+        poemResponseDto.setLast(poems.isLast());
+
+        return poemResponseDto;
     }
 
     @Override
@@ -88,6 +127,7 @@ public class PoemServiceImpl implements PoemService {
         }
 
         Poem poem = mapper.dtoToPoem(dto);
+        poem.setMythCharacters(new HashSet<>(mythCharacters));
         Poem savedPoem = poemRepository.save(poem);
         return mapper.poemToDto(savedPoem);
     }

@@ -2,17 +2,13 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueResponseDto;
-import com.kaliv.myths.dto.statueDtos.UpdateStatueDto;
+import com.kaliv.myths.dto.statueDtos.*;
 import com.kaliv.myths.service.statue.StatueService;
 
 @RestController
@@ -26,8 +22,17 @@ public class StatueController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StatueResponseDto>> getAllStatues() {
-        return ResponseEntity.ok(statueService.getAllStatues());
+    public ResponseEntity<PaginatedStatueResponseDto> getAllStatues(
+            @RequestParam(name = "author", required = false) String authorName,
+            @RequestParam(name = "myth", required = false) String mythName,
+            @RequestParam(name = "museum", required = false) String museumName,
+            @RequestParam(name = "character", required = false) String characterName,
+            @RequestParam(value = "page", defaultValue = CriteriaConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+            @RequestParam(value = "size", defaultValue = CriteriaConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort", defaultValue = CriteriaConstants.DEFAULT_SORT_ATTRIBUTE, required = false) String sortBy,
+            @RequestParam(value = "dir", defaultValue = CriteriaConstants.DEFAULT_SORT_ORDER, required = false) String sortOrder) {
+        return ResponseEntity.ok(statueService.getAllStatues(
+                authorName, mythName, museumName, characterName, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

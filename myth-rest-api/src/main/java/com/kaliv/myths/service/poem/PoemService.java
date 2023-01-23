@@ -1,14 +1,15 @@
 package com.kaliv.myths.service.poem;
 
-import java.util.List;
-
-import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemDto;
-import com.kaliv.myths.dto.poemDtos.PoemResponseDto;
-import com.kaliv.myths.dto.poemDtos.UpdatePoemDto;
+import com.kaliv.myths.dto.poemDtos.*;
 
 public interface PoemService {
-    List<PoemResponseDto> getAllPoems();
+    PaginatedPoemResponseDto getAllPoems(String authorName,
+                                         String mythName,
+                                         String characterName,
+                                         int pageNumber,
+                                         int pageSize,
+                                         String sortBy,
+                                         String sortOrder);
 
     PoemResponseDto getPoemById(long id);
 

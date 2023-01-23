@@ -6,7 +6,7 @@ import java.util.zip.DataFormatException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.common.utils.ImageHandler;
+import com.kaliv.myths.common.ImageHandler;
 import com.kaliv.myths.dto.imageDtos.PaintingImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.StatueImageDetailsDto;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;

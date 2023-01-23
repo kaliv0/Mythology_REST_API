@@ -2,17 +2,13 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
-import com.kaliv.myths.dto.authorDtos.AuthorResponseDto;
-import com.kaliv.myths.dto.authorDtos.AuthorDto;
-import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
-import com.kaliv.myths.dto.authorDtos.UpdateAuthorDto;
+import com.kaliv.myths.dto.authorDtos.*;
 import com.kaliv.myths.service.author.AuthorService;
 
 @RestController
@@ -26,8 +22,15 @@ public class AuthorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorResponseDto>> getAllAuthors() {
-        return ResponseEntity.ok(authorService.getAllAuthors());
+    public ResponseEntity<PaginatedAuthorResponseDto> getAllAuthors(
+            @RequestParam(name = "time-period", required = false) String timePeriodName,
+            @RequestParam(name = "nationality", required = false) String nationalityName,
+            @RequestParam(value = "page", defaultValue = CriteriaConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+            @RequestParam(value = "size", defaultValue = CriteriaConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort", defaultValue = CriteriaConstants.DEFAULT_SORT_ATTRIBUTE, required = false) String sortBy,
+            @RequestParam(value = "dir", defaultValue = CriteriaConstants.DEFAULT_SORT_ORDER, required = false) String sortOrder) {
+        return ResponseEntity.ok(authorService.getAllAuthors(
+                timePeriodName, nationalityName, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

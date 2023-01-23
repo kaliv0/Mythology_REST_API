@@ -3,20 +3,22 @@ package com.kaliv.myths.service.music;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.musicDtos.CreateMusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicDto;
-import com.kaliv.myths.dto.musicDtos.MusicResponseDto;
-import com.kaliv.myths.dto.musicDtos.UpdateMusicDto;
+import com.kaliv.myths.dto.musicDtos.*;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.QMusic;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -28,6 +30,7 @@ import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.MusicRepository;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class MusicServiceImpl implements MusicService {
@@ -51,10 +54,46 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public List<MusicResponseDto> getAllMusic() {
-        return musicRepository.findAll()
-                .stream().map(mapper::musicToResponseDto)
+    public PaginatedMusicResponseDto getAllMusic(String authorName,
+                                                 String mythName,
+                                                 String characterName,
+                                                 int pageNumber,
+                                                 int pageSize,
+                                                 String sortBy,
+                                                 String sortOrder) {
+        QMusic qMusic = QMusic.music;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (authorName != null) {
+            booleanBuilder.and(qMusic.author.name.equalsIgnoreCase(authorName));
+        }
+        if (mythName != null) {
+            booleanBuilder.and(qMusic.myth.name.equalsIgnoreCase(mythName));
+        }
+        if (characterName != null) {
+            booleanBuilder.and(qMusic.mythCharacters.any().name.equalsIgnoreCase(characterName));
+        }
+
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
+        Page<Music> music = musicRepository.findAll(booleanBuilder, pageable);
+
+        List<MusicResponseDto> content = music
+                .getContent() //TODO:check if redundant
+                .stream()
+                .map(mapper::musicToResponseDto)
                 .collect(Collectors.toList());
+
+        PaginatedMusicResponseDto musicResponseDto = new PaginatedMusicResponseDto();
+        musicResponseDto.setContent(content);
+        musicResponseDto.setPageNumber(music.getNumber());
+        musicResponseDto.setPageSize(music.getSize());
+        musicResponseDto.setTotalElements(music.getTotalElements());
+        musicResponseDto.setTotalPages(music.getTotalPages());
+        musicResponseDto.setLast(music.isLast());
+
+        return musicResponseDto;
     }
 
     @Override
@@ -88,12 +127,9 @@ public class MusicServiceImpl implements MusicService {
         }
 
         Music music = mapper.dtoToMusic(dto);
+        music.setMythCharacters(new HashSet<>(mythCharacters));
         Music savedMusic = musicRepository.save(music);
 
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setMusic(savedMusic));
-//        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.musicToDto(savedMusic);
     }
 

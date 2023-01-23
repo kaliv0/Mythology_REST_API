@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.nationalityDtos.CreateNationalityDto;
@@ -79,12 +79,9 @@ public class NationalityServiceImpl implements NationalityService {
         }
 
         Nationality nationality = mapper.dtoToNationality(dto);
+        nationality.setMyths(new HashSet<>(myths));
+        nationality.setAuthors(new HashSet<>(authors));
         Nationality savedNationality = nationalityRepository.save(nationality);
-
-        myths.forEach(m -> m.setNationality(savedNationality));
-        mythRepository.saveAll(myths);
-        authors.forEach(a -> a.setNationality(savedNationality));
-        authorRepository.saveAll(authors);
 
         return mapper.nationalityToDto(savedNationality);
     }

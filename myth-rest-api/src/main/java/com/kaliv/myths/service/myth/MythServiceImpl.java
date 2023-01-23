@@ -9,16 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythDtos.*;
-import com.kaliv.myths.entity.BaseEntity;
-import com.kaliv.myths.entity.Myth;
-import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.entity.Nationality;
+import com.kaliv.myths.entity.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -29,6 +24,7 @@ import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
 import com.kaliv.myths.persistence.NationalityRepository;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class MythServiceImpl implements MythService {
@@ -49,17 +45,31 @@ public class MythServiceImpl implements MythService {
     }
 
     @Override
-    public PaginatedMythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria) {
-        int page = paginationCriteria.getPage();
-        int size = paginationCriteria.getSize();
-        String sortDir = sortCriteria.getSortOrder();
-        String sortAttr = sortCriteria.getSortAttribute();
+    public PaginatedMythResponseDto getAllMyths(String nationalityName,
+                                                String characterName,
+                                                int pageNumber,
+                                                int pageSize,
+                                                String sortBy,
+                                                String sortOrder) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortAttr);
-        Page<Myth> myths = mythRepository.findAll(pageable);
-        List<Myth> listOfMyths = myths.getContent(); //TODO:check if redundant
+        QMyth qMyth = QMyth.myth;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (nationalityName != null) {
+            booleanBuilder.and(qMyth.nationality.name.equalsIgnoreCase(nationalityName));
+        }
+        if (characterName != null) {
+            booleanBuilder.and(qMyth.mythCharacters.any().name.equalsIgnoreCase(characterName));
+        }
 
-        List<MythResponseDto> content = listOfMyths.stream()
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
+        Page<Myth> myths = mythRepository.findAll(booleanBuilder, pageable);
+
+        List<MythResponseDto> content = myths
+                .getContent() //TODO:check if redundant
+                .stream()
                 .map(mapper::mythToResponseDto)
                 .collect(Collectors.toList());
 
@@ -99,10 +109,9 @@ public class MythServiceImpl implements MythService {
         }
 
         Myth myth = mapper.dtoToMyth(dto);
+        myth.setMythCharacters(new HashSet<>(mythCharacters));
         Myth savedMyth = mythRepository.save(myth);
 
-        mythCharacters.forEach(ch -> ch.getMyths().add(savedMyth));
-        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.mythToDto(savedMyth);
     }
 

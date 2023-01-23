@@ -1,11 +1,15 @@
 package com.kaliv.myths.service.myth;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.mythDtos.*;
 
 public interface MythService {
-    PaginatedMythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria);
+    PaginatedMythResponseDto getAllMyths(String nationalityName,
+                                         String characterName,
+                                         int pageNumber,
+                                         int pageSize,
+                                         String sortBy,
+                                         String sortOrder
+    );
 
     MythResponseDto getMythById(long id);
 

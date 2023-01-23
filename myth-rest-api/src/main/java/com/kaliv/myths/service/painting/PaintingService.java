@@ -1,14 +1,16 @@
 package com.kaliv.myths.service.painting;
 
-import java.util.List;
-
-import com.kaliv.myths.dto.paintingDtos.CreatePaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingDto;
-import com.kaliv.myths.dto.paintingDtos.PaintingResponseDto;
-import com.kaliv.myths.dto.paintingDtos.UpdatePaintingDto;
+import com.kaliv.myths.dto.paintingDtos.*;
 
 public interface PaintingService {
-    List<PaintingResponseDto> getAllPaintings();
+    PaginatedPaintingResponseDto getAllPaintings(String authorName,
+                                                 String mythName,
+                                                 String museumName,
+                                                 String characterName,
+                                                 int pageNumber,
+                                                 int pageSize,
+                                                 String sortBy,
+                                                 String sortOrder);
 
     PaintingResponseDto getPaintingById(long id);
 

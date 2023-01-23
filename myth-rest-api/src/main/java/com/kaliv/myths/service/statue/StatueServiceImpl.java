@@ -3,20 +3,22 @@ package com.kaliv.myths.service.statue;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueDto;
-import com.kaliv.myths.dto.statueDtos.StatueResponseDto;
-import com.kaliv.myths.dto.statueDtos.UpdateStatueDto;
+import com.kaliv.myths.dto.statueDtos.*;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Museum;
+import com.kaliv.myths.entity.artefacts.QStatue;
 import com.kaliv.myths.entity.artefacts.Statue;
 import com.kaliv.myths.entity.artefacts.images.StatueImage;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
@@ -27,6 +29,7 @@ import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.StatueMapper;
 import com.kaliv.myths.persistence.*;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class StatueServiceImpl implements StatueService {
@@ -56,10 +59,51 @@ public class StatueServiceImpl implements StatueService {
     }
 
     @Override
-    public List<StatueResponseDto> getAllStatues() {
-        return statueRepository.findAll().stream()
+    public PaginatedStatueResponseDto getAllStatues(String authorName,
+                                                    String mythName,
+                                                    String museumName,
+                                                    String characterName,
+                                                    int pageNumber,
+                                                    int pageSize,
+                                                    String sortBy,
+                                                    String sortOrder) {
+        QStatue qStatue = QStatue.statue;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (authorName != null) {
+            booleanBuilder.and(qStatue.author.name.equalsIgnoreCase(authorName));
+        }
+        if (mythName != null) {
+            booleanBuilder.and(qStatue.myth.name.equalsIgnoreCase(mythName));
+        }
+        if (museumName != null) {
+            booleanBuilder.and(qStatue.museum.name.equalsIgnoreCase(authorName));
+        }
+        if (characterName != null) {
+            booleanBuilder.and(qStatue.mythCharacters.any().name.equalsIgnoreCase(characterName));
+        }
+
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
+        Page<Statue> statues = statueRepository.findAll(booleanBuilder, pageable);
+
+        List<StatueResponseDto> content = statues
+                .getContent() //TODO:check if redundant
+                .stream()
                 .map(mapper::statueToResponseDto)
                 .collect(Collectors.toList());
+
+        PaginatedStatueResponseDto statueResponseDto = new PaginatedStatueResponseDto();
+        statueResponseDto.setContent(content);
+        statueResponseDto.setPageNumber(statues.getNumber());
+        statueResponseDto.setPageSize(statues.getSize());
+        statueResponseDto.setTotalElements(statues.getTotalElements());
+        statueResponseDto.setTotalPages(statues.getTotalPages());
+        statueResponseDto.setLast(statues.isLast());
+
+        return statueResponseDto;
     }
 
     @Override
@@ -104,13 +148,9 @@ public class StatueServiceImpl implements StatueService {
         }
 
         Statue statue = mapper.dtoToStatue(dto);
+        statue.setMythCharacters(new HashSet<>(mythCharacters));
+        statue.setStatueImages(new HashSet<>(statueImages));
         Statue savedStatue = statueRepository.save(statue);
-
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setStatue(savedStatue));
-//        mythCharacterRepository.saveAll(mythCharacters);
-        //add statueImages.forEach(...)
 
         return mapper.statueToDto(savedStatue);
     }

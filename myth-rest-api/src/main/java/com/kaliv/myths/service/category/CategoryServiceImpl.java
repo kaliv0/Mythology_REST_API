@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.categoryDtos.CategoryDto;
@@ -68,10 +68,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         Category category = mapper.dtoToCategory(dto);
+        category.setMythCharacters(new HashSet<>(mythCharacters));
         Category savedCategory = categoryRepository.save(category);
 
-        mythCharacters.forEach(a -> a.setCategory(savedCategory));
-        mythCharacterRepository.saveAll(mythCharacters);
+//        mythCharacters.forEach(a -> a.setCategory(savedCategory));
+//        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.categoryToDto(savedCategory);
     }
 

@@ -61,25 +61,25 @@ public class PoemServiceImpl implements PoemService {
                                                 int pageSize,
                                                 String sortBy,
                                                 String sortOrder) {
-        QPoem qMusic = QPoem.poem;
+        QPoem qPoem = QPoem.poem;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (authorName != null) {
-            booleanBuilder.and(qMusic.author.name.equalsIgnoreCase(authorName));
+            booleanBuilder.and(qPoem.author.name.equalsIgnoreCase(authorName));
         }
         if (mythName != null) {
-            booleanBuilder.and(qMusic.myth.name.equalsIgnoreCase(mythName));
+            booleanBuilder.and(qPoem.myth.name.equalsIgnoreCase(mythName));
         }
         if (characterName != null) {
-            booleanBuilder.and(qMusic.mythCharacters.any().name.equalsIgnoreCase(characterName));
+            booleanBuilder.and(qPoem.mythCharacters.any().name.equalsIgnoreCase(characterName));
         }
 
         Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
-        Page<Poem> poem = poemRepository.findAll(booleanBuilder, pageable);
+        Page<Poem> poems = poemRepository.findAll(booleanBuilder, pageable);
 
-        List<PoemResponseDto> content = poem
+        List<PoemResponseDto> content = poems
                 .getContent() //TODO:check if redundant
                 .stream()
                 .map(mapper::poemToResponseDto)
@@ -87,11 +87,11 @@ public class PoemServiceImpl implements PoemService {
 
         PaginatedPoemResponseDto poemResponseDto = new PaginatedPoemResponseDto();
         poemResponseDto.setContent(content);
-        poemResponseDto.setPageNumber(poem.getNumber());
-        poemResponseDto.setPageSize(poem.getSize());
-        poemResponseDto.setTotalElements(poem.getTotalElements());
-        poemResponseDto.setTotalPages(poem.getTotalPages());
-        poemResponseDto.setLast(poem.isLast());
+        poemResponseDto.setPageNumber(poems.getNumber());
+        poemResponseDto.setPageSize(poems.getSize());
+        poemResponseDto.setTotalElements(poems.getTotalElements());
+        poemResponseDto.setTotalPages(poems.getTotalPages());
+        poemResponseDto.setLast(poems.isLast());
 
         return poemResponseDto;
     }

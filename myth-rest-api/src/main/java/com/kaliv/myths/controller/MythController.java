@@ -23,12 +23,14 @@ public class MythController {
 
     @GetMapping
     public ResponseEntity<PaginatedMythResponseDto> getAllMyths(
+            @RequestParam(name = "nationality", required = false) String nationalityName,
+            @RequestParam(name = "character", required = false) String characterName,
             @RequestParam(value = "page", defaultValue = CriteriaConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
             @RequestParam(value = "size", defaultValue = CriteriaConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
             @RequestParam(value = "sort", defaultValue = CriteriaConstants.DEFAULT_SORT_ATTRIBUTE, required = false) String sortBy,
             @RequestParam(value = "dir", defaultValue = CriteriaConstants.DEFAULT_SORT_ORDER, required = false) String sortOrder) {
         return ResponseEntity.ok(mythService.getAllMyths(
-                pageNumber, pageSize, sortBy, sortOrder));
+                nationalityName, characterName, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

@@ -4,23 +4,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.authorDtos.AuthorDto;
-import com.kaliv.myths.dto.authorDtos.AuthorResponseDto;
-import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
-import com.kaliv.myths.dto.authorDtos.UpdateAuthorDto;
+import com.kaliv.myths.dto.authorDtos.*;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
 import com.kaliv.myths.entity.artefacts.Author;
+import com.kaliv.myths.entity.artefacts.QAuthor;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.AuthorMapper;
 import com.kaliv.myths.persistence.AuthorRepository;
 import com.kaliv.myths.persistence.NationalityRepository;
 import com.kaliv.myths.persistence.TimePeriodRepository;
+import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -41,10 +44,42 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<AuthorResponseDto> getAllAuthors() {
-        return authorRepository.findAll()
-                .stream().map(mapper::authorToResponseDto)
+    public PaginatedAuthorResponseDto getAllAuthors(String timePeriodName,
+                                                    String nationalityName,
+                                                    int pageNumber,
+                                                    int pageSize,
+                                                    String sortBy,
+                                                    String sortOrder) {
+        QAuthor qAuthor = QAuthor.author;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (timePeriodName != null) {
+            booleanBuilder.and(qAuthor.timePeriod.name.equalsIgnoreCase(timePeriodName));
+        }
+        if (nationalityName != null) {
+            booleanBuilder.and(qAuthor.nationality.name.equalsIgnoreCase(nationalityName));
+        }
+
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
+        Page<Author> authors = authorRepository.findAll(booleanBuilder, pageable);
+
+        List<AuthorResponseDto> content = authors
+                .getContent() //TODO:check if redundant
+                .stream()
+                .map(mapper::authorToResponseDto)
                 .collect(Collectors.toList());
+
+        PaginatedAuthorResponseDto authorResponseDto = new PaginatedAuthorResponseDto();
+        authorResponseDto.setContent(content);
+        authorResponseDto.setPageNumber(authors.getNumber());
+        authorResponseDto.setPageSize(authors.getSize());
+        authorResponseDto.setTotalElements(authors.getTotalElements());
+        authorResponseDto.setTotalPages(authors.getTotalPages());
+        authorResponseDto.setLast(authors.isLast());
+
+        return authorResponseDto;
     }
 
     @Override

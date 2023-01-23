@@ -3,7 +3,9 @@ package com.kaliv.myths.service.myth;
 import com.kaliv.myths.dto.mythDtos.*;
 
 public interface MythService {
-    PaginatedMythResponseDto getAllMyths(int pageNumber,
+    PaginatedMythResponseDto getAllMyths(String nationalityName,
+                                         String characterName,
+                                         int pageNumber,
                                          int pageSize,
                                          String sortBy,
                                          String sortOrder

@@ -79,12 +79,9 @@ public class NationalityServiceImpl implements NationalityService {
         }
 
         Nationality nationality = mapper.dtoToNationality(dto);
+        nationality.setMyths(new HashSet<>(myths));
+        nationality.setAuthors(new HashSet<>(authors));
         Nationality savedNationality = nationalityRepository.save(nationality);
-
-        myths.forEach(m -> m.setNationality(savedNationality));
-        mythRepository.saveAll(myths);
-        authors.forEach(a -> a.setNationality(savedNationality));
-        authorRepository.saveAll(authors);
 
         return mapper.nationalityToDto(savedNationality);
     }

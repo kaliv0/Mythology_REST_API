@@ -18,7 +18,9 @@ import com.kaliv.myths.dto.poemDtos.*;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
 import com.kaliv.myths.entity.MythCharacter;
-import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.artefacts.Author;
+import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.QPoem;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -126,6 +128,7 @@ public class PoemServiceImpl implements PoemService {
         }
 
         Poem poem = mapper.dtoToPoem(dto);
+        poem.setMythCharacters(new HashSet<>(mythCharacters));
         Poem savedPoem = poemRepository.save(poem);
         return mapper.poemToDto(savedPoem);
     }

@@ -108,7 +108,8 @@ public class PaintingServiceImpl implements PaintingService {
 
     @Override
     public PaintingResponseDto getPaintingById(long id) {
-        Painting paintingInDb = paintingRepository.findById(id).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
+        Painting paintingInDb = paintingRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
         return mapper.paintingToResponseDto(paintingInDb);
     }
 
@@ -147,13 +148,9 @@ public class PaintingServiceImpl implements PaintingService {
         }
 
         Painting painting = mapper.dtoToPainting(dto);
+        painting.setMythCharacters(new HashSet<>(mythCharacters));
+        painting.setPaintingImages(new HashSet<>(paintingImages));
         Painting savedPainting = paintingRepository.save(painting);
-
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setPainting(savedPainting));
-//        mythCharacterRepository.saveAll(mythCharacters);
-        //add paintingImages.forEach(...)
 
         return mapper.paintingToDto(savedPainting);
     }

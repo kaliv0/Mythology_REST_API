@@ -148,13 +148,9 @@ public class StatueServiceImpl implements StatueService {
         }
 
         Statue statue = mapper.dtoToStatue(dto);
+        statue.setMythCharacters(new HashSet<>(mythCharacters));
+        statue.setStatueImages(new HashSet<>(statueImages));
         Statue savedStatue = statueRepository.save(statue);
-
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setStatue(savedStatue));
-//        mythCharacterRepository.saveAll(mythCharacters);
-        //add statueImages.forEach(...)
 
         return mapper.statueToDto(savedStatue);
     }

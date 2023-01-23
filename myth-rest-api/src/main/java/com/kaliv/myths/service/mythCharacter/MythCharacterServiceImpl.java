@@ -137,10 +137,9 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         MythCharacter mythCharacter = mapper.dtoToMythCharacter(dto);
         mythCharacter.setFather(father);
         mythCharacter.setMother(mother);
+        mythCharacter.setMyths(new HashSet<>(myths));
         MythCharacter savedMythCharacter = mythCharacterRepository.save(mythCharacter);
 
-        myths.forEach(m -> m.getMythCharacters().add(savedMythCharacter));
-        mythRepository.saveAll(myths);
         return mapper.mythCharacterToDto(savedMythCharacter);
     }
 

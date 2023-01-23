@@ -128,12 +128,9 @@ public class MusicServiceImpl implements MusicService {
         }
 
         Music music = mapper.dtoToMusic(dto);
+        music.setMythCharacters(new HashSet<>(mythCharacters));
         Music savedMusic = musicRepository.save(music);
 
-        /*TODO: check if works without inverse properties   */
-
-//        mythCharacters.forEach(a -> a.setMusic(savedMusic));
-//        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.musicToDto(savedMusic);
     }
 

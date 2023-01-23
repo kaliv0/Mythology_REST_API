@@ -68,10 +68,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         Category category = mapper.dtoToCategory(dto);
+        category.setMythCharacters(new HashSet<>(mythCharacters));
         Category savedCategory = categoryRepository.save(category);
 
-        mythCharacters.forEach(a -> a.setCategory(savedCategory));
-        mythCharacterRepository.saveAll(mythCharacters);
+//        mythCharacters.forEach(a -> a.setCategory(savedCategory));
+//        mythCharacterRepository.saveAll(mythCharacters);
         return mapper.categoryToDto(savedCategory);
     }
 

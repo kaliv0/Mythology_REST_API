@@ -68,10 +68,9 @@ public class TimePeriodServiceImpl implements TimePeriodService {
         }
 
         TimePeriod timePeriod = mapper.dtoToTimePeriod(dto);
+        timePeriod.setAuthors(new HashSet<>(authors));
         TimePeriod savedTimePeriod = timePeriodRepository.save(timePeriod);
 
-        authors.forEach(a -> a.setTimePeriod(savedTimePeriod));
-        authorRepository.saveAll(authors);
         return mapper.timePeriodToDto(savedTimePeriod);
     }
 

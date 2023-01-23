@@ -88,14 +88,12 @@ public class AuthorServiceImpl implements AuthorService {
             }
             authorInDb.setName(dto.getName());
         }
-
         if (Optional.ofNullable(dto.getTimePeriodId()).isPresent()) {
             long timePeriodId = dto.getTimePeriodId();
             TimePeriod timePeriodInDb = timePeriodRepository.findById(timePeriodId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.TIME_PERIOD, Fields.ID, timePeriodId));
             authorInDb.setTimePeriod(timePeriodInDb);
         }
-
         if (Optional.ofNullable(dto.getNationalityId()).isPresent()) {
             long nationalityId = dto.getNationalityId();
             Nationality nationalityInDb = nationalityRepository.findById(nationalityId)

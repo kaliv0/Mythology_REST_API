@@ -79,12 +79,9 @@ public class MuseumServiceImpl implements MuseumService {
         }
 
         Museum museum = mapper.dtoToMuseum(dto);
+        museum.setStatues(new HashSet<>(statues));
+        museum.setPaintings(new HashSet<>(paintings));
         Museum savedMuseum = museumRepository.save(museum);
-
-        statues.forEach(m -> m.setMuseum(savedMuseum));
-        statueRepository.saveAll(statues);
-        paintings.forEach(a -> a.setMuseum(savedMuseum));
-        paintingRepository.saveAll(paintings);
 
         return mapper.museumToDto(savedMuseum);
     }

@@ -10,11 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kaliv.myths.constant.ArtworkType;
 import com.kaliv.myths.constant.messages.ResponseMessages;
+import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
 import com.kaliv.myths.entity.artefacts.images.StatueImage;
+import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.InvalidArtworkTypeException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.mapper.ImageBuilder;
@@ -41,8 +43,14 @@ public class ImageServiceImpl implements ImageService {
             throws InvalidArtworkTypeException, IOException {
         PaintingImage savedImage = null;
         if (artworkType.equals(ArtworkType.STATUE)) {
+            if (statueImageRepository.existsByName(file.getOriginalFilename())) {
+                throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, file.getOriginalFilename());
+            }
             statueImageRepository.save(imageBuilder.getStatueImage(file));
         } else if (artworkType.equals(ArtworkType.PAINTING)) {
+            if (paintingImageRepository.existsByName(file.getOriginalFilename())) {
+                throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, file.getOriginalFilename());
+            }
             savedImage = paintingImageRepository.save(imageBuilder.getPaintingImage(file));
         } else {
             throw new InvalidArtworkTypeException();

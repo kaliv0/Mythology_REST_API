@@ -8,4 +8,6 @@ import com.kaliv.myths.entity.artefacts.images.PaintingImage;
 
 public interface PaintingImageRepository extends JpaRepository<PaintingImage, Long> {
     Optional<PaintingImage> findByName(String name);
+
+    boolean existsByName(String name);
 }

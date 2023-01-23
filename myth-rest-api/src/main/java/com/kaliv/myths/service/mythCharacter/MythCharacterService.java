@@ -1,7 +1,5 @@
 package com.kaliv.myths.service.mythCharacter;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.mythCharacterDtos.*;
 
 public interface MythCharacterService {
@@ -9,8 +7,10 @@ public interface MythCharacterService {
                                                            String motherName,
                                                            String categoryName,
                                                            String mythName,
-                                                           PaginationCriteria paginationCriteria,
-                                                           SortCriteria sortCriteria);
+                                                           int pageNumber,
+                                                           int pageSize,
+                                                           String sortBy,
+                                                           String sortOrder);
 
     MythCharacterResponseDto getMythCharacterById(long id);
 

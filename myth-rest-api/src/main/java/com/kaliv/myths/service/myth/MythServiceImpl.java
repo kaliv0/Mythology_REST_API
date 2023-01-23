@@ -9,9 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythDtos.*;
@@ -49,14 +47,16 @@ public class MythServiceImpl implements MythService {
     }
 
     @Override
-    public PaginatedMythResponseDto getAllMyths(PaginationCriteria paginationCriteria, SortCriteria sortCriteria) {
-        int page = paginationCriteria.getPage();
-        int size = paginationCriteria.getSize();
-        String sortDir = sortCriteria.getSortOrder();
-        String sortAttr = sortCriteria.getSortAttribute();
-
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortAttr);
+    public PaginatedMythResponseDto getAllMyths(int pageNumber,
+                                                int pageSize,
+                                                String sortBy,
+                                                String sortOrder) {
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
         Page<Myth> myths = mythRepository.findAll(pageable);
+
         List<Myth> listOfMyths = myths.getContent(); //TODO:check if redundant
 
         List<MythResponseDto> content = listOfMyths.stream()

@@ -1,7 +1,5 @@
 package com.kaliv.myths.service.statue;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.statueDtos.*;
 
 public interface StatueService {
@@ -9,8 +7,10 @@ public interface StatueService {
                                              String mythName,
                                              String museumName,
                                              String characterName,
-                                             PaginationCriteria paginationCriteria,
-                                             SortCriteria sortCriteria);
+                                             int pageNumber,
+                                             int pageSize,
+                                             String sortBy,
+                                             String sortOrder);
 
     StatueResponseDto getStatueById(long id);
 

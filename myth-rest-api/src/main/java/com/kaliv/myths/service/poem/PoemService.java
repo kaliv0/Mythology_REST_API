@@ -1,15 +1,15 @@
 package com.kaliv.myths.service.poem;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.poemDtos.*;
 
 public interface PoemService {
     PaginatedPoemResponseDto getAllPoems(String authorName,
                                          String mythName,
                                          String characterName,
-                                         PaginationCriteria paginationCriteria,
-                                         SortCriteria sortCriteria);
+                                         int pageNumber,
+                                         int pageSize,
+                                         String sortBy,
+                                         String sortOrder);
 
     PoemResponseDto getPoemById(long id);
 

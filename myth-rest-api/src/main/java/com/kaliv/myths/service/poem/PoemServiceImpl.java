@@ -9,9 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
-import com.kaliv.myths.common.utils.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.poemDtos.*;
@@ -59,8 +57,10 @@ public class PoemServiceImpl implements PoemService {
     public PaginatedPoemResponseDto getAllPoems(String authorName,
                                                 String mythName,
                                                 String characterName,
-                                                PaginationCriteria paginationCriteria,
-                                                SortCriteria sortCriteria) {
+                                                int pageNumber,
+                                                int pageSize,
+                                                String sortBy,
+                                                String sortOrder) {
         QPoem qMusic = QPoem.poem;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (authorName != null) {
@@ -73,11 +73,10 @@ public class PoemServiceImpl implements PoemService {
             booleanBuilder.and(qMusic.mythCharacters.any().name.equalsIgnoreCase(characterName));
         }
 
-        int page = paginationCriteria.getPage();
-        int size = paginationCriteria.getSize();
-        String sortDir = sortCriteria.getSortOrder();
-        String sortAttr = sortCriteria.getSortAttribute();
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(sortDir), sortAttr);
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
         Page<Poem> poem = poemRepository.findAll(booleanBuilder, pageable);
 
         List<PoemResponseDto> content = poem

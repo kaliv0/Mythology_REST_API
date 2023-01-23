@@ -1,7 +1,5 @@
 package com.kaliv.myths.service.painting;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
 import com.kaliv.myths.dto.paintingDtos.*;
 
 public interface PaintingService {
@@ -9,8 +7,10 @@ public interface PaintingService {
                                                  String mythName,
                                                  String museumName,
                                                  String characterName,
-                                                 PaginationCriteria paginationCriteria,
-                                                 SortCriteria sortCriteria);
+                                                 int pageNumber,
+                                                 int pageSize,
+                                                 String sortBy,
+                                                 String sortOrder);
 
     PaintingResponseDto getPaintingById(long id);
 

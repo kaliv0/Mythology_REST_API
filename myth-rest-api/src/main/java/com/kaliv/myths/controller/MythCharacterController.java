@@ -6,8 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.common.criteria.PaginationCriteria;
-import com.kaliv.myths.common.criteria.SortCriteria;
+import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.mythCharacterDtos.*;
 import com.kaliv.myths.service.mythCharacter.MythCharacterService;
@@ -28,10 +27,12 @@ public class MythCharacterController {
             @RequestParam(name = "mother", required = false) String motherName,
             @RequestParam(name = "category", required = false) String categoryName,
             @RequestParam(name = "myth", required = false) String mythName,
-            PaginationCriteria paginationCriteria,
-            SortCriteria sortCriteria) {
+            @RequestParam(value = "page", defaultValue = CriteriaConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+            @RequestParam(value = "size", defaultValue = CriteriaConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort", defaultValue = CriteriaConstants.DEFAULT_SORT_ATTRIBUTE, required = false) String sortBy,
+            @RequestParam(value = "dir", defaultValue = CriteriaConstants.DEFAULT_SORT_ORDER, required = false) String sortOrder) {
         return ResponseEntity.ok(mythCharacterService.getAllMythCharacters(
-                fatherName, motherName, categoryName, mythName, paginationCriteria, sortCriteria));
+                fatherName, motherName, categoryName, mythName, pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @GetMapping("/{id}")

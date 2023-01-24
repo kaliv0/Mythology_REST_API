@@ -24,6 +24,8 @@ import com.kaliv.myths.entity.artefacts.images.StatueImage;
 import com.kaliv.myths.exception.invalidInput.InvalidImageInputException;
 import com.kaliv.myths.exception.invalidInput.UnsupportedImageContentTypeException;
 
+import lombok.SneakyThrows;
+
 @Component
 public class ImageHandler {
     public StatueImage prepareStatueImage(MultipartFile file) throws IOException {
@@ -36,7 +38,7 @@ public class ImageHandler {
 
     public SmallStatueImage prepareSmallStatueImage(MultipartFile file) throws IOException {
         byte[] resizedFileByteArray = resizeImage(file);
-        String resizedFileName = renameFile(file);
+        String resizedFileName = prepareResizedFileName(file.getOriginalFilename());
         return SmallStatueImage.builder()
                 .name(resizedFileName)
                 .type(file.getContentType())
@@ -46,7 +48,7 @@ public class ImageHandler {
 
     public PaintingImage preparePaintingImage(MultipartFile file) throws IOException {
         byte[] resizedFileByteArray = resizeImage(file);
-        String resizedFileName = renameFile(file);
+        String resizedFileName = prepareResizedFileName(file.getOriginalFilename());
         return PaintingImage.builder()
                 .name(resizedFileName)
                 .type(file.getContentType())
@@ -54,8 +56,8 @@ public class ImageHandler {
                 .build();
     }
 
-    public StatueImageDetailsDto getStatueImageDetails(ArtImage statueImageInDb)
-            throws DataFormatException, IOException {
+    @SneakyThrows
+    public StatueImageDetailsDto getStatueImageDetails(ArtImage statueImageInDb) {
         return StatueImageDetailsDto.builder()
                 .id(statueImageInDb.getId())
                 .name(statueImageInDb.getName())
@@ -93,9 +95,8 @@ public class ImageHandler {
         return outputStream.toByteArray();
     }
 
-    private static String renameFile(MultipartFile file) {
+    public static String prepareResizedFileName(String fileName) {
         StringBuilder sb = new StringBuilder();
-        String fileName = file.getOriginalFilename();
         if (fileName == null || fileName.length() == 0) {
             throw new InvalidImageInputException();
         }

@@ -2,12 +2,12 @@ package com.kaliv.myths.common.image;
 
 import javax.imageio.ImageIO;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 
+import org.imgscalr.Scalr;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,10 +86,7 @@ public class ImageHandler {
 
     private static byte[] resizeImage(MultipartFile file) throws IOException {
         BufferedImage originalImage = ImageIO.read(file.getInputStream());
-        Image resultingImage = originalImage.getScaledInstance(Args.WIDTH, Args.HEIGHT, Image.SCALE_DEFAULT);
-        BufferedImage outputImage = new BufferedImage(Args.WIDTH, Args.HEIGHT, BufferedImage.TYPE_INT_RGB);
-        outputImage.getGraphics().drawImage(resultingImage, Args.X_AXIS, Args.Y_AXIS, null);
-
+        BufferedImage outputImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, Args.WIDTH);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         String type = mapMediaType(file);
         ImageIO.write(outputImage, type, outputStream);

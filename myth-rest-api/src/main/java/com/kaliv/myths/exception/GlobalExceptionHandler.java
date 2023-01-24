@@ -15,24 +15,36 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
+import com.kaliv.myths.exception.invalidInput.*;
+import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
+import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // handle specific exceptions
-    @ExceptionHandler(ResourceWithGivenValuesNotFoundException.class)
-    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(
-            ResourceWithGivenValuesNotFoundException exception, WebRequest webRequest) {
+    @ExceptionHandler({ResourceWithGivenValuesNotFoundException.class,
+            ResourceNotFoundException.class,
+            ResourceListNotFoundException.class})
+    public ResponseEntity<ErrorDetails> handleResourceNotFoundException(RuntimeException exception,
+                                                                        WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ResourceWithGivenValuesExistsException.class)
-    public ResponseEntity<ErrorDetails> handleResourceAlreadyExistsException(
-            ResourceWithGivenValuesExistsException exception, WebRequest webRequest) {
+    @ExceptionHandler({ResourceWithGivenValuesExistsException.class,
+            ResourceAlreadyExistsException.class,
+            DuplicateEntriesException.class,
+            InvalidArtworkTypeException.class,
+            InvalidImageInputException.class,
+            InvalidParentException.class,
+            UnsupportedImageContentTypeException.class})
+    public ResponseEntity<ErrorDetails> handleInvalidInputException(RuntimeException exception,
+                                                                    WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
@@ -40,8 +52,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // global exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleGlobalException(
-            Exception exception, WebRequest webRequest) {
+    public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
+                                                              WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.toString(),
                 webRequest.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -49,12 +61,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     @NonNull
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
-
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();

@@ -1,7 +1,6 @@
 package com.kaliv.myths.dto.imageDtos;
 
 import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
 
 import com.kaliv.myths.dto.BaseDto;
 
@@ -14,8 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
-@MappedSuperclass
-public abstract class ImageDetailsDto extends BaseDto {
+public class ImageDetailsDto extends BaseDto {
     private String type;
 
     @Lob

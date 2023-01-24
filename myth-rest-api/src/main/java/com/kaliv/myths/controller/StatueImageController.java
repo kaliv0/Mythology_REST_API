@@ -1,11 +1,18 @@
 package com.kaliv.myths.controller;
 
+import java.io.IOException;
+import java.util.zip.DataFormatException;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kaliv.myths.constant.CriteriaConstants;
+import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
+import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.service.statueImage.StatueImageService;
 
@@ -20,6 +27,16 @@ public class StatueImageController {
 
     public StatueImageController(StatueImageService imageService) {
         this.statueImageService = imageService;
+    }
+
+    @GetMapping
+    public ResponseEntity<PaginatedImageResponseDto> getAllStatueImages(
+            @RequestParam(value = "page", defaultValue = CriteriaConstants.DEFAULT_PAGE_NUMBER, required = false) int pageNumber,
+            @RequestParam(value = "size", defaultValue = CriteriaConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sort", defaultValue = CriteriaConstants.DEFAULT_SORT_ATTRIBUTE, required = false) String sortBy,
+            @RequestParam(value = "dir", defaultValue = CriteriaConstants.DEFAULT_SORT_ORDER, required = false) String sortOrder)
+            throws DataFormatException, IOException {
+        return ResponseEntity.ok(statueImageService.getAllStatueImages(pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -56,5 +73,11 @@ public class StatueImageController {
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(imageInDb.getType()))
                 .body(imageInDb.getImageData());
+    }
+
+    @DeleteMapping("/{name}")
+    public ResponseEntity<String> deleteStatueImage(@PathVariable(name = "name") String name) {
+        statueImageService.deleteStatueImage(name);
+        return new ResponseEntity<>(ResponseMessages.IMAGE_DELETED, HttpStatus.OK);
     }
 }

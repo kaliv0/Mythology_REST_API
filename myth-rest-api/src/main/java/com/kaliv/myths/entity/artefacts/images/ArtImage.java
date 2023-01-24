@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class Image extends BaseEntity {
+public abstract class ArtImage extends BaseEntity {
     private String type;
 
     @Lob

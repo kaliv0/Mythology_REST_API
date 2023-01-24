@@ -5,7 +5,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.Statue;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,9 +19,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "painting_images")
-public class PaintingImage extends ArtImage {
+@Table(name = "small_statue_images")
+public class SmallStatueImage extends ArtImage {
     @ManyToOne
-    @JoinColumn(name = "painting_id", referencedColumnName = "id")
-    private Painting painting;
+    @JoinColumn(name = "small_statue_id", referencedColumnName = "id")
+    private Statue statue;
 }

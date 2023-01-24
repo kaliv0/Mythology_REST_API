@@ -156,7 +156,8 @@ public class PaintingServiceImpl implements PaintingService {
 
     @Override
     public PaintingDto updatePainting(long id, UpdatePaintingDto dto) {
-        Painting paintingInDb = paintingRepository.findById(id).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
+        Painting paintingInDb = paintingRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
 
         if (Optional.ofNullable(dto.getName()).isPresent()) {
             String newName = dto.getName();
@@ -165,22 +166,22 @@ public class PaintingServiceImpl implements PaintingService {
             }
             paintingInDb.setName(dto.getName());
         }
-
         if (Optional.ofNullable(dto.getAuthorId()).isPresent()) {
             long authorId = dto.getAuthorId();
-            Author authorInDb = authorRepository.findById(authorId).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, authorId));
+            Author authorInDb = authorRepository.findById(authorId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, authorId));
             paintingInDb.setAuthor(authorInDb);
         }
-
         if (Optional.ofNullable(dto.getMythId()).isPresent()) {
             long mythId = dto.getMythId();
-            Myth mythInDb = mythRepository.findById(mythId).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, mythId));
+            Myth mythInDb = mythRepository.findById(mythId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, mythId));
             paintingInDb.setMyth(mythInDb);
         }
-
         if (Optional.ofNullable(dto.getMuseumId()).isPresent()) {
             long museumId = dto.getMuseumId();
-            Museum museumInDb = museumRepository.findById(museumId).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSEUM, Fields.ID, museumId));
+            Museum museumInDb = museumRepository.findById(museumId)
+                    .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSEUM, Fields.ID, museumId));
             paintingInDb.setMuseum(museumInDb);
         }
 

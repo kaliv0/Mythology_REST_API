@@ -167,21 +167,18 @@ public class StatueServiceImpl implements StatueService {
             }
             statueInDb.setName(dto.getName());
         }
-
         if (Optional.ofNullable(dto.getAuthorId()).isPresent()) {
             long authorId = dto.getAuthorId();
             Author authorInDb = authorRepository.findById(authorId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, authorId));
             statueInDb.setAuthor(authorInDb);
         }
-
         if (Optional.ofNullable(dto.getMythId()).isPresent()) {
             long mythId = dto.getMythId();
             Myth mythInDb = mythRepository.findById(mythId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MYTH, Fields.ID, mythId));
             statueInDb.setMyth(mythInDb);
         }
-
         if (Optional.ofNullable(dto.getMuseumId()).isPresent()) {
             long museumId = dto.getMuseumId();
             Museum museumInDb = museumRepository.findById(museumId)
@@ -209,7 +206,7 @@ public class StatueServiceImpl implements StatueService {
 //        mythCharacterRepository.saveAll(mythCharactersToAdd);
 //        mythCharactersToRemove.forEach(a -> a.setStatue(null));
 //        mythCharacterRepository.saveAll(mythCharactersToRemove);
-//        handle statueIamges.forEach(...)
+//        handle statueImages.forEach(...)
         return mapper.statueToDto(statueInDb);
     }
 

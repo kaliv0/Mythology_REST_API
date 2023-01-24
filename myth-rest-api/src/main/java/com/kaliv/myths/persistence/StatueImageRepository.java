@@ -8,4 +8,6 @@ import com.kaliv.myths.entity.artefacts.images.StatueImage;
 
 public interface StatueImageRepository extends JpaRepository<StatueImage, Long> {
     Optional<StatueImage> findByName(String name);
+
+    boolean existsByName(String name);
 }

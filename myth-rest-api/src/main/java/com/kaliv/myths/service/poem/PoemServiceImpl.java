@@ -144,14 +144,12 @@ public class PoemServiceImpl implements PoemService {
             }
             poemInDb.setName(dto.getName());
         }
-
         if (Optional.ofNullable(dto.getAuthorId()).isPresent()) {
             long authorId = dto.getAuthorId();
             Author authorInDb = authorRepository.findById(authorId)
                     .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, authorId));
             poemInDb.setAuthor(authorInDb);
         }
-
         if (Optional.ofNullable(dto.getMythId()).isPresent()) {
             long mythId = dto.getMythId();
             Myth mythInDb = mythRepository.findById(mythId)

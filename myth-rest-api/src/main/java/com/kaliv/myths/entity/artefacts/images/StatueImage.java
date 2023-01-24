@@ -20,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Entity
 @Table(name = "statue_images")
-public class StatueImage extends Image {
+public class StatueImage extends ArtImage {
     @ManyToOne
     @JoinColumn(name = "statue_id", referencedColumnName = "id")
     private Statue statue;

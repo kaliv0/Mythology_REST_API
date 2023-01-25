@@ -66,8 +66,7 @@ public class AuthorServiceImpl implements AuthorService {
         Page<Author> authors = authorRepository.findAll(booleanBuilder, pageable);
 
         List<AuthorResponseDto> content = authors
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::authorToResponseDto)
                 .collect(Collectors.toList());
 

@@ -68,8 +68,7 @@ public class MythServiceImpl implements MythService {
         Page<Myth> myths = mythRepository.findAll(booleanBuilder, pageable);
 
         List<MythResponseDto> content = myths
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::mythToResponseDto)
                 .collect(Collectors.toList());
 

@@ -19,7 +19,7 @@ import lombok.Setter;
 @MappedSuperclass
 @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
 public abstract class Artwork extends BaseEntity {
-    @ManyToOne(cascade = CascadeType.ALL) //TODO: check cascade type
+    @ManyToOne(cascade = CascadeType.ALL)
     private Author author;
 
     /*

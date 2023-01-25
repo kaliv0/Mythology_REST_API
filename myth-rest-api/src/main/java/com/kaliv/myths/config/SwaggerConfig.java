@@ -9,9 +9,6 @@ import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 public class SwaggerConfig {
-
-//    @Operation(security = { @SecurityRequirement(name = "Authorization") })
-
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()

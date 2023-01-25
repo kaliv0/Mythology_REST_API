@@ -89,8 +89,7 @@ public class PaintingServiceImpl implements PaintingService {
         Page<Painting> paintings = paintingRepository.findAll(booleanBuilder, pageable);
 
         List<PaintingResponseDto> content = paintings
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::paintingToResponseDto)
                 .collect(Collectors.toList());
 
@@ -198,8 +197,6 @@ public class PaintingServiceImpl implements PaintingService {
         paintingInDb.getPaintingImages().removeAll(new HashSet<>(paintingImagesToRemove));
 
         paintingRepository.save(paintingInDb);
-
-        /*TODO: check if works without inverse properties   */
 
 //        mythCharactersToAdd.forEach(a -> a.setPainting(paintingInDb));
 //        mythCharacterRepository.saveAll(mythCharactersToAdd);

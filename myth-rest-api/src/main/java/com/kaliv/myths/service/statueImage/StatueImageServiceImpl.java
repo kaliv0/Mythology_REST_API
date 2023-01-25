@@ -59,8 +59,7 @@ public class StatueImageServiceImpl implements ImageService {
         Page<SmallStatueImage> smallStatueImages = smallStatueImageRepository.findAll(pageable);
 
         List<ImageDetailsDto> content = smallStatueImages
-                .getContent()//TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(imageBuilder::getStatueImageDetails)
                 .collect(Collectors.toList());
 

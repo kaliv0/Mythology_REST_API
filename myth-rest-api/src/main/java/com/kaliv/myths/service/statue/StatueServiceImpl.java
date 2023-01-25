@@ -90,8 +90,7 @@ public class StatueServiceImpl implements StatueService {
         Page<Statue> statues = statueRepository.findAll(booleanBuilder, pageable);
 
         List<StatueResponseDto> content = statues
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::statueToResponseDto)
                 .collect(Collectors.toList());
 
@@ -199,8 +198,6 @@ public class StatueServiceImpl implements StatueService {
         statueInDb.getStatueImages().removeAll(new HashSet<>(statueImagesToRemove));
 
         statueRepository.save(statueInDb);
-
-        /*TODO: check if works without inverse properties   */
 
 //        mythCharactersToAdd.forEach(a -> a.setStatue(statueInDb));
 //        mythCharacterRepository.saveAll(mythCharactersToAdd);

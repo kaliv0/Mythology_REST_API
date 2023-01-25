@@ -80,8 +80,7 @@ public class MusicServiceImpl implements MusicService {
         Page<Music> music = musicRepository.findAll(booleanBuilder, pageable);
 
         List<MusicResponseDto> content = music
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::musicToResponseDto)
                 .collect(Collectors.toList());
 
@@ -168,8 +167,6 @@ public class MusicServiceImpl implements MusicService {
         musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
         musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
         musicRepository.save(musicInDb);
-
-        /*TODO: check if works without inverse properties   */
 
 //        mythCharactersToAdd.forEach(a -> a.setMusic(musicInDb));
 //        mythCharacterRepository.saveAll(mythCharactersToAdd);

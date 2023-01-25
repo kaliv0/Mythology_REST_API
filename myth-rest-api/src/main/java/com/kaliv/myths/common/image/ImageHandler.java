@@ -5,7 +5,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.DataFormatException;
 
 import org.imgscalr.Scalr;
 import org.springframework.http.MediaType;
@@ -17,10 +16,7 @@ import com.kaliv.myths.constant.params.Args;
 import com.kaliv.myths.dto.imageDtos.PaintingImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.StatueImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
-import com.kaliv.myths.entity.artefacts.images.ArtImage;
-import com.kaliv.myths.entity.artefacts.images.PaintingImage;
-import com.kaliv.myths.entity.artefacts.images.SmallStatueImage;
-import com.kaliv.myths.entity.artefacts.images.StatueImage;
+import com.kaliv.myths.entity.artefacts.images.*;
 import com.kaliv.myths.exception.invalidInput.InvalidImageInputException;
 import com.kaliv.myths.exception.invalidInput.UnsupportedImageContentTypeException;
 
@@ -47,9 +43,17 @@ public class ImageHandler {
     }
 
     public PaintingImage preparePaintingImage(MultipartFile file) throws IOException {
+        return PaintingImage.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .imageData(ImageCompressor.compressImage(file.getBytes()))
+                .build();
+    }
+
+    public SmallPaintingImage prepareSmallPaintingImage(MultipartFile file) throws IOException {
         byte[] resizedFileByteArray = resizeImage(file);
         String resizedFileName = prepareResizedFileName(file.getOriginalFilename());
-        return PaintingImage.builder()
+        return SmallPaintingImage.builder()
                 .name(resizedFileName)
                 .type(file.getContentType())
                 .imageData(ImageCompressor.compressImage(resizedFileByteArray))
@@ -67,8 +71,8 @@ public class ImageHandler {
                 .build();
     }
 
-    public PaintingImageDetailsDto getPaintingImageDetails(ArtImage paintingImageInDb)
-            throws DataFormatException, IOException {
+    @SneakyThrows
+    public PaintingImageDetailsDto getPaintingImageDetails(ArtImage paintingImageInDb) {
         return PaintingImageDetailsDto.builder()
                 .id(paintingImageInDb.getId())
                 .name(paintingImageInDb.getName())

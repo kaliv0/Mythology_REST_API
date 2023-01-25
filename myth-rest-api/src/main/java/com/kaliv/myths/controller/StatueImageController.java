@@ -15,7 +15,7 @@ import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
-import com.kaliv.myths.service.ImageService;
+import com.kaliv.myths.service.image.ImageService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 

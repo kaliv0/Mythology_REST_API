@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.statueImage;
+package com.kaliv.myths.service.image;
 
 import javax.transaction.Transactional;
 
@@ -28,7 +28,6 @@ import com.kaliv.myths.exception.invalidInput.InvalidArtworkTypeException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.persistence.SmallStatueImageRepository;
 import com.kaliv.myths.persistence.StatueImageRepository;
-import com.kaliv.myths.service.ImageService;
 
 @Service
 @Qualifier("statueImageServiceImpl")
@@ -39,29 +38,19 @@ public class StatueImageServiceImpl implements ImageService {
     private final ImageHandler imageBuilder;
 
 
-    public StatueImageServiceImpl(StatueImageRepository statueImageRepository,
-                                  SmallStatueImageRepository smallStatueImageRepository,
-                                  ImageHandler imageBuilder) {
+    public StatueImageServiceImpl(StatueImageRepository statueImageRepository, SmallStatueImageRepository smallStatueImageRepository, ImageHandler imageBuilder) {
         this.statueImageRepository = statueImageRepository;
         this.smallStatueImageRepository = smallStatueImageRepository;
         this.imageBuilder = imageBuilder;
     }
 
     @Override
-    public PaginatedImageResponseDto getAllImages(int pageNumber,
-                                                  int pageSize,
-                                                  String sortBy,
-                                                  String sortOrder) {
-        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
-                ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
+    public PaginatedImageResponseDto getAllImages(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
         Page<SmallStatueImage> smallStatueImages = smallStatueImageRepository.findAll(pageable);
 
-        List<ImageDetailsDto> content = smallStatueImages
-                .getContent().stream()
-                .map(imageBuilder::getStatueImageDetails)
-                .collect(Collectors.toList());
+        List<ImageDetailsDto> content = smallStatueImages.getContent().stream().map(imageBuilder::getStatueImageDetails).collect(Collectors.toList());
 
         PaginatedImageResponseDto statueImageResponseDto = new PaginatedImageResponseDto();
         statueImageResponseDto.setContent(content);
@@ -74,8 +63,7 @@ public class StatueImageServiceImpl implements ImageService {
         return statueImageResponseDto;
     }
 
-    public UploadImageResponseDto uploadImage(MultipartFile file)
-            throws InvalidArtworkTypeException, IOException {
+    public UploadImageResponseDto uploadImage(MultipartFile file) throws InvalidArtworkTypeException, IOException {
         String originalFilename = file.getOriginalFilename();
         if (statueImageRepository.existsByName(originalFilename)) {
             throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, originalFilename);
@@ -86,30 +74,24 @@ public class StatueImageServiceImpl implements ImageService {
     }
 
     @Transactional
-    public ImageDetailsDto getImageDetails(String name)
-            throws InvalidArtworkTypeException {
-        StatueImage statueImageInDb = statueImageRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
+    public ImageDetailsDto getImageDetails(String name) throws InvalidArtworkTypeException {
+        StatueImage statueImageInDb = statueImageRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
         return imageBuilder.getStatueImageDetails(statueImageInDb);
     }
 
     @Transactional
-    public ImageDetailsDto getSmallImageDetails(String name)
-            throws InvalidArtworkTypeException {
-        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
+    public ImageDetailsDto getSmallImageDetails(String name) throws InvalidArtworkTypeException {
+        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
         return imageBuilder.getStatueImageDetails(smallStatueImageInDb);
     }
 
     @Override
     public void deleteImage(String name) {
-        StatueImage statueImageInDb = statueImageRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
+        StatueImage statueImageInDb = statueImageRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
         statueImageRepository.delete(statueImageInDb);
 
         String resizedFileName = ImageHandler.prepareResizedFileName(name);
-        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(resizedFileName)
-                .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
+        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(resizedFileName).orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
         smallStatueImageRepository.delete(smallStatueImageInDb);
     }
 }

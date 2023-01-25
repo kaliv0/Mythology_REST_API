@@ -1,4 +1,4 @@
-package com.kaliv.myths.service;
+package com.kaliv.myths.service.image;
 
 import java.io.IOException;
 import java.util.zip.DataFormatException;

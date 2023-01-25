@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.paintingImage;
+package com.kaliv.myths.service.image;
 
 import javax.transaction.Transactional;
 
@@ -28,7 +28,6 @@ import com.kaliv.myths.exception.invalidInput.InvalidArtworkTypeException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.persistence.PaintingImageRepository;
 import com.kaliv.myths.persistence.SmallPaintingImageRepository;
-import com.kaliv.myths.service.ImageService;
 
 @Service
 @Qualifier("paintingImageService")

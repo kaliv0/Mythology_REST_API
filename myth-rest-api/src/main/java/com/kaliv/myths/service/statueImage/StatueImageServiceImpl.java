@@ -80,6 +80,7 @@ public class StatueImageServiceImpl implements ImageService {
         if (statueImageRepository.existsByName(originalFilename)) {
             throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, originalFilename);
         }
+        //TODO: add check for existing small image in db
         smallStatueImageRepository.save(imageBuilder.prepareSmallStatueImage(file));
         StatueImage savedImage = statueImageRepository.save(imageBuilder.prepareStatueImage(file));
         return imageBuilder.getUploadImageResponseDto(savedImage.getId(), ResponseMessages.IMAGE_UPLOADED, savedImage.getName());

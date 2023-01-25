@@ -45,7 +45,10 @@ public class StatueImageServiceImpl implements StatueImageService {
     }
 
     @Override
-    public PaginatedImageResponseDto getAllStatueImages(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+    public PaginatedImageResponseDto getAllStatueImages(int pageNumber,
+                                                        int pageSize,
+                                                        String sortBy,
+                                                        String sortOrder) {
         Sort sortCriteria = sortOrder.equalsIgnoreCase(Sort.Direction.ASC.name())
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
@@ -69,7 +72,8 @@ public class StatueImageServiceImpl implements StatueImageService {
         return statueImageResponseDto;
     }
 
-    public UploadImageResponseDto uploadImage(MultipartFile file) throws InvalidArtworkTypeException, IOException {
+    public UploadImageResponseDto uploadImage(MultipartFile file)
+            throws InvalidArtworkTypeException, IOException {
         String originalFilename = file.getOriginalFilename();
         if (statueImageRepository.existsByName(originalFilename)) {
             throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, originalFilename);

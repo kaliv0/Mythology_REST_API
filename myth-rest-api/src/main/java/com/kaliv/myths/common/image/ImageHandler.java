@@ -116,6 +116,7 @@ public class ImageHandler {
     }
 
     private static String mapMediaType(MultipartFile file) {
+        //TODO: refactor after adding mediaType validator
         if (file.getContentType() == null) {
             throw new InvalidImageInputException();
         }

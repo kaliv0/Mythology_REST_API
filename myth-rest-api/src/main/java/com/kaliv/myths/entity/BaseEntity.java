@@ -17,6 +17,7 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    //TODO: decide for length
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 }

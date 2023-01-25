@@ -3,6 +3,7 @@ package com.kaliv.myths.service.image;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
+import java.rmi.MarshalException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,6 +75,9 @@ public class PaintingImageServiceImpl implements ImageService {
 
     public UploadImageResponseDto uploadImage(MultipartFile file)
             throws InvalidArtworkTypeException, IOException {
+
+        //TODO: add checks for empty or invalid contentType (not equal to MediaType.JPEG,PNG,GIF)
+
         String originalFilename = file.getOriginalFilename();
         if (paintingImageRepository.existsByName(originalFilename)) {
             throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, originalFilename);

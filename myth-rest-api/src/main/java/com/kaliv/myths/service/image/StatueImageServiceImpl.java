@@ -38,7 +38,9 @@ public class StatueImageServiceImpl implements ImageService {
     private final ImageHandler imageBuilder;
 
 
-    public StatueImageServiceImpl(StatueImageRepository statueImageRepository, SmallStatueImageRepository smallStatueImageRepository, ImageHandler imageBuilder) {
+    public StatueImageServiceImpl(StatueImageRepository statueImageRepository,
+                                  SmallStatueImageRepository smallStatueImageRepository,
+                                  ImageHandler imageBuilder) {
         this.statueImageRepository = statueImageRepository;
         this.smallStatueImageRepository = smallStatueImageRepository;
         this.imageBuilder = imageBuilder;

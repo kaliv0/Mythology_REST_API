@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.statueImage;
+package com.kaliv.myths.service.paintingImage;
 
 import javax.transaction.Transactional;
 
@@ -21,29 +21,29 @@ import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
-import com.kaliv.myths.entity.artefacts.images.SmallStatueImage;
-import com.kaliv.myths.entity.artefacts.images.StatueImage;
+import com.kaliv.myths.entity.artefacts.images.PaintingImage;
+import com.kaliv.myths.entity.artefacts.images.SmallPaintingImage;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.InvalidArtworkTypeException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
-import com.kaliv.myths.persistence.SmallStatueImageRepository;
-import com.kaliv.myths.persistence.StatueImageRepository;
+import com.kaliv.myths.persistence.PaintingImageRepository;
+import com.kaliv.myths.persistence.SmallPaintingImageRepository;
 import com.kaliv.myths.service.ImageService;
 
 @Service
-@Qualifier("statueImageServiceImpl")
-public class StatueImageServiceImpl implements ImageService {
+@Qualifier("paintingImageService")
+public class PaintingImageServiceImpl implements ImageService {
 
-    private final StatueImageRepository statueImageRepository;
-    private final SmallStatueImageRepository smallStatueImageRepository;
+    private final PaintingImageRepository paintingImageRepository;
+    private final SmallPaintingImageRepository smallPaintingImageRepository;
     private final ImageHandler imageBuilder;
 
 
-    public StatueImageServiceImpl(StatueImageRepository statueImageRepository,
-                                  SmallStatueImageRepository smallStatueImageRepository,
-                                  ImageHandler imageBuilder) {
-        this.statueImageRepository = statueImageRepository;
-        this.smallStatueImageRepository = smallStatueImageRepository;
+    public PaintingImageServiceImpl(PaintingImageRepository paintingImageRepository,
+                                    SmallPaintingImageRepository smallPaintingImageRepository,
+                                    ImageHandler imageBuilder) {
+        this.paintingImageRepository = paintingImageRepository;
+        this.smallPaintingImageRepository = smallPaintingImageRepository;
         this.imageBuilder = imageBuilder;
     }
 
@@ -56,61 +56,61 @@ public class StatueImageServiceImpl implements ImageService {
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(pageNumber, pageSize, sortCriteria);
-        Page<SmallStatueImage> smallStatueImages = smallStatueImageRepository.findAll(pageable);
+        Page<SmallPaintingImage> smallPaintingImages = smallPaintingImageRepository.findAll(pageable);
 
-        List<ImageDetailsDto> content = smallStatueImages
+        List<ImageDetailsDto> content = smallPaintingImages
                 .getContent().stream()
-                .map(imageBuilder::getStatueImageDetails)
+                .map(imageBuilder::getPaintingImageDetails)
                 .collect(Collectors.toList());
 
-        PaginatedImageResponseDto statueImageResponseDto = new PaginatedImageResponseDto();
-        statueImageResponseDto.setContent(content);
-        statueImageResponseDto.setPageNumber(smallStatueImages.getNumber());
-        statueImageResponseDto.setPageSize(smallStatueImages.getSize());
-        statueImageResponseDto.setTotalElements(smallStatueImages.getTotalElements());
-        statueImageResponseDto.setTotalPages(smallStatueImages.getTotalPages());
-        statueImageResponseDto.setLast(smallStatueImages.isLast());
+        PaginatedImageResponseDto paintingImageResponseDto = new PaginatedImageResponseDto();
+        paintingImageResponseDto.setContent(content);
+        paintingImageResponseDto.setPageNumber(smallPaintingImages.getNumber());
+        paintingImageResponseDto.setPageSize(smallPaintingImages.getSize());
+        paintingImageResponseDto.setTotalElements(smallPaintingImages.getTotalElements());
+        paintingImageResponseDto.setTotalPages(smallPaintingImages.getTotalPages());
+        paintingImageResponseDto.setLast(smallPaintingImages.isLast());
 
-        return statueImageResponseDto;
+        return paintingImageResponseDto;
     }
 
     public UploadImageResponseDto uploadImage(MultipartFile file)
             throws InvalidArtworkTypeException, IOException {
         String originalFilename = file.getOriginalFilename();
-        if (statueImageRepository.existsByName(originalFilename)) {
+        if (paintingImageRepository.existsByName(originalFilename)) {
             throw new ResourceWithGivenValuesExistsException(Sources.IMAGE, Fields.NAME, originalFilename);
         }
-        smallStatueImageRepository.save(imageBuilder.prepareSmallStatueImage(file));
-        StatueImage savedImage = statueImageRepository.save(imageBuilder.prepareStatueImage(file));
+        smallPaintingImageRepository.save(imageBuilder.prepareSmallPaintingImage(file));
+        PaintingImage savedImage = paintingImageRepository.save(imageBuilder.preparePaintingImage(file));
         return imageBuilder.getUploadImageResponseDto(savedImage.getId(), ResponseMessages.IMAGE_UPLOADED, savedImage.getName());
     }
 
     @Transactional
     public ImageDetailsDto getImageDetails(String name)
             throws InvalidArtworkTypeException {
-        StatueImage statueImageInDb = statueImageRepository.findByName(name)
+        PaintingImage paintingImageInDb = paintingImageRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
-        return imageBuilder.getStatueImageDetails(statueImageInDb);
+        return imageBuilder.getPaintingImageDetails(paintingImageInDb);
     }
 
     @Transactional
     public ImageDetailsDto getSmallImageDetails(String name)
             throws InvalidArtworkTypeException {
-        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(name)
+        SmallPaintingImage smallPaintingImageInDb = smallPaintingImageRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
-        return imageBuilder.getStatueImageDetails(smallStatueImageInDb);
+        return imageBuilder.getPaintingImageDetails(smallPaintingImageInDb);
     }
 
     @Override
     public void deleteImage(String name) {
-        StatueImage statueImageInDb = statueImageRepository.findByName(name)
+        PaintingImage paintingImageInDb = paintingImageRepository.findByName(name)
                 .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
-        statueImageRepository.delete(statueImageInDb);
+        paintingImageRepository.delete(paintingImageInDb);
 
         String resizedFileName = ImageHandler.prepareResizedFileName(name);
-        SmallStatueImage smallStatueImageInDb = smallStatueImageRepository.findByName(resizedFileName)
+        SmallPaintingImage smallPaintingImageInDb = smallPaintingImageRepository.findByName(resizedFileName)
                 .orElseThrow(() -> new ResourceNotFoundException(Sources.IMAGE));
-        smallStatueImageRepository.delete(smallStatueImageInDb);
+        smallPaintingImageRepository.delete(smallPaintingImageInDb);
     }
 }
 

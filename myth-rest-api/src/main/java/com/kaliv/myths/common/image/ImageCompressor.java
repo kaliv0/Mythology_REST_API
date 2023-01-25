@@ -33,7 +33,7 @@ public class ImageCompressor {
         Inflater inflater = new Inflater();
         inflater.setInput(data);
 
-        byte[] tempByteArray = new byte[4 * 1024]; //TODO: extract in constant
+        byte[] tempByteArray = new byte[4 * 1024];
         byte[] result;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length)) {
             while (!inflater.finished()) {

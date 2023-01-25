@@ -80,8 +80,7 @@ public class PoemServiceImpl implements PoemService {
         Page<Poem> poems = poemRepository.findAll(booleanBuilder, pageable);
 
         List<PoemResponseDto> content = poems
-                .getContent() //TODO:check if redundant
-                .stream()
+                .getContent().stream()
                 .map(mapper::poemToResponseDto)
                 .collect(Collectors.toList());
 

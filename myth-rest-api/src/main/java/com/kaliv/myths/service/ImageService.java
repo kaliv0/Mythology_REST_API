@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.statueImage;
+package com.kaliv.myths.service;
 
 import java.io.IOException;
 import java.util.zip.DataFormatException;
@@ -9,8 +9,9 @@ import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 
-public interface StatueImageService {
-    PaginatedImageResponseDto getAllStatueImages(int pageNumber, int pageSize, String sortBy, String sortOrder) throws DataFormatException, IOException;
+public interface ImageService {
+    PaginatedImageResponseDto getAllImages(int pageNumber, int pageSize, String sortBy, String sortOrder)
+            throws DataFormatException, IOException;
 
     UploadImageResponseDto uploadImage(MultipartFile file) throws Exception;
 
@@ -18,5 +19,6 @@ public interface StatueImageService {
 
     ImageDetailsDto getSmallImageDetails(String name) throws Exception;
 
-    void deleteStatueImage(String name);
+    void deleteImage(String name);
 }
+

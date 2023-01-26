@@ -22,7 +22,7 @@ public class Myth extends BaseEntity {
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")
     private Nationality nationality;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "myths_characters",
             joinColumns = @JoinColumn(

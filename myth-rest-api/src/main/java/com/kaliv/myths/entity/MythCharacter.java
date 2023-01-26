@@ -19,14 +19,14 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "father_id", referencedColumnName = "id")
     private MythCharacter father;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "mythCharacters")
+    @ManyToMany(mappedBy = "mythCharacters")
     private Set<Myth> myths = new HashSet<>();
 }

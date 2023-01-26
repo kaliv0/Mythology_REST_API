@@ -1,6 +1,5 @@
 package com.kaliv.myths.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,6 +17,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "character_categories")
 public class Category extends BaseEntity {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    @OneToMany(mappedBy = "category")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

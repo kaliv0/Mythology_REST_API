@@ -1,6 +1,8 @@
 package com.kaliv.myths.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,6 @@ import lombok.Setter;
 public class TimePeriod extends BaseEntity {
     private String years;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "timePeriod")
+    @OneToMany(mappedBy = "timePeriod")
     private Set<Author> authors = new HashSet<>();
 }

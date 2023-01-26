@@ -14,7 +14,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "music")
 public class Music extends Artwork {
-    //TODO: how long should the url be??
     @Column(name = "recording_url", nullable = false)
     private String recordingUrl;
 }

@@ -19,17 +19,17 @@ import lombok.Setter;
 @MappedSuperclass
 @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
 public abstract class Artwork extends BaseEntity {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Author author;
 
     /*
        One could assign a statue to a certain god or hero without specifying a myth.
        On the other hand a statue of two or more characters most probably represents a particular myth.
     */
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "myth_id", referencedColumnName = "id")
     private Myth myth;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

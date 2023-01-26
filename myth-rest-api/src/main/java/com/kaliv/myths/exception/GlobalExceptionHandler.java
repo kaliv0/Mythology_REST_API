@@ -17,7 +17,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
-import com.kaliv.myths.exception.invalidInput.*;
+import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
+import com.kaliv.myths.exception.invalidInput.InvalidImageInputException;
+import com.kaliv.myths.exception.invalidInput.InvalidParentException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
@@ -39,10 +41,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ResourceWithGivenValuesExistsException.class,
             ResourceAlreadyExistsException.class,
             DuplicateEntriesException.class,
-            InvalidArtworkTypeException.class,
             InvalidImageInputException.class,
-            InvalidParentException.class,
-            UnsupportedImageContentTypeException.class})
+            InvalidParentException.class})
     public ResponseEntity<ErrorDetails> handleInvalidInputException(RuntimeException exception,
                                                                     WebRequest webRequest) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), exception.getMessage(),

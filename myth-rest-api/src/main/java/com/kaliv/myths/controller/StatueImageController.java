@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kaliv.myths.common.validator.ValidFile;
 import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
@@ -20,6 +22,7 @@ import com.kaliv.myths.service.image.ImageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Statue images")
+@Validated
 @RestController
 @RequestMapping("/api/v1/images/statues")
 public class StatueImageController {
@@ -41,8 +44,8 @@ public class StatueImageController {
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UploadImageResponseDto> uploadStatueImage(@RequestParam("image") MultipartFile file)
-            throws Exception {
+    public ResponseEntity<UploadImageResponseDto> uploadStatueImage(
+            @ValidFile @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(statueImageService.uploadImage(file));
     }
 

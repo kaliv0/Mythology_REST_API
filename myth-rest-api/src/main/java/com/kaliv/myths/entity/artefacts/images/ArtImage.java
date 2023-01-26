@@ -16,7 +16,6 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @MappedSuperclass
 public abstract class ArtImage extends BaseEntity {
-    //TODO: could be JPEG, PNG, GIF
     private String type;
 
     @Lob

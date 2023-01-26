@@ -15,7 +15,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "myths")
 public class Myth extends BaseEntity {
-    //TODO: decide for length
     @Column(name = "plot", nullable = false)
     private String plot;
 

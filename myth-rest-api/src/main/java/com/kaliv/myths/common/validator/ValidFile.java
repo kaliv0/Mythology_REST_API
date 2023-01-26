@@ -5,7 +5,7 @@ import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
-import static com.kaliv.myths.constant.messages.ValidationMessages.INVALID_FILE_TYPE;
+import static com.kaliv.myths.constant.messages.ExceptionMessages.INVALID_FILE_TYPE;
 
 @Documented
 @Target(ElementType.PARAMETER)

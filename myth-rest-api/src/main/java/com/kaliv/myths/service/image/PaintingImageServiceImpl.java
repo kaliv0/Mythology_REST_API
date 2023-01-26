@@ -70,7 +70,7 @@ public class PaintingImageServiceImpl implements ImageService {
 
         return paintingImageResponseDto;
     }
-
+    
     public UploadImageResponseDto uploadImage(MultipartFile file) throws IOException {
         String originalFilename = file.getOriginalFilename();
         String resizedFileName = ImageResizeHandler.prepareResizedFileName(file.getOriginalFilename());

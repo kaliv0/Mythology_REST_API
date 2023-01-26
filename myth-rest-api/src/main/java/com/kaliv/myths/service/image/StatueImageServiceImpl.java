@@ -37,7 +37,6 @@ public class StatueImageServiceImpl implements ImageService {
     private final SmallStatueImageRepository smallStatueImageRepository;
     private final ImageBuilder imageBuilder;
 
-
     public StatueImageServiceImpl(StatueImageRepository statueImageRepository,
                                   SmallStatueImageRepository smallStatueImageRepository,
                                   ImageBuilder imageBuilder) {

@@ -1,6 +1,7 @@
 package com.kaliv.myths.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -19,9 +20,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "nationalities")
 public class Nationality extends BaseEntity {
-    @OneToMany(mappedBy = "nationality")
+    @OneToMany(mappedBy = "nationality", fetch = FetchType.LAZY)
     private Set<Myth> myths = new HashSet<>();
 
-    @OneToMany(mappedBy = "nationality")
+    @OneToMany(mappedBy = "nationality", fetch = FetchType.LAZY)
     private Set<Author> authors = new HashSet<>();
 }

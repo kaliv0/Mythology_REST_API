@@ -27,6 +27,6 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
-    @ManyToMany(mappedBy = "mythCharacters")
+    @ManyToMany(mappedBy = "mythCharacters", fetch = FetchType.LAZY)
     private Set<Myth> myths = new HashSet<>();
 }

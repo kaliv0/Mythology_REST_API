@@ -22,7 +22,7 @@ public class Myth extends BaseEntity {
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")
     private Nationality nationality;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "myths_characters",
             joinColumns = @JoinColumn(

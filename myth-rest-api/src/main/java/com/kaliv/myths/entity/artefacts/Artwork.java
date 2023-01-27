@@ -30,6 +30,6 @@ public abstract class Artwork extends BaseEntity {
     @JoinColumn(name = "myth_id", referencedColumnName = "id")
     private Myth myth;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

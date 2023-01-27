@@ -1,6 +1,7 @@
 package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -19,6 +20,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "statues")
 public class Statue extends VisualArtwork {
-    @OneToMany(mappedBy = "statue")
+    @OneToMany(mappedBy = "statue", fetch = FetchType.LAZY)
     private Set<StatueImage> statueImages = new HashSet<>();
 }

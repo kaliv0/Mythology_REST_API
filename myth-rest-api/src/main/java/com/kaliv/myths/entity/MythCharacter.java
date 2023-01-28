@@ -5,6 +5,9 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +30,7 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
-    @ManyToMany(mappedBy = "mythCharacters", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "mythCharacters")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Set<Myth> myths = new HashSet<>();
 }

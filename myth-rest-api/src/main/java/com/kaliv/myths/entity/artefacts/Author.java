@@ -2,6 +2,9 @@ package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
@@ -23,4 +26,7 @@ public class Author extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")
     private Nationality nationality;
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Set<Statue> statues = new HashSet<>();
 }

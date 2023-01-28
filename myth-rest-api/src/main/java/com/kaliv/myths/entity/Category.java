@@ -15,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "categories")
 public class Category extends BaseEntity {
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 
     @PrePersist

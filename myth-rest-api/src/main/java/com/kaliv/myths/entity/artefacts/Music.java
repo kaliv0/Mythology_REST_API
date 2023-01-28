@@ -20,6 +20,6 @@ public class Music extends Artwork {
     @Column(name = "recording_url", nullable = false)
     private String recordingUrl;
 
-    @ManyToMany(mappedBy = "music", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "music")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

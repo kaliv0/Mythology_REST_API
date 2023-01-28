@@ -35,39 +35,31 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
-    @ManyToMany(mappedBy = "mythCharacters")
+    @ManyToMany
     @OnDelete(action = OnDeleteAction.NO_ACTION) //TODO: does this work?
     private Set<Myth> myths = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY) //TODO: potentially should be CascadeType.ALL/REMOVE
-    @JoinTable(
-            name = "characters_statues",
+    @ManyToMany //TODO: potentially should be CascadeType.ALL/REMOVE
+    @JoinTable(name = "characters_statues",
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "statue_id", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "statue_id", referencedColumnName = "id"))
     private Set<Statue> statues = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "characters_paintings",
+    @ManyToMany
+    @JoinTable(name = "characters_paintings",
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "painting_id", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "painting_id", referencedColumnName = "id"))
     private Set<Painting> paintings = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "characters_music",
+    @ManyToMany
+    @JoinTable(name = "characters_music",
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "music_id", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "music_id", referencedColumnName = "id"))
     private Set<Music> music = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "characters_poems",
+    @ManyToMany
+    @JoinTable(name = "characters_poems",
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "poem_id", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "poem_id", referencedColumnName = "id"))
     private Set<Poem> poems = new HashSet<>();
 }

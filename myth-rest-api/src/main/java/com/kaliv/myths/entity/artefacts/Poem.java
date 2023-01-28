@@ -22,6 +22,6 @@ public class Poem extends Artwork {
 
     private String excerpt;
 
-    @ManyToMany(mappedBy = "poems", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "poems")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

@@ -19,12 +19,12 @@ import lombok.Setter;
 @Entity
 @Table(name = "statues")
 public class Statue extends VisualArtwork {
-    @OneToMany(mappedBy = "statue", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE) //TODO: check cascade
     private Set<StatueImage> statueImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "statue", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE)
     private Set<SmallStatueImage> smallStatueImages = new HashSet<>();
 
-    @ManyToMany(mappedBy = "statues", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "statues")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

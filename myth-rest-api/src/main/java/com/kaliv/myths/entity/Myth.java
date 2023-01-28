@@ -27,23 +27,21 @@ public class Myth extends BaseEntity {
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")
     private Nationality nationality;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "myths_characters",
+    @ManyToMany
+    @JoinTable(name = "myths_characters",
             joinColumns = @JoinColumn(name = "myth_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"))
     private Set<MythCharacter> mythCharacters = new HashSet<>();
 
-    @OneToMany(mappedBy = "myth", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "myth")
     private Set<Statue> statues = new HashSet<>();
 
-    @OneToMany(mappedBy = "myth", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "myth")
     private Set<Painting> paintings = new HashSet<>();
 
-    @OneToMany(mappedBy = "myth", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "myth")
     private Set<Music> music = new HashSet<>();
 
-    @OneToMany(mappedBy = "myth", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "myth")
     private Set<Poem> poems = new HashSet<>();
 }

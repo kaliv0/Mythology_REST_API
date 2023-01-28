@@ -17,10 +17,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "nationalities")
 public class Nationality extends BaseEntity {
-    @OneToMany(mappedBy = "nationality", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "nationality")
     private Set<Myth> myths = new HashSet<>();
 
-    @OneToMany(mappedBy = "nationality", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "nationality")
     private Set<Author> authors = new HashSet<>();
 
     @PrePersist

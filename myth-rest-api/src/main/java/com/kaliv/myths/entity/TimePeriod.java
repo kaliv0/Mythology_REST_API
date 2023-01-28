@@ -19,7 +19,7 @@ import lombok.Setter;
 public class TimePeriod extends BaseEntity {
     private String years;
 
-    @OneToMany(mappedBy = "timePeriod", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "timePeriod")
     private Set<Author> authors = new HashSet<>();
 
     @PrePersist

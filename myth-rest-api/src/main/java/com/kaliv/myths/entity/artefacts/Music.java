@@ -1,8 +1,11 @@
 package com.kaliv.myths.entity.artefacts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.kaliv.myths.entity.MythCharacter;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +19,7 @@ import lombok.Setter;
 public class Music extends Artwork {
     @Column(name = "recording_url", nullable = false)
     private String recordingUrl;
+
+    @ManyToMany(mappedBy = "music", fetch = FetchType.LAZY)
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.images.SmallStatueImage;
 import com.kaliv.myths.entity.artefacts.images.StatueImage;
 
@@ -23,4 +24,7 @@ public class Statue extends VisualArtwork {
 
     @OneToMany(mappedBy = "statue", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<SmallStatueImage> smallStatueImages = new HashSet<>();
+
+    @ManyToMany(mappedBy = "statues", fetch = FetchType.LAZY)
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

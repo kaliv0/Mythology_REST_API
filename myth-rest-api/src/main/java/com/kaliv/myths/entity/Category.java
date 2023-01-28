@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "character_categories")
+@Table(name = "categories")
 public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private Set<MythCharacter> mythCharacters = new HashSet<>();

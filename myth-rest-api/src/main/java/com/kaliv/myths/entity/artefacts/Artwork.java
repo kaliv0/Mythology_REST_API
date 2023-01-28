@@ -2,12 +2,8 @@ package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
-import com.kaliv.myths.entity.MythCharacter;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +16,7 @@ import lombok.Setter;
 @AttributeOverride(name = "name", column = @Column(name = "name", nullable = false))
 public abstract class Artwork extends BaseEntity {
     @ManyToOne
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author author;
 
     /*
@@ -29,7 +26,4 @@ public abstract class Artwork extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "myth_id", referencedColumnName = "id")
     private Myth myth;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

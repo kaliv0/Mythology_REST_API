@@ -191,10 +191,10 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
         mythCharacterRepository.save(mythCharacterInDb);
 
-        mythsToAdd.forEach(a -> a.getMythCharacters().add(mythCharacterInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(a -> a.getMythCharacters().remove(mythCharacterInDb));
-        mythRepository.saveAll(mythsToRemove);
+//        mythsToAdd.forEach(a -> a.getMythCharacters().add(mythCharacterInDb));
+//        mythRepository.saveAll(mythsToAdd);
+//        mythsToRemove.forEach(a -> a.getMythCharacters().remove(mythCharacterInDb));
+//        mythRepository.saveAll(mythsToRemove);
 
         return mapper.mythCharacterToDto(mythCharacterInDb);
     }

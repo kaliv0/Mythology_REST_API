@@ -113,15 +113,15 @@ public class NationalityServiceImpl implements NationalityService {
 
         nationalityRepository.save(nationalityInDb);
 
-        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(m -> m.setNationality(null));
-        mythRepository.saveAll(mythsToRemove);
-
-        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setNationality(null));
-        authorRepository.saveAll(authorsToRemove);
+//        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
+//        mythRepository.saveAll(mythsToAdd);
+//        mythsToRemove.forEach(m -> m.setNationality(null));
+//        mythRepository.saveAll(mythsToRemove);
+//
+//        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
+//        authorRepository.saveAll(authorsToAdd);
+//        authorsToRemove.forEach(a -> a.setNationality(null));
+//        authorRepository.saveAll(authorsToRemove);
 
         return mapper.nationalityToDto(nationalityInDb);
     }

@@ -96,10 +96,10 @@ public class TimePeriodServiceImpl implements TimePeriodService {
         timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
         timePeriodRepository.save(timePeriodInDb);
 
-        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setTimePeriod(null));
-        authorRepository.saveAll(authorsToRemove);
+//        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
+//        authorRepository.saveAll(authorsToAdd);
+//        authorsToRemove.forEach(a -> a.setTimePeriod(null));
+//        authorRepository.saveAll(authorsToRemove);
 
         return mapper.timePeriodToDto(timePeriodInDb);
     }

@@ -9,11 +9,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.common.ArtworkHandler;
+import com.kaliv.myths.common.containers.Quadruple;
+import com.kaliv.myths.common.containers.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythDtos.*;
 import com.kaliv.myths.entity.*;
+import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.Statue;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -32,15 +38,18 @@ public class MythServiceImpl implements MythService {
     private final MythRepository mythRepository;
     private final NationalityRepository nationalityRepository;
     private final MythCharacterRepository mythCharacterRepository;
+    private final ArtworkHandler artworkHandler;
     private final MythMapper mapper;
 
     public MythServiceImpl(MythRepository mythRepository,
                            NationalityRepository nationalityRepository,
                            MythCharacterRepository mythCharacterRepository,
+                           ArtworkHandler artworkHandler,
                            MythMapper mapper) {
         this.mythRepository = mythRepository;
         this.nationalityRepository = nationalityRepository;
         this.mythCharacterRepository = mythCharacterRepository;
+        this.artworkHandler = artworkHandler;
         this.mapper = mapper;
     }
 
@@ -51,7 +60,6 @@ public class MythServiceImpl implements MythService {
                                                 int pageSize,
                                                 String sortBy,
                                                 String sortOrder) {
-
         QMyth qMyth = QMyth.myth;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (nationalityName != null) {
@@ -107,8 +115,18 @@ public class MythServiceImpl implements MythService {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
 
+        Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> artworks = artworkHandler.getValidArtworks(dto);
+        List<Statue> statues = artworks.getFirst();
+        List<Painting> paintings = artworks.getSecond();
+        List<Music> music = artworks.getThird();
+        List<Poem> poems = artworks.getFourth();
+
         Myth myth = mapper.dtoToMyth(dto);
         myth.setMythCharacters(new HashSet<>(mythCharacters));
+        myth.setStatues(new HashSet<>(statues));
+        myth.setPaintings(new HashSet<>(paintings));
+        myth.setMusic(new HashSet<>(music));
+        myth.setPoems(new HashSet<>(poems));
         Myth savedMyth = mythRepository.save(myth);
 
         return mapper.mythToDto(savedMyth);
@@ -139,13 +157,9 @@ public class MythServiceImpl implements MythService {
         List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
         mythInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
         mythInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+
+        artworkHandler.handleArtworksToUpdate(dto, mythInDb);
         mythRepository.save(mythInDb);
-
-        mythCharactersToAdd.forEach(a -> a.getMyths().add(mythInDb));
-        mythCharacterRepository.saveAll(mythCharactersToAdd);
-        mythCharactersToRemove.forEach(a -> a.getMyths().remove(mythInDb));
-        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
         return mapper.mythToDto(mythInDb);
     }
 

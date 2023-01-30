@@ -1,8 +1,6 @@
 package com.kaliv.myths.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,4 +21,16 @@ public class TimePeriod extends BaseEntity {
 
     @OneToMany(mappedBy = "timePeriod")
     private Set<Author> authors = new HashSet<>();
+
+    @PrePersist
+    public void addTimePeriod() {
+        this.getAuthors()
+                .forEach(author -> author.setTimePeriod(this));
+    }
+
+    @PreRemove
+    public void deleteTimePeriod() {
+        this.getAuthors()
+                .forEach(author -> author.setTimePeriod(null));
+    }
 }

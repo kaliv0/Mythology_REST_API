@@ -24,6 +24,22 @@ public class MythCharacterMapper {
                 mythCharacter.getMyths().stream()
                         .map(BaseEntity::getId)
                         .collect(Collectors.toSet()));
+        mythCharacterDto.setStatueIds(
+                mythCharacter.getStatues().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythCharacterDto.setPaintingIds(
+                mythCharacter.getPaintings().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythCharacterDto.setMusicIds(
+                mythCharacter.getMusic().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythCharacterDto.setPoemIds(
+                mythCharacter.getPoems().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
         return mythCharacterDto;
     }
 
@@ -32,6 +48,22 @@ public class MythCharacterMapper {
         mythCharacterResponseDto.setMyths(
                 mythCharacter.getMyths().stream()
                         .map(myth -> mapper.map(myth, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythCharacterResponseDto.setStatues(
+                mythCharacter.getStatues().stream()
+                        .map(statue -> mapper.map(statue, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythCharacterResponseDto.setPaintings(
+                mythCharacter.getPaintings().stream()
+                        .map(painting -> mapper.map(painting, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythCharacterResponseDto.setMusic(
+                mythCharacter.getMusic().stream()
+                        .map(music -> mapper.map(music, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythCharacterResponseDto.setPoems(
+                mythCharacter.getPoems().stream()
+                        .map(poem -> mapper.map(poem, BaseDto.class))
                         .collect(Collectors.toSet()));
         return mythCharacterResponseDto;
     }

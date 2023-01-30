@@ -17,7 +17,12 @@ public class Sources {
     public static final String ADD_CHARACTERS = "mythCharactersToAdd";
     public static final String REMOVE_CHARACTERS = "mythCharactersToRemove";
     public static final String MUSIC = "Music";
+    public static final String ADD_MUSIC = "musicToAdd";
+    public static final String REMOVE_MUSIC = "musicToRemove";
     public static final String POEM = "Poem";
+    public static final String POEMS = "Poems";
+    public static final String ADD_POEMS = "poemsToAdd";
+    public static final String REMOVE_POEMS = "poemsToRemove";
     public static final String IMAGE = "Image";
     public static final String IMAGES = "Images";
     public static final String MUSEUM = "Museum";

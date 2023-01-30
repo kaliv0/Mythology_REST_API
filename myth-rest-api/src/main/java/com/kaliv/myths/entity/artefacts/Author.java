@@ -2,7 +2,9 @@ package com.kaliv.myths.entity.artefacts;
 
 import javax.persistence.*;
 
-import com.kaliv.myths.entity.BaseEntity;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
 
@@ -15,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "authors")
-public class Author extends BaseEntity {
+public class Author extends ArtworkPossessor {
     @ManyToOne
     @JoinColumn(name = "time_period_id", referencedColumnName = "id")
     private TimePeriod timePeriod;
@@ -23,4 +25,16 @@ public class Author extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "nationality_id", referencedColumnName = "id")
     private Nationality nationality;
+
+    @OneToMany(mappedBy = "author")
+    private Set<Statue> statues = new HashSet<>();
+
+    @OneToMany(mappedBy = "author")
+    private Set<Painting> paintings = new HashSet<>();
+
+    @OneToMany(mappedBy = "author")
+    private Set<Music> music = new HashSet<>();
+
+    @OneToMany(mappedBy = "author")
+    private Set<Poem> poems = new HashSet<>();
 }

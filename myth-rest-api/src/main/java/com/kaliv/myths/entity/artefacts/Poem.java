@@ -1,8 +1,11 @@
 package com.kaliv.myths.entity.artefacts;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import com.kaliv.myths.entity.MythCharacter;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +21,7 @@ public class Poem extends Artwork {
     private String fullTextUrl;
 
     private String excerpt;
+
+    @ManyToMany(mappedBy = "poems")
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

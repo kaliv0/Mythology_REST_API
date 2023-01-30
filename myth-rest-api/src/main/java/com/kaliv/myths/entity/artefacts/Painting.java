@@ -1,13 +1,13 @@
 package com.kaliv.myths.entity.artefacts;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import com.kaliv.myths.entity.MythCharacter;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
+import com.kaliv.myths.entity.artefacts.images.SmallPaintingImage;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,12 @@ import lombok.Setter;
 @Entity
 @Table(name = "paintings")
 public class Painting extends VisualArtwork {
-    @OneToMany(mappedBy = "painting")
+    @OneToMany(mappedBy = "painting", cascade = CascadeType.REMOVE)//TODO: check cascade
     private Set<PaintingImage> paintingImages = new HashSet<>();
+
+    @OneToMany(mappedBy = "painting", cascade = CascadeType.REMOVE)
+    private Set<SmallPaintingImage> smallPaintingImages = new HashSet<>();
+
+    @ManyToMany(mappedBy = "paintings")
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

@@ -1,5 +1,6 @@
 package com.kaliv.myths.service.author;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,13 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.kaliv.myths.common.ArtworkHandler;
+import com.kaliv.myths.common.containers.Quadruple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.authorDtos.*;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
-import com.kaliv.myths.entity.artefacts.Author;
-import com.kaliv.myths.entity.artefacts.QAuthor;
+import com.kaliv.myths.entity.artefacts.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.AuthorMapper;
@@ -31,15 +33,18 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
     private final TimePeriodRepository timePeriodRepository;
     private final NationalityRepository nationalityRepository;
+    private final ArtworkHandler artworkHandler;
     private final AuthorMapper mapper;
 
     public AuthorServiceImpl(AuthorRepository authorRepository,
                              TimePeriodRepository timePeriodRepository,
                              NationalityRepository nationalityRepository,
+                             ArtworkHandler artworkHandler,
                              AuthorMapper mapper) {
         this.authorRepository = authorRepository;
         this.timePeriodRepository = timePeriodRepository;
         this.nationalityRepository = nationalityRepository;
+        this.artworkHandler = artworkHandler;
         this.mapper = mapper;
     }
 
@@ -105,8 +110,19 @@ public class AuthorServiceImpl implements AuthorService {
             throw new ResourceWithGivenValuesNotFoundException(Sources.NATIONALITY, Fields.ID, nationalityId);
         }
 
+        Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> artworks = artworkHandler.getValidArtworks(dto);
+        List<Statue> statues = artworks.getFirst();
+        List<Painting> paintings = artworks.getSecond();
+        List<Music> music = artworks.getThird();
+        List<Poem> poems = artworks.getFourth();
+
         Author author = mapper.dtoToAuthor(dto);
+        author.setStatues(new HashSet<>(statues));
+        author.setPaintings(new HashSet<>(paintings));
+        author.setMusic(new HashSet<>(music));
+        author.setPoems(new HashSet<>(poems));
         Author savedAuthor = authorRepository.save(author);
+
         return mapper.authorToDto(savedAuthor);
     }
 
@@ -135,8 +151,9 @@ public class AuthorServiceImpl implements AuthorService {
             authorInDb.setNationality(nationalityInDb);
         }
 
-        Author savedAuthor = authorRepository.save(authorInDb);
-        return mapper.authorToDto(savedAuthor);
+        artworkHandler.handleArtworksToUpdate(dto, authorInDb);
+        authorRepository.save(authorInDb);
+        return mapper.authorToDto(authorInDb);
     }
 
     @Override

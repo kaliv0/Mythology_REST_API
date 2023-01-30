@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.common.containers.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
@@ -96,10 +96,10 @@ public class TimePeriodServiceImpl implements TimePeriodService {
         timePeriodInDb.getAuthors().removeAll(new HashSet<>(authorsToRemove));
         timePeriodRepository.save(timePeriodInDb);
 
-        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setTimePeriod(null));
-        authorRepository.saveAll(authorsToRemove);
+//        authorsToAdd.forEach(a -> a.setTimePeriod(timePeriodInDb));
+//        authorRepository.saveAll(authorsToAdd);
+//        authorsToRemove.forEach(a -> a.setTimePeriod(null));
+//        authorRepository.saveAll(authorsToRemove);
 
         return mapper.timePeriodToDto(timePeriodInDb);
     }

@@ -9,11 +9,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.common.ArtworkHandler;
+import com.kaliv.myths.common.containers.Quadruple;
+import com.kaliv.myths.common.containers.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythCharacterDtos.*;
 import com.kaliv.myths.entity.*;
+import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.Statue;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -33,15 +39,18 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     private final CategoryRepository categoryRepository;
     private final MythRepository mythRepository;
     private final MythCharacterMapper mapper;
+    private final ArtworkHandler artworkHandler;
 
     public MythCharacterServiceImpl(MythCharacterRepository mythCharacterRepository,
                                     CategoryRepository categoryRepository,
                                     MythRepository mythRepository,
-                                    MythCharacterMapper mapper) {
+                                    MythCharacterMapper mapper,
+                                    ArtworkHandler artworkHandler) {
         this.mythCharacterRepository = mythCharacterRepository;
         this.categoryRepository = categoryRepository;
         this.mythRepository = mythRepository;
         this.mapper = mapper;
+        this.artworkHandler = artworkHandler;
     }
 
     @Override
@@ -133,10 +142,20 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             throw new ResourceListNotFoundException(Sources.MYTHS, Fields.IDS);
         }
 
+        Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> artworks = artworkHandler.getValidArtworks(dto);
+        List<Statue> statues = artworks.getFirst();
+        List<Painting> paintings = artworks.getSecond();
+        List<Music> music = artworks.getThird();
+        List<Poem> poems = artworks.getFourth();
+
         MythCharacter mythCharacter = mapper.dtoToMythCharacter(dto);
         mythCharacter.setFather(father);
         mythCharacter.setMother(mother);
         mythCharacter.setMyths(new HashSet<>(myths));
+        mythCharacter.setStatues(new HashSet<>(statues));
+        mythCharacter.setPaintings(new HashSet<>(paintings));
+        mythCharacter.setMusic(new HashSet<>(music));
+        mythCharacter.setPoems(new HashSet<>(poems));
         MythCharacter savedMythCharacter = mythCharacterRepository.save(mythCharacter);
 
         return mapper.mythCharacterToDto(savedMythCharacter);
@@ -189,13 +208,9 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         List<Myth> mythsToRemove = mythsToUpdate.getSecond();
         mythCharacterInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
         mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
+
+        artworkHandler.handleArtworksToUpdate(dto, mythCharacterInDb);
         mythCharacterRepository.save(mythCharacterInDb);
-
-        mythsToAdd.forEach(a -> a.getMythCharacters().add(mythCharacterInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(a -> a.getMythCharacters().remove(mythCharacterInDb));
-        mythRepository.saveAll(mythsToRemove);
-
         return mapper.mythCharacterToDto(mythCharacterInDb);
     }
 
@@ -203,6 +218,18 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     public void deleteMythCharacter(long id) {
         MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTERS, Fields.ID, id));
+
+        QMythCharacter qMythCharacter = QMythCharacter.mythCharacter;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(qMythCharacter.father.id.eq(id));
+        booleanBuilder.or(qMythCharacter.mother.id.eq(id));
+        mythCharacterRepository.findAll(booleanBuilder).forEach(x -> {
+            if (x.getFather().getId() == id) {
+                x.setFather(null);
+            } else {
+                x.setMother(null);
+            }
+        });
         mythCharacterRepository.delete(mythCharacterInDb);
     }
 

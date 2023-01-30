@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.common.containers.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.nationalityDtos.CreateNationalityDto;
@@ -113,15 +113,15 @@ public class NationalityServiceImpl implements NationalityService {
 
         nationalityRepository.save(nationalityInDb);
 
-        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(m -> m.setNationality(null));
-        mythRepository.saveAll(mythsToRemove);
-
-        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
-        authorRepository.saveAll(authorsToAdd);
-        authorsToRemove.forEach(a -> a.setNationality(null));
-        authorRepository.saveAll(authorsToRemove);
+//        mythsToAdd.forEach(m -> m.setNationality(nationalityInDb));
+//        mythRepository.saveAll(mythsToAdd);
+//        mythsToRemove.forEach(m -> m.setNationality(null));
+//        mythRepository.saveAll(mythsToRemove);
+//
+//        authorsToAdd.forEach(a -> a.setNationality(nationalityInDb));
+//        authorRepository.saveAll(authorsToAdd);
+//        authorsToRemove.forEach(a -> a.setNationality(null));
+//        authorRepository.saveAll(authorsToRemove);
 
         return mapper.nationalityToDto(nationalityInDb);
     }

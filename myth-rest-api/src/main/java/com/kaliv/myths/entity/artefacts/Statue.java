@@ -1,12 +1,12 @@
 package com.kaliv.myths.entity.artefacts;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.entity.artefacts.images.SmallStatueImage;
 import com.kaliv.myths.entity.artefacts.images.StatueImage;
 
 import lombok.Getter;
@@ -19,6 +19,12 @@ import lombok.Setter;
 @Entity
 @Table(name = "statues")
 public class Statue extends VisualArtwork {
-    @OneToMany(mappedBy = "statue")
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE) //TODO: check cascade
     private Set<StatueImage> statueImages = new HashSet<>();
+
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE)
+    private Set<SmallStatueImage> smallStatueImages = new HashSet<>();
+
+    @ManyToMany(mappedBy = "statues")
+    private Set<MythCharacter> mythCharacters = new HashSet<>();
 }

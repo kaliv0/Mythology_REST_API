@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.kaliv.myths.common.containers.Quadruple;
-import com.kaliv.myths.common.containers.Tuple;
+import com.kaliv.myths.common.container.Quadruple;
+import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.artworkPosessorDto.CreateArtworkPossessorDto;
@@ -41,7 +41,6 @@ public class ArtworkHandler {
         this.musicRepository = musicRepository;
         this.poemRepository = poemRepository;
     }
-
 
     public Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> getValidArtworks(CreateArtworkPossessorDto dto) {
         List<Long> statueIds = new ArrayList<>(dto.getStatueIds());

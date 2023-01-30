@@ -27,16 +27,16 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "father_id", referencedColumnName = "id")
     private MythCharacter father;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
     @ManyToMany
-    @OnDelete(action = OnDeleteAction.NO_ACTION) //TODO: does this work?
+    @OnDelete(action = OnDeleteAction.NO_ACTION) //TODO: check if works
     private Set<Myth> myths = new HashSet<>();
 
     @ManyToMany //TODO: potentially should be CascadeType.ALL/REMOVE

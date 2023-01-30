@@ -203,6 +203,19 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     public void deleteMythCharacter(long id) {
         MythCharacter mythCharacterInDb = mythCharacterRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.CHARACTERS, Fields.ID, id));
+
+        QMythCharacter qMythCharacter = QMythCharacter.mythCharacter;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(qMythCharacter.father.id.eq(id));
+        booleanBuilder.or(qMythCharacter.mother.id.eq(id));
+        mythCharacterRepository.findAll(booleanBuilder)
+                .forEach(x -> {
+                    if (x.getFather().getId() == id) {
+                        x.setFather(null);
+                    } else {
+                        x.setMother(null);
+                    }
+                });
         mythCharacterRepository.delete(mythCharacterInDb);
     }
 

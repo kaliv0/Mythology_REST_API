@@ -24,6 +24,22 @@ public class MythMapper {
                 myth.getMythCharacters().stream()
                         .map(BaseEntity::getId)
                         .collect(Collectors.toSet()));
+        mythDto.setStatueIds(
+                myth.getStatues().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythDto.setPaintingIds(
+                myth.getPaintings().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythDto.setMusicIds(
+                myth.getMusic().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
+        mythDto.setPoemIds(
+                myth.getPoems().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
         return mythDto;
     }
 
@@ -32,6 +48,22 @@ public class MythMapper {
         mythResponseDto.setMythCharacters(
                 myth.getMythCharacters().stream()
                         .map(character -> mapper.map(character, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythResponseDto.setStatues(
+                myth.getStatues().stream()
+                        .map(statue -> mapper.map(statue, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythResponseDto.setPaintings(
+                myth.getPaintings().stream()
+                        .map(painting -> mapper.map(painting, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythResponseDto.setMusic(
+                myth.getMusic().stream()
+                        .map(music -> mapper.map(music, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        mythResponseDto.setPoems(
+                myth.getPoems().stream()
+                        .map(poem -> mapper.map(poem, BaseDto.class))
                         .collect(Collectors.toSet()));
         return mythResponseDto;
     }

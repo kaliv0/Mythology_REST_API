@@ -4,6 +4,8 @@ import javax.validation.constraints.NotBlank;
 
 import java.util.Set;
 
+import com.kaliv.myths.dto.artworkPosessorDto.CreateArtworkPossessorDto;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateMythDto {
+public class CreateMythDto extends CreateArtworkPossessorDto {
     @NotBlank
     private String name;
 

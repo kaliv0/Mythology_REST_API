@@ -1,8 +1,6 @@
-package com.kaliv.myths.dto.mythDtos;
+package com.kaliv.myths.dto.artworkPosessorDto;
 
 import java.util.Set;
-
-import com.kaliv.myths.dto.BaseDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MythDto extends BaseDto {
-    private String plot;
-    private Long nationalityId;
-    private Set<Long> mythCharacterIds;
+public class CreateArtworkPossessorDto {
     private Set<Long> statueIds;
     private Set<Long> paintingIds;
     private Set<Long> musicIds;

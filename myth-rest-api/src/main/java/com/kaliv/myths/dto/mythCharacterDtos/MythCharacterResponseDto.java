@@ -16,4 +16,8 @@ public class MythCharacterResponseDto extends BaseDto {
     private BaseDto father;
     private BaseDto mother;
     private Set<BaseDto> myths;
+    private Set<BaseDto> statues;
+    private Set<BaseDto> paintings;
+    private Set<BaseDto> music;
+    private Set<BaseDto> poems;
 }

@@ -15,4 +15,8 @@ public class MythResponseDto extends BaseDto {
     private String plot;
     private BaseDto nationality;
     private Set<BaseDto> mythCharacters;
+    private Set<BaseDto> statues;
+    private Set<BaseDto> paintings;
+    private Set<BaseDto> music;
+    private Set<BaseDto> poems;
 }

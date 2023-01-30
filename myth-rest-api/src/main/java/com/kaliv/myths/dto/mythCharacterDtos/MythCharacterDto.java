@@ -16,4 +16,8 @@ public class MythCharacterDto extends BaseDto {
     private Long fatherId;
     private Long motherId;
     private Set<Long> mythIds;
+    private Set<Long> statueIds;
+    private Set<Long> paintingIds;
+    private Set<Long> musicIds;
+    private Set<Long> poemIds;
 }

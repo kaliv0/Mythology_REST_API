@@ -9,8 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.Quadruple;
-import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.common.ArtworkHandler;
+import com.kaliv.myths.common.containers.Quadruple;
+import com.kaliv.myths.common.containers.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.mythCharacterDtos.*;
@@ -27,7 +28,9 @@ import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.MythCharacterMapper;
-import com.kaliv.myths.persistence.*;
+import com.kaliv.myths.persistence.CategoryRepository;
+import com.kaliv.myths.persistence.MythCharacterRepository;
+import com.kaliv.myths.persistence.MythRepository;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
@@ -35,28 +38,19 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     private final MythCharacterRepository mythCharacterRepository;
     private final CategoryRepository categoryRepository;
     private final MythRepository mythRepository;
-    private final StatueRepository statueRepository;
-    private final PaintingRepository paintingRepository;
-    private final MusicRepository musicRepository;
-    private final PoemRepository poemRepository;
     private final MythCharacterMapper mapper;
+    private final ArtworkHandler artworkHandler;
 
     public MythCharacterServiceImpl(MythCharacterRepository mythCharacterRepository,
                                     CategoryRepository categoryRepository,
                                     MythRepository mythRepository,
-                                    StatueRepository statueRepository,
-                                    PaintingRepository paintingRepository,
-                                    MusicRepository musicRepository,
-                                    PoemRepository poemRepository,
-                                    MythCharacterMapper mapper) {
+                                    MythCharacterMapper mapper,
+                                    ArtworkHandler artworkHandler) {
         this.mythCharacterRepository = mythCharacterRepository;
         this.categoryRepository = categoryRepository;
         this.mythRepository = mythRepository;
-        this.statueRepository = statueRepository;
-        this.paintingRepository = paintingRepository;
-        this.musicRepository = musicRepository;
-        this.poemRepository = poemRepository;
         this.mapper = mapper;
+        this.artworkHandler = artworkHandler;
     }
 
     @Override
@@ -148,7 +142,7 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             throw new ResourceListNotFoundException(Sources.MYTHS, Fields.IDS);
         }
 
-        Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> artworks = this.getValidArtworks(dto);
+        Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> artworks = artworkHandler.getValidArtworks(dto);
         List<Statue> statues = artworks.getFirst();
         List<Painting> paintings = artworks.getSecond();
         List<Music> music = artworks.getThird();
@@ -209,7 +203,13 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         mythCharacterInDb.setFather(father);
         mythCharacterInDb.setMother(mother);
 
-        handleCollectionsToUpdate(dto, mythCharacterInDb);
+        Tuple<List<Myth>, List<Myth>> mythsToUpdate = this.getValidMyths(dto, mythCharacterInDb);
+        List<Myth> mythsToAdd = mythsToUpdate.getFirst();
+        List<Myth> mythsToRemove = mythsToUpdate.getSecond();
+        mythCharacterInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
+        mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
+
+        artworkHandler.handleArtworksToUpdate(dto, mythCharacterInDb);
         mythCharacterRepository.save(mythCharacterInDb);
         return mapper.mythCharacterToDto(mythCharacterInDb);
     }
@@ -231,62 +231,6 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             }
         });
         mythCharacterRepository.delete(mythCharacterInDb);
-    }
-
-    private Quadruple<List<Statue>, List<Painting>, List<Music>, List<Poem>> getValidArtworks(CreateMythCharacterDto dto) {
-        List<Long> statueIds = new ArrayList<>(dto.getStatueIds());
-        List<Statue> statues = statueRepository.findAllById(statueIds);
-        if (statues.size() != statueIds.size()) {
-            throw new ResourceListNotFoundException(Sources.STATUES, Fields.IDS);
-        }
-        List<Long> paintingIds = new ArrayList<>(dto.getPaintingIds());
-        List<Painting> paintings = paintingRepository.findAllById(paintingIds);
-        if (paintings.size() != paintingIds.size()) {
-            throw new ResourceListNotFoundException(Sources.PAINTINGS, Fields.IDS);
-        }
-        List<Long> musicIds = new ArrayList<>(dto.getMusicIds());
-        List<Music> music = musicRepository.findAllById(musicIds);
-        if (music.size() != musicIds.size()) {
-            throw new ResourceListNotFoundException(Sources.MUSIC, Fields.IDS);
-        }
-        List<Long> poemIds = new ArrayList<>(dto.getPoemIds());
-        List<Poem> poems = poemRepository.findAllById(poemIds);
-        if (poems.size() != poemIds.size()) {
-            throw new ResourceListNotFoundException(Sources.POEMS, Fields.IDS);
-        }
-        return new Quadruple<>(statues, paintings, music, poems);
-    }
-
-    private void handleCollectionsToUpdate(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
-        Tuple<List<Myth>, List<Myth>> mythsToUpdate = this.getValidMyths(dto, mythCharacterInDb);
-        List<Myth> mythsToAdd = mythsToUpdate.getFirst();
-        List<Myth> mythsToRemove = mythsToUpdate.getSecond();
-        mythCharacterInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
-        mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
-
-        Tuple<List<Statue>, List<Statue>> statuesToUpdate = this.getValidStatues(dto, mythCharacterInDb);
-        List<Statue> statuesToAdd = statuesToUpdate.getFirst();
-        List<Statue> statuesToRemove = statuesToUpdate.getSecond();
-        mythCharacterInDb.getStatues().addAll(new HashSet<>(statuesToAdd));
-        mythCharacterInDb.getStatues().removeAll(new HashSet<>(statuesToRemove));
-
-        Tuple<List<Painting>, List<Painting>> paintingsToUpdate = this.getValidPaintings(dto, mythCharacterInDb);
-        List<Painting> paintingsToAdd = paintingsToUpdate.getFirst();
-        List<Painting> paintingsToRemove = paintingsToUpdate.getSecond();
-        mythCharacterInDb.getPaintings().addAll(new HashSet<>(paintingsToAdd));
-        mythCharacterInDb.getPaintings().removeAll(new HashSet<>(paintingsToRemove));
-
-        Tuple<List<Music>, List<Music>> musicToUpdate = this.getValidMusic(dto, mythCharacterInDb);
-        List<Music> musicToAdd = musicToUpdate.getFirst();
-        List<Music> musicToRemove = musicToUpdate.getSecond();
-        mythCharacterInDb.getMusic().addAll(new HashSet<>(musicToAdd));
-        mythCharacterInDb.getMusic().removeAll(new HashSet<>(musicToRemove));
-
-        Tuple<List<Poem>, List<Poem>> poemsToUpdate = this.getValidPoems(dto, mythCharacterInDb);
-        List<Poem> poemsToAdd = poemsToUpdate.getFirst();
-        List<Poem> poemsToRemove = poemsToUpdate.getSecond();
-        mythCharacterInDb.getPoems().addAll(new HashSet<>(poemsToAdd));
-        mythCharacterInDb.getPoems().removeAll(new HashSet<>(poemsToRemove));
     }
 
     private Tuple<List<Myth>, List<Myth>> getValidMyths(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
@@ -317,125 +261,5 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             throw new ResourceListNotFoundException(Sources.MYTHS, Fields.IDS);
         }
         return new Tuple<>(mythsToAdd, mythsToRemove);
-    }
-
-    private Tuple<List<Statue>, List<Statue>> getValidStatues(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
-        List<Long> statuesToAddIds = new ArrayList<>(dto.getStatuesToAdd());
-        List<Long> statuesToRemoveIds = new ArrayList<>(dto.getStatuesToRemove());
-        //check if user tries to add and remove same statue
-        if (!Collections.disjoint(statuesToAddIds, statuesToRemoveIds)) {
-            throw new DuplicateEntriesException(Sources.ADD_STATUES, Sources.REMOVE_STATUES);
-        }
-        //check if user tries to add statue that is already in the list
-        if (mythCharacterInDb.getStatues().stream()
-                .map(BaseEntity::getId)
-                .anyMatch(statuesToAddIds::contains)) {
-            throw new ResourceAlreadyExistsException(Sources.STATUE);
-        }
-        //check if user tries to remove statue that is not in the list
-        if (!mythCharacterInDb.getStatues().stream()
-                .map(BaseEntity::getId)
-                .collect(Collectors.toSet())
-                .containsAll(statuesToRemoveIds)) {
-            throw new ResourceNotFoundException(Sources.STATUE);
-        }
-
-        List<Statue> statuesToAdd = statueRepository.findAllById(statuesToAddIds);
-        List<Statue> statuesToRemove = statueRepository.findAllById(statuesToRemoveIds);
-        if (statuesToAddIds.size() != statuesToAdd.size()
-                || statuesToRemoveIds.size() != statuesToRemove.size()) {
-            throw new ResourceListNotFoundException(Sources.STATUES, Fields.IDS);
-        }
-        return new Tuple<>(statuesToAdd, statuesToRemove);
-    }
-
-    private Tuple<List<Painting>, List<Painting>> getValidPaintings(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
-        List<Long> paintingsToAddIds = new ArrayList<>(dto.getPaintingsToAdd());
-        List<Long> paintingsToRemoveIds = new ArrayList<>(dto.getPaintingsToRemove());
-        //check if user tries to add and remove same painting
-        if (!Collections.disjoint(paintingsToAddIds, paintingsToRemoveIds)) {
-            throw new DuplicateEntriesException(Sources.ADD_PAINTINGS, Sources.REMOVE_PAINTINGS);
-        }
-        //check if user tries to add painting that is already in the list
-        if (mythCharacterInDb.getPaintings().stream()
-                .map(BaseEntity::getId)
-                .anyMatch(paintingsToAddIds::contains)) {
-            throw new ResourceAlreadyExistsException(Sources.PAINTING);
-        }
-        //check if user tries to remove painting that is not in the list
-        if (!mythCharacterInDb.getPaintings().stream()
-                .map(BaseEntity::getId)
-                .collect(Collectors.toSet())
-                .containsAll(paintingsToRemoveIds)) {
-            throw new ResourceNotFoundException(Sources.PAINTING);
-        }
-
-        List<Painting> paintingsToAdd = paintingRepository.findAllById(paintingsToAddIds);
-        List<Painting> paintingsToRemove = paintingRepository.findAllById(paintingsToRemoveIds);
-        if (paintingsToAddIds.size() != paintingsToAdd.size()
-                || paintingsToRemoveIds.size() != paintingsToRemove.size()) {
-            throw new ResourceListNotFoundException(Sources.PAINTING, Fields.IDS);
-        }
-        return new Tuple<>(paintingsToAdd, paintingsToRemove);
-    }
-
-    private Tuple<List<Music>, List<Music>> getValidMusic(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
-        List<Long> musicToAddIds = new ArrayList<>(dto.getMusicToAdd());
-        List<Long> musicToRemoveIds = new ArrayList<>(dto.getMusicToRemove());
-        //check if user tries to add and remove same painting
-        if (!Collections.disjoint(musicToAddIds, musicToRemoveIds)) {
-            throw new DuplicateEntriesException(Sources.ADD_MUSIC, Sources.REMOVE_MUSIC);
-        }
-        //check if user tries to add painting that is already in the list
-        if (mythCharacterInDb.getMusic().stream()
-                .map(BaseEntity::getId)
-                .anyMatch(musicToAddIds::contains)) {
-            throw new ResourceAlreadyExistsException(Sources.MUSIC);
-        }
-        //check if user tries to remove painting that is not in the list
-        if (!mythCharacterInDb.getMusic().stream()
-                .map(BaseEntity::getId)
-                .collect(Collectors.toSet())
-                .containsAll(musicToRemoveIds)) {
-            throw new ResourceNotFoundException(Sources.MUSIC);
-        }
-
-        List<Music> musicToAdd = musicRepository.findAllById(musicToAddIds);
-        List<Music> musicToRemove = musicRepository.findAllById(musicToRemoveIds);
-        if (musicToAddIds.size() != musicToAdd.size()
-                || musicToRemoveIds.size() != musicToRemove.size()) {
-            throw new ResourceListNotFoundException(Sources.MUSIC, Fields.IDS);
-        }
-        return new Tuple<>(musicToAdd, musicToRemove);
-    }
-
-    private Tuple<List<Poem>, List<Poem>> getValidPoems(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
-        List<Long> poemsToAddIds = new ArrayList<>(dto.getPoemsToAdd());
-        List<Long> poemsToRemoveIds = new ArrayList<>(dto.getPoemsToRemove());
-        //check if user tries to add and remove same painting
-        if (!Collections.disjoint(poemsToAddIds, poemsToRemoveIds)) {
-            throw new DuplicateEntriesException(Sources.ADD_POEMS, Sources.REMOVE_POEMS);
-        }
-        //check if user tries to add painting that is already in the list
-        if (mythCharacterInDb.getPoems().stream()
-                .map(BaseEntity::getId)
-                .anyMatch(poemsToAddIds::contains)) {
-            throw new ResourceAlreadyExistsException(Sources.POEM);
-        }
-        //check if user tries to remove painting that is not in the list
-        if (!mythCharacterInDb.getPoems().stream()
-                .map(BaseEntity::getId)
-                .collect(Collectors.toSet())
-                .containsAll(poemsToRemoveIds)) {
-            throw new ResourceNotFoundException(Sources.POEM);
-        }
-
-        List<Poem> poemsToAdd = poemRepository.findAllById(poemsToAddIds);
-        List<Poem> poemsToRemove = poemRepository.findAllById(poemsToRemoveIds);
-        if (poemsToAddIds.size() != poemsToAdd.size()
-                || poemsToRemoveIds.size() != poemsToRemove.size()) {
-            throw new ResourceListNotFoundException(Sources.POEMS, Fields.IDS);
-        }
-        return new Tuple<>(poemsToAdd, poemsToRemove);
     }
 }

@@ -8,10 +8,7 @@ import java.util.Set;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.kaliv.myths.entity.artefacts.Music;
-import com.kaliv.myths.entity.artefacts.Painting;
-import com.kaliv.myths.entity.artefacts.Poem;
-import com.kaliv.myths.entity.artefacts.Statue;
+import com.kaliv.myths.entity.artefacts.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "characters")
-public class MythCharacter extends BaseEntity {
+public class MythCharacter extends ArtworkPossessor {
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
@@ -35,7 +32,7 @@ public class MythCharacter extends BaseEntity {
     @JoinColumn(name = "mother_id", referencedColumnName = "id")
     private MythCharacter mother;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "mythCharacters")
     @OnDelete(action = OnDeleteAction.NO_ACTION) //TODO: check if works
     private Set<Myth> myths = new HashSet<>();
 

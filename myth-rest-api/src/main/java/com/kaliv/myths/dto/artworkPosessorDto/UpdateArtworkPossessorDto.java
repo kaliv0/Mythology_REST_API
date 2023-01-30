@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateArtworkPossessorDto {
+public abstract class UpdateArtworkPossessorDto {
     private Set<Long> statuesToAdd;
     private Set<Long> statuesToRemove;
     private Set<Long> paintingsToAdd;

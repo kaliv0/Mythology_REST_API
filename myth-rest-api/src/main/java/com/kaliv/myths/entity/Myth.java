@@ -5,10 +5,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kaliv.myths.entity.artefacts.Music;
-import com.kaliv.myths.entity.artefacts.Painting;
-import com.kaliv.myths.entity.artefacts.Poem;
-import com.kaliv.myths.entity.artefacts.Statue;
+import com.kaliv.myths.entity.artefacts.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "myths")
-public class Myth extends BaseEntity {
+public class Myth extends ArtworkPossessor {
     @Column(name = "plot", nullable = false)
     private String plot;
 
@@ -39,7 +36,7 @@ public class Myth extends BaseEntity {
     @OneToMany(mappedBy = "myth")
     private Set<Painting> paintings = new HashSet<>();
 
-    @OneToMany(mappedBy = "myth")
+    @OneToMany(targetEntity = Music.class, mappedBy = "myth")
     private Set<Music> music = new HashSet<>();
 
     @OneToMany(mappedBy = "myth")

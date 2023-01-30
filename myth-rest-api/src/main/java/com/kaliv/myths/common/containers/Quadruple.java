@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.common.containers;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

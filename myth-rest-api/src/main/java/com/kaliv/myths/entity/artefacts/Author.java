@@ -5,7 +5,6 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
 
@@ -18,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "authors")
-public class Author extends BaseEntity {
+public class Author extends ArtworkPossessor {
     @ManyToOne
     @JoinColumn(name = "time_period_id", referencedColumnName = "id")
     private TimePeriod timePeriod;

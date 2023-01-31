@@ -168,11 +168,6 @@ public class MusicServiceImpl implements MusicService {
         musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
         musicRepository.save(musicInDb);
 
-//        mythCharactersToAdd.forEach(a -> a.setMusic(musicInDb));
-//        mythCharacterRepository.saveAll(mythCharactersToAdd);
-//        mythCharactersToRemove.forEach(a -> a.setMusic(null));
-//        mythCharacterRepository.saveAll(mythCharactersToRemove);
-
         return mapper.musicToDto(musicInDb);
     }
 

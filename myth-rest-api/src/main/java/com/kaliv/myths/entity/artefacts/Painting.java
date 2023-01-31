@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.entity.artefacts.contracts.artworks.VisualArtwork;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
 import com.kaliv.myths.entity.artefacts.images.SmallPaintingImage;
 
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "paintings")
 public class Painting extends VisualArtwork {
-    @OneToMany(mappedBy = "painting", cascade = CascadeType.REMOVE)//TODO: check cascade
+    @OneToMany(mappedBy = "painting", cascade = CascadeType.REMOVE)
     private Set<PaintingImage> paintingImages = new HashSet<>();
 
     @OneToMany(mappedBy = "painting", cascade = CascadeType.REMOVE)

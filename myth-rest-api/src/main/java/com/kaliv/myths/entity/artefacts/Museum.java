@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kaliv.myths.entity.BaseEntity;
+import com.kaliv.myths.entity.artefacts.contracts.possessors.VisualArtworkPossessor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "museums")
-public class Museum extends BaseEntity {
+public class Museum extends VisualArtworkPossessor {
     @OneToMany(mappedBy = "museum")
     private Set<Statue> statues = new HashSet<>();
 

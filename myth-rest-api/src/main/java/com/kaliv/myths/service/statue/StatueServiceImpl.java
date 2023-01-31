@@ -198,12 +198,6 @@ public class StatueServiceImpl implements StatueService {
         statueInDb.getStatueImages().removeAll(new HashSet<>(statueImagesToRemove));
 
         statueRepository.save(statueInDb);
-
-//        mythCharactersToAdd.forEach(a -> a.setStatue(statueInDb));
-//        mythCharacterRepository.saveAll(mythCharactersToAdd);
-//        mythCharactersToRemove.forEach(a -> a.setStatue(null));
-//        mythCharacterRepository.saveAll(mythCharactersToRemove);
-//        handle statueImages.forEach(...)
         return mapper.statueToDto(statueInDb);
     }
 

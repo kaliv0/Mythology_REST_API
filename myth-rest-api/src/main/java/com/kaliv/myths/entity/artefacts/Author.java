@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.kaliv.myths.entity.Nationality;
 import com.kaliv.myths.entity.TimePeriod;
+import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

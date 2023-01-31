@@ -5,10 +5,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,10 +31,9 @@ public class MythCharacter extends ArtworkPossessor {
     private MythCharacter mother;
 
     @ManyToMany(mappedBy = "mythCharacters")
-    @OnDelete(action = OnDeleteAction.NO_ACTION) //TODO: check if works
     private Set<Myth> myths = new HashSet<>();
 
-    @ManyToMany //TODO: potentially should be CascadeType.ALL/REMOVE
+    @ManyToMany
     @JoinTable(name = "characters_statues",
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "statue_id", referencedColumnName = "id"))

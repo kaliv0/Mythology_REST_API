@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.museumDtos;
 
-import java.util.Set;
+import com.kaliv.myths.dto.artworkPosessorDto.UpdateVisualArtworkPossessorDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,10 +9,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UpdateMuseumDto {
+public class UpdateMuseumDto extends UpdateVisualArtworkPossessorDto {
     private String name;
-    private Set<Long> statuesToAdd;
-    private Set<Long> statuesToRemove;
-    private Set<Long> paintingsToAdd;
-    private Set<Long> paintingsToRemove;
 }

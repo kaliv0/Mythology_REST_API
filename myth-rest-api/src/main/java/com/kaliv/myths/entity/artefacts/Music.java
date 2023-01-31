@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.kaliv.myths.entity.MythCharacter;
+import com.kaliv.myths.entity.artefacts.contracts.artworks.Artwork;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,10 @@
-package com.kaliv.myths.entity.artefacts;
+package com.kaliv.myths.entity.artefacts.contracts.artworks;
 
 import javax.persistence.*;
 
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.Myth;
+import com.kaliv.myths.entity.artefacts.Author;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

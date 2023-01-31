@@ -1,8 +1,10 @@
-package com.kaliv.myths.entity.artefacts;
+package com.kaliv.myths.entity.artefacts.contracts.artworks;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+
+import com.kaliv.myths.entity.artefacts.Museum;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

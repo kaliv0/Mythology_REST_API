@@ -197,12 +197,6 @@ public class PaintingServiceImpl implements PaintingService {
         paintingInDb.getPaintingImages().removeAll(new HashSet<>(paintingImagesToRemove));
 
         paintingRepository.save(paintingInDb);
-
-//        mythCharactersToAdd.forEach(a -> a.setPainting(paintingInDb));
-//        mythCharacterRepository.saveAll(mythCharactersToAdd);
-//        mythCharactersToRemove.forEach(a -> a.setPainting(null));
-//        mythCharacterRepository.saveAll(mythCharactersToRemove);
-//        handle paintingIamges.forEach(...)
         return mapper.paintingToDto(paintingInDb);
     }
 

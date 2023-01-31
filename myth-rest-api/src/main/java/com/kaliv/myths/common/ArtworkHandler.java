@@ -14,8 +14,11 @@ import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.artworkPosessorDto.CreateArtworkPossessorDto;
 import com.kaliv.myths.dto.artworkPosessorDto.UpdateArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDto.UpdateVisualArtworkPossessorDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;
+import com.kaliv.myths.entity.artefacts.contracts.possessors.VisualArtworkPossessor;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
 import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
@@ -92,7 +95,8 @@ public class ArtworkHandler {
         artworkPossessorInDb.getPoems().removeAll(new HashSet<>(poemsToRemove));
     }
 
-    private Tuple<List<Statue>, List<Statue>> getValidStatues(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
+    public Tuple<List<Statue>, List<Statue>> getValidStatues(UpdateVisualArtworkPossessorDto dto,
+                                                             VisualArtworkPossessor artworkPossessorInDb) {
         List<Long> statuesToAddIds = new ArrayList<>(dto.getStatuesToAdd());
         List<Long> statuesToRemoveIds = new ArrayList<>(dto.getStatuesToRemove());
         //check if user tries to add and remove same statue
@@ -122,7 +126,8 @@ public class ArtworkHandler {
         return new Tuple<>(statuesToAdd, statuesToRemove);
     }
 
-    private Tuple<List<Painting>, List<Painting>> getValidPaintings(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
+    public Tuple<List<Painting>, List<Painting>> getValidPaintings(UpdateVisualArtworkPossessorDto dto,
+                                                                   VisualArtworkPossessor artworkPossessorInDb) {
         List<Long> paintingsToAddIds = new ArrayList<>(dto.getPaintingsToAdd());
         List<Long> paintingsToRemoveIds = new ArrayList<>(dto.getPaintingsToRemove());
         //check if user tries to add and remove same painting
@@ -152,7 +157,7 @@ public class ArtworkHandler {
         return new Tuple<>(paintingsToAdd, paintingsToRemove);
     }
 
-    private Tuple<List<Music>, List<Music>> getValidMusic(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
+    public Tuple<List<Music>, List<Music>> getValidMusic(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
         List<Long> musicToAddIds = new ArrayList<>(dto.getMusicToAdd());
         List<Long> musicToRemoveIds = new ArrayList<>(dto.getMusicToRemove());
         //check if user tries to add and remove same painting
@@ -182,7 +187,7 @@ public class ArtworkHandler {
         return new Tuple<>(musicToAdd, musicToRemove);
     }
 
-    private Tuple<List<Poem>, List<Poem>> getValidPoems(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
+    public Tuple<List<Poem>, List<Poem>> getValidPoems(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
         List<Long> poemsToAddIds = new ArrayList<>(dto.getPoemsToAdd());
         List<Long> poemsToRemoveIds = new ArrayList<>(dto.getPoemsToRemove());
         //check if user tries to add and remove same painting

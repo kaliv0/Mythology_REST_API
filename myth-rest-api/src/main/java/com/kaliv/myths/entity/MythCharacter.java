@@ -5,7 +5,10 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.Statue;
 import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;
 
 import lombok.Getter;
@@ -56,4 +59,16 @@ public class MythCharacter extends ArtworkPossessor {
             joinColumns = @JoinColumn(name = "character_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "poem_id", referencedColumnName = "id"))
     private Set<Poem> poems = new HashSet<>();
+
+    @PrePersist
+    public void addMythCharacter() {
+        this.getMyths()
+                .forEach(myth -> myth.getMythCharacters().add(this));
+    }
+
+    @PreRemove
+    public void deleteMythCharacter() {
+        this.getMyths()
+                .forEach(myth -> myth.setMythCharacters(null));
+    }
 }

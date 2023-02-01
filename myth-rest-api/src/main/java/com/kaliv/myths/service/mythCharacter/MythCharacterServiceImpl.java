@@ -211,6 +211,12 @@ public class MythCharacterServiceImpl implements MythCharacterService {
 
         artworkHandler.handleArtworksToUpdate(dto, mythCharacterInDb);
         mythCharacterRepository.save(mythCharacterInDb);
+
+        mythsToAdd.forEach(myth -> myth.getMythCharacters().add(mythCharacterInDb));
+        mythRepository.saveAll(mythsToAdd);
+        mythsToRemove.forEach(myth -> myth.getMythCharacters().remove(mythCharacterInDb));
+        mythRepository.saveAll(mythsToRemove);
+
         return mapper.mythCharacterToDto(mythCharacterInDb);
     }
 

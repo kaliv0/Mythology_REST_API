@@ -64,11 +64,27 @@ public class MythCharacter extends ArtworkPossessor {
     public void addMythCharacter() {
         this.getMyths()
                 .forEach(myth -> myth.getMythCharacters().add(this));
+        this.getStatues()
+                .forEach(statue -> statue.getMythCharacters().add(this));
+        this.getPaintings()
+                .forEach(painting -> painting.getMythCharacters().add(this));
+        this.getMusic()
+                .forEach(music -> music.getMythCharacters().add(this));
+        this.getPoems()
+                .forEach(poem -> poem.getMythCharacters().add(this));
     }
 
     @PreRemove
     public void deleteMythCharacter() {
         this.getMyths()
                 .forEach(myth -> myth.setMythCharacters(null));
+        this.getStatues()
+                .forEach(statue -> statue.setMythCharacters(null));
+        this.getPaintings()
+                .forEach(painting -> painting.setMythCharacters(null));
+        this.getMusic()
+                .forEach(music -> music.setMythCharacters(null));
+        this.getPoems()
+                .forEach(poem -> poem.setMythCharacters(null));
     }
 }

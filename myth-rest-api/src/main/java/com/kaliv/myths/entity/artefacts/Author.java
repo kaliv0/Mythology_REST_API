@@ -38,4 +38,28 @@ public class Author extends ArtworkPossessor {
 
     @OneToMany(mappedBy = "author")
     private Set<Poem> poems = new HashSet<>();
+
+    @PrePersist
+    public void addAuthor() {
+        this.getStatues()
+                .forEach(statue -> statue.setAuthor(this));
+        this.getPaintings()
+                .forEach(painting -> painting.setAuthor(this));
+        this.getMusic()
+                .forEach(music -> music.setAuthor(this));
+        this.getPoems()
+                .forEach(poem -> poem.setAuthor(this));
+    }
+
+    @PreRemove
+    public void deleteAuthor() {
+        this.getStatues()
+                .forEach(statue -> statue.setAuthor(null));
+        this.getPaintings()
+                .forEach(painting -> painting.setAuthor(null));
+        this.getMusic()
+                .forEach(music -> music.setAuthor(null));
+        this.getPoems()
+                .forEach(poem -> poem.setAuthor(null));
+    }
 }

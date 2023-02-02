@@ -69,7 +69,11 @@ public class ArtworkHandler {
         return new Quadruple<>(statues, paintings, music, poems);
     }
 
-    public void handleArtworksToUpdate(UpdateArtworkPossessorDto dto, ArtworkPossessor artworkPossessorInDb) {
+    public Quadruple<Tuple<List<Statue>, List<Statue>>,
+            Tuple<List<Painting>, List<Painting>>,
+            Tuple<List<Music>, List<Music>>,
+            Tuple<List<Poem>, List<Poem>>> handleArtworksToUpdate(UpdateArtworkPossessorDto dto,
+                                                                  ArtworkPossessor artworkPossessorInDb) {
         Tuple<List<Statue>, List<Statue>> statuesToUpdate = this.getValidStatues(dto, artworkPossessorInDb);
         List<Statue> statuesToAdd = statuesToUpdate.getFirst();
         List<Statue> statuesToRemove = statuesToUpdate.getSecond();
@@ -93,6 +97,8 @@ public class ArtworkHandler {
         List<Poem> poemsToRemove = poemsToUpdate.getSecond();
         artworkPossessorInDb.getPoems().addAll(new HashSet<>(poemsToAdd));
         artworkPossessorInDb.getPoems().removeAll(new HashSet<>(poemsToRemove));
+
+        return new Quadruple<>(statuesToUpdate, paintingsToUpdate, musicToUpdate, poemsToUpdate);
     }
 
     public Tuple<List<Statue>, List<Statue>> getValidStatues(UpdateVisualArtworkPossessorDto dto,

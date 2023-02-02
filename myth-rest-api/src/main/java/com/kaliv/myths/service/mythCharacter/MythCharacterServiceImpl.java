@@ -3,6 +3,7 @@ package com.kaliv.myths.service.mythCharacter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.kaliv.myths.persistence.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +29,6 @@ import com.kaliv.myths.exception.notFound.ResourceListNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.MythCharacterMapper;
-import com.kaliv.myths.persistence.CategoryRepository;
-import com.kaliv.myths.persistence.MythCharacterRepository;
-import com.kaliv.myths.persistence.MythRepository;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
@@ -38,17 +36,29 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     private final MythCharacterRepository mythCharacterRepository;
     private final CategoryRepository categoryRepository;
     private final MythRepository mythRepository;
+    private final StatueRepository statueRepository;
+    private final PaintingRepository paintingRepository;
+    private final MusicRepository musicRepository;
+    private final PoemRepository poemRepository;
     private final MythCharacterMapper mapper;
     private final ArtworkHandler artworkHandler;
 
     public MythCharacterServiceImpl(MythCharacterRepository mythCharacterRepository,
                                     CategoryRepository categoryRepository,
                                     MythRepository mythRepository,
+                                    StatueRepository statueRepository,
+                                    PaintingRepository paintingRepository,
+                                    MusicRepository musicRepository,
+                                    PoemRepository poemRepository,
                                     MythCharacterMapper mapper,
                                     ArtworkHandler artworkHandler) {
         this.mythCharacterRepository = mythCharacterRepository;
         this.categoryRepository = categoryRepository;
         this.mythRepository = mythRepository;
+        this.statueRepository = statueRepository;
+        this.paintingRepository = paintingRepository;
+        this.musicRepository = musicRepository;
+        this.poemRepository = poemRepository;
         this.mapper = mapper;
         this.artworkHandler = artworkHandler;
     }
@@ -173,7 +183,6 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             }
             mythCharacterInDb.setName(dto.getName());
         }
-
         if (Optional.ofNullable(dto.getCategoryId()).isPresent()) {
             long categoryId = dto.getCategoryId();
             Category categoryInDb = categoryRepository.findById(categoryId)
@@ -203,20 +212,8 @@ public class MythCharacterServiceImpl implements MythCharacterService {
         mythCharacterInDb.setFather(father);
         mythCharacterInDb.setMother(mother);
 
-        Tuple<List<Myth>, List<Myth>> mythsToUpdate = this.getValidMyths(dto, mythCharacterInDb);
-        List<Myth> mythsToAdd = mythsToUpdate.getFirst();
-        List<Myth> mythsToRemove = mythsToUpdate.getSecond();
-        mythCharacterInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
-        mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
-
-        artworkHandler.handleArtworksToUpdate(dto, mythCharacterInDb);
+        this.handleCollectionsToUpdate(dto, mythCharacterInDb);
         mythCharacterRepository.save(mythCharacterInDb);
-
-        mythsToAdd.forEach(myth -> myth.getMythCharacters().add(mythCharacterInDb));
-        mythRepository.saveAll(mythsToAdd);
-        mythsToRemove.forEach(myth -> myth.getMythCharacters().remove(mythCharacterInDb));
-        mythRepository.saveAll(mythsToRemove);
-
         return mapper.mythCharacterToDto(mythCharacterInDb);
     }
 
@@ -237,6 +234,61 @@ public class MythCharacterServiceImpl implements MythCharacterService {
             }
         });
         mythCharacterRepository.delete(mythCharacterInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {
+        Tuple<List<Myth>, List<Myth>> mythsToUpdate = this.getValidMyths(dto, mythCharacterInDb);
+        List<Myth> mythsToAdd = mythsToUpdate.getFirst();
+        List<Myth> mythsToRemove = mythsToUpdate.getSecond();
+        mythCharacterInDb.getMyths().addAll(new HashSet<>(mythsToAdd));
+        mythCharacterInDb.getMyths().removeAll(new HashSet<>(mythsToRemove));
+
+        Quadruple<Tuple<List<Statue>, List<Statue>>,
+                Tuple<List<Painting>, List<Painting>>,
+                Tuple<List<Music>, List<Music>>,
+                Tuple<List<Poem>, List<Poem>>> artworksToUpdate = artworkHandler.handleArtworksToUpdate(dto, mythCharacterInDb);
+
+        Tuple<List<Statue>, List<Statue>> statuesToUpdate = artworksToUpdate.getFirst();
+        Tuple<List<Painting>, List<Painting>> paintingsToUpdate = artworksToUpdate.getSecond();
+        Tuple<List<Music>, List<Music>> musicToUpdate = artworksToUpdate.getThird();
+        Tuple<List<Poem>, List<Poem>> poemsToUpdate = artworksToUpdate.getFourth();
+
+        List<Statue> statuesToAdd = statuesToUpdate.getFirst();
+        List<Statue> statuesToRemove = statuesToUpdate.getSecond();
+
+        List<Painting> paintingsToAdd = paintingsToUpdate.getFirst();
+        List<Painting> paintingsToRemove = paintingsToUpdate.getSecond();
+
+        List<Music> musicToAdd = musicToUpdate.getFirst();
+        List<Music> musicToRemove = musicToUpdate.getSecond();
+
+        List<Poem> poemsToAdd = poemsToUpdate.getFirst();
+        List<Poem> poemsToRemove = poemsToUpdate.getSecond();
+
+        statuesToAdd.forEach(statue -> statue.getMythCharacters().add(mythCharacterInDb));
+        statueRepository.saveAll(statuesToAdd);
+        statuesToRemove.forEach(statue -> statue.getMythCharacters().remove(mythCharacterInDb));
+        statueRepository.saveAll(statuesToRemove);
+
+        paintingsToAdd.forEach(painting -> painting.getMythCharacters().add(mythCharacterInDb));
+        paintingRepository.saveAll(paintingsToAdd);
+        paintingsToRemove.forEach(painting -> painting.getMythCharacters().remove(mythCharacterInDb));
+        paintingRepository.saveAll(paintingsToRemove);
+
+        musicToAdd.forEach(music -> music.getMythCharacters().add(mythCharacterInDb));
+        musicRepository.saveAll(musicToAdd);
+        musicToRemove.forEach(music -> music.getMythCharacters().remove(mythCharacterInDb));
+        musicRepository.saveAll(musicToRemove);
+
+        poemsToAdd.forEach(poem -> poem.getMythCharacters().add(mythCharacterInDb));
+        poemRepository.saveAll(poemsToAdd);
+        poemsToRemove.forEach(poem -> poem.getMythCharacters().remove(mythCharacterInDb));
+        poemRepository.saveAll(poemsToRemove);
+
+        mythsToAdd.forEach(myth -> myth.getMythCharacters().add(mythCharacterInDb));
+        mythRepository.saveAll(mythsToAdd);
+        mythsToRemove.forEach(myth -> myth.getMythCharacters().remove(mythCharacterInDb));
+        mythRepository.saveAll(mythsToRemove);
     }
 
     private Tuple<List<Myth>, List<Myth>> getValidMyths(UpdateMythCharacterDto dto, MythCharacter mythCharacterInDb) {

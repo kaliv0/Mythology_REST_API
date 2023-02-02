@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.persistence.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,28 +24,36 @@ import com.kaliv.myths.entity.artefacts.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.AuthorMapper;
-import com.kaliv.myths.persistence.AuthorRepository;
-import com.kaliv.myths.persistence.NationalityRepository;
-import com.kaliv.myths.persistence.TimePeriodRepository;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
-
     private final AuthorRepository authorRepository;
     private final TimePeriodRepository timePeriodRepository;
     private final NationalityRepository nationalityRepository;
+    private final StatueRepository statueRepository;
+    private final PaintingRepository paintingRepository;
+    private final MusicRepository musicRepository;
+    private final PoemRepository poemRepository;
     private final ArtworkHandler artworkHandler;
     private final AuthorMapper mapper;
 
     public AuthorServiceImpl(AuthorRepository authorRepository,
                              TimePeriodRepository timePeriodRepository,
                              NationalityRepository nationalityRepository,
+                             StatueRepository statueRepository,
+                             PaintingRepository paintingRepository,
+                             MusicRepository musicRepository,
+                             PoemRepository poemRepository,
                              ArtworkHandler artworkHandler,
                              AuthorMapper mapper) {
         this.authorRepository = authorRepository;
         this.timePeriodRepository = timePeriodRepository;
         this.nationalityRepository = nationalityRepository;
+        this.statueRepository = statueRepository;
+        this.paintingRepository = paintingRepository;
+        this.musicRepository = musicRepository;
+        this.poemRepository = poemRepository;
         this.artworkHandler = artworkHandler;
         this.mapper = mapper;
     }
@@ -151,7 +161,7 @@ public class AuthorServiceImpl implements AuthorService {
             authorInDb.setNationality(nationalityInDb);
         }
 
-        artworkHandler.handleArtworksToUpdate(dto, authorInDb);
+        this.handleCollectionsToUpdate(dto, authorInDb);
         authorRepository.save(authorInDb);
         return mapper.authorToDto(authorInDb);
     }
@@ -161,5 +171,49 @@ public class AuthorServiceImpl implements AuthorService {
         Author authorInDb = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.AUTHOR, Fields.ID, id));
         authorRepository.delete(authorInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdateAuthorDto dto, Author authorInDb) {
+        Quadruple<Tuple<List<Statue>, List<Statue>>,
+                Tuple<List<Painting>, List<Painting>>,
+                Tuple<List<Music>, List<Music>>,
+                Tuple<List<Poem>, List<Poem>>> artworksToUpdate = artworkHandler.handleArtworksToUpdate(dto, authorInDb);
+
+        Tuple<List<Statue>, List<Statue>> statuesToUpdate = artworksToUpdate.getFirst();
+        Tuple<List<Painting>, List<Painting>> paintingsToUpdate = artworksToUpdate.getSecond();
+        Tuple<List<Music>, List<Music>> musicToUpdate = artworksToUpdate.getThird();
+        Tuple<List<Poem>, List<Poem>> poemsToUpdate = artworksToUpdate.getFourth();
+
+        List<Statue> statuesToAdd = statuesToUpdate.getFirst();
+        List<Statue> statuesToRemove = statuesToUpdate.getSecond();
+
+        List<Painting> paintingsToAdd = paintingsToUpdate.getFirst();
+        List<Painting> paintingsToRemove = paintingsToUpdate.getSecond();
+
+        List<Music> musicToAdd = musicToUpdate.getFirst();
+        List<Music> musicToRemove = musicToUpdate.getSecond();
+
+        List<Poem> poemsToAdd = poemsToUpdate.getFirst();
+        List<Poem> poemsToRemove = poemsToUpdate.getSecond();
+
+        statuesToAdd.forEach(statue -> statue.setAuthor(authorInDb));
+        statueRepository.saveAll(statuesToAdd);
+        statuesToRemove.forEach(statue -> statue.setAuthor(null));
+        statueRepository.saveAll(statuesToRemove);
+
+        paintingsToAdd.forEach(painting -> painting.setAuthor(authorInDb));
+        paintingRepository.saveAll(paintingsToAdd);
+        paintingsToRemove.forEach(painting -> painting.setAuthor(null));
+        paintingRepository.saveAll(paintingsToRemove);
+
+        musicToAdd.forEach(music -> music.setAuthor(authorInDb));
+        musicRepository.saveAll(musicToAdd);
+        musicToRemove.forEach(music -> music.setAuthor(null));
+        musicRepository.saveAll(musicToRemove);
+
+        poemsToAdd.forEach(poem -> poem.setAuthor(authorInDb));
+        poemRepository.saveAll(poemsToAdd);
+        poemsToRemove.forEach(poem -> poem.setAuthor(null));
+        poemRepository.saveAll(poemsToRemove);
     }
 }

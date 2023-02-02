@@ -77,6 +77,13 @@
             <artifactId>imgscalr-lib</artifactId>
             <version>4.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <version>2.28.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -107,6 +114,55 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.diffplug.spotless</groupId>-->
+<!--                <artifactId>spotless-maven-plugin</artifactId>-->
+<!--                <version>2.28.0</version>-->
+<!--                <configuration>-->
+<!--                    <java>-->
+<!--                        <includes>-->
+<!--                            <include>src/main/java/**/*.java</include>-->
+<!--                            <include>src/test/java/**/*.java</include>-->
+<!--                        </includes>-->
+<!--                        <importOrder/>-->
+<!--                        <removeUnusedImports/>-->
+<!--                        <toggleOffOn/>-->
+<!--                        <trimTrailingWhitespace/>-->
+<!--                        <endWithNewline/>-->
+<!--                        <googleJavaFormat/>-->
+<!--                        <indent>-->
+<!--                            <tabs>true</tabs>-->
+<!--                            <spacesPerTab>4</spacesPerTab>-->
+<!--                        </indent>-->
+
+<!--                    </java>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.28.0</version>
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                        </includes>
+                        <googleJavaFormat>
+                            <style>GOOGLE</style>
+                        </googleJavaFormat>
+                        <indent>
+                            <tabs>true</tabs>
+                            <spacesPerTab>2</spacesPerTab>
+                        </indent>
+                        <indent>
+                            <spaces>true</spaces>
+                            <spacesPerTab>4</spacesPerTab>
+                        </indent>
+                    </java>
+                </configuration>
             </plugin>
         </plugins>
     </build>

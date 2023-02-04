@@ -28,6 +28,10 @@ public class StatueMapper {
                 statue.getStatueImages().stream()
                         .map(BaseEntity::getId)
                         .collect(Collectors.toSet()));
+        statueDto.setSmallStatueImageIds(
+                statue.getSmallStatueImages().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
         return statueDto;
     }
 
@@ -39,6 +43,10 @@ public class StatueMapper {
                         .collect(Collectors.toSet()));
         statueResponseDto.setStatueImages(
                 statue.getStatueImages().stream()
+                        .map(image -> mapper.map(image, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        statueResponseDto.setSmallStatueImages(
+                statue.getSmallStatueImages().stream()
                         .map(image -> mapper.map(image, BaseDto.class))
                         .collect(Collectors.toSet()));
         return statueResponseDto;

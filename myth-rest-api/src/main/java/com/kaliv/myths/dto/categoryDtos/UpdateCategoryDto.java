@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.categoryDtos;
 
+import javax.validation.constraints.Positive;
+
 import java.util.Set;
 
 import lombok.Getter;
@@ -11,6 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateCategoryDto {
     private String name;
-    private Set<Long> mythCharactersToAdd;
-    private Set<Long> mythCharactersToRemove;
+    private Set<@Positive Long> mythCharactersToAdd;
+    private Set<@Positive Long> mythCharactersToRemove;
 }

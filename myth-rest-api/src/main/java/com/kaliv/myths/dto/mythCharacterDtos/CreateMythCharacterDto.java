@@ -1,6 +1,7 @@
 package com.kaliv.myths.dto.mythCharacterDtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 import java.util.Set;
 
@@ -17,11 +18,15 @@ public class CreateMythCharacterDto extends CreateArtworkPossessorDto {
     @NotBlank
     private String name;
 
+    @Positive
     private Long categoryId;
 
+    @Positive
     private Long fatherId;
 
+    @Positive
     private Long motherId;
 
-    private Set<Long> mythIds;
+
+    private Set<@Positive Long> mythIds;
 }

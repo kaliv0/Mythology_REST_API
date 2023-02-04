@@ -17,4 +17,5 @@ public class StatueResponseDto extends BaseDto {
     private BaseDto Museum;
     private Set<BaseDto> mythCharacters;
     private Set<BaseDto> statueImages;
+    private Set<BaseDto> smallStatueImages;
 }

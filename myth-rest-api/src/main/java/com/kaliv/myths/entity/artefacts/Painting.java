@@ -28,4 +28,24 @@ public class Painting extends VisualArtwork {
 
     @ManyToMany(mappedBy = "paintings")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
+
+    @PrePersist
+    public void addPainting() {
+        this.getPaintingImages()
+                .forEach(image -> image.setPainting(this));
+        this.getSmallPaintingImages()
+                .forEach(painting -> painting.setPainting(this));
+        this.getMythCharacters()
+                .forEach(character -> character.getPaintings().add(this));
+    }
+
+    @PreRemove
+    public void deletePainting() {
+        this.getPaintingImages()
+                .forEach(image -> image.setPainting(null));
+        this.getSmallPaintingImages()
+                .forEach(painting -> painting.setPainting(null));
+        this.getMythCharacters()
+                .forEach(character -> character.getPaintings().remove(this));
+    }
 }

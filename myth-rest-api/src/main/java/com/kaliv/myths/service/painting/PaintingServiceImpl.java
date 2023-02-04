@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.paintingDtos.*;
@@ -21,6 +22,8 @@ import com.kaliv.myths.entity.artefacts.Museum;
 import com.kaliv.myths.entity.artefacts.Painting;
 import com.kaliv.myths.entity.artefacts.QPainting;
 import com.kaliv.myths.entity.artefacts.images.PaintingImage;
+import com.kaliv.myths.entity.artefacts.images.QSmallPaintingImage;
+import com.kaliv.myths.entity.artefacts.images.SmallPaintingImage;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.invalidInput.DuplicateEntriesException;
@@ -40,6 +43,7 @@ public class PaintingServiceImpl implements PaintingService {
     private final MuseumRepository museumRepository;
     private final MythCharacterRepository mythCharacterRepository;
     private final PaintingImageRepository paintingImageRepository;
+    private final SmallPaintingImageRepository smallPaintingImageRepository;
     private final PaintingMapper mapper;
 
     public PaintingServiceImpl(PaintingRepository paintingRepository,
@@ -48,6 +52,7 @@ public class PaintingServiceImpl implements PaintingService {
                                MuseumRepository museumRepository,
                                MythCharacterRepository mythCharacterRepository,
                                PaintingImageRepository paintingImageRepository,
+                               SmallPaintingImageRepository smallPaintingImageRepository,
                                PaintingMapper mapper) {
         this.paintingRepository = paintingRepository;
         this.authorRepository = authorRepository;
@@ -55,6 +60,7 @@ public class PaintingServiceImpl implements PaintingService {
         this.museumRepository = museumRepository;
         this.mythCharacterRepository = mythCharacterRepository;
         this.paintingImageRepository = paintingImageRepository;
+        this.smallPaintingImageRepository = smallPaintingImageRepository;
         this.mapper = mapper;
     }
 
@@ -145,9 +151,12 @@ public class PaintingServiceImpl implements PaintingService {
             throw new ResourceListNotFoundException(Sources.IMAGES, Fields.IDS);
         }
 
+        List<SmallPaintingImage> smallPaintingImages = this.getCorrespondingSmallPaintingImages(paintingImages);
+
         Painting painting = mapper.dtoToPainting(dto);
         painting.setMythCharacters(new HashSet<>(mythCharacters));
         painting.setPaintingImages(new HashSet<>(paintingImages));
+        painting.setSmallPaintingImages(new HashSet<>(smallPaintingImages));
         Painting savedPainting = paintingRepository.save(painting);
 
         return mapper.paintingToDto(savedPainting);
@@ -184,18 +193,7 @@ public class PaintingServiceImpl implements PaintingService {
             paintingInDb.setMuseum(museumInDb);
         }
 
-        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, paintingInDb);
-        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
-        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
-        paintingInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        paintingInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-
-        Tuple<List<PaintingImage>, List<PaintingImage>> paintingImagesToUpdate = this.getValidPaintingImages(dto, paintingInDb);
-        List<PaintingImage> paintingImagesToAdd = paintingImagesToUpdate.getFirst();
-        List<PaintingImage> paintingImagesToRemove = paintingImagesToUpdate.getSecond();
-        paintingInDb.getPaintingImages().addAll(new HashSet<>(paintingImagesToAdd));
-        paintingInDb.getPaintingImages().removeAll(new HashSet<>(paintingImagesToRemove));
-
+        this.handleCollectionsToUpdate(dto, paintingInDb);
         paintingRepository.save(paintingInDb);
         return mapper.paintingToDto(paintingInDb);
     }
@@ -207,6 +205,54 @@ public class PaintingServiceImpl implements PaintingService {
         paintingRepository.delete(paintingInDb);
     }
 
+    private void handleCollectionsToUpdate(UpdatePaintingDto dto, Painting paintingInDb) {
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, paintingInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        paintingInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        paintingInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+
+        Tuple<List<PaintingImage>, List<PaintingImage>> paintingImagesToUpdate = this.getValidPaintingImages(dto, paintingInDb);
+        List<PaintingImage> paintingImagesToAdd = paintingImagesToUpdate.getFirst();
+        List<PaintingImage> paintingImagesToRemove = paintingImagesToUpdate.getSecond();
+        List<SmallPaintingImage> smallPaintingImagesToAdd = getCorrespondingSmallPaintingImages(paintingImagesToAdd);
+        List<SmallPaintingImage> smallPaintingImagesToRemove = getCorrespondingSmallPaintingImages(paintingImagesToRemove);
+
+        paintingInDb.getPaintingImages().addAll(new HashSet<>(paintingImagesToAdd));
+        paintingInDb.getPaintingImages().removeAll(new HashSet<>(paintingImagesToRemove));
+        paintingInDb.getSmallPaintingImages().addAll(new HashSet<>(smallPaintingImagesToAdd));
+        paintingInDb.getSmallPaintingImages().removeAll(new HashSet<>(smallPaintingImagesToRemove));
+
+        mythCharactersToAdd.forEach(character -> character.getPaintings().add(paintingInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(character -> character.getPaintings().remove(paintingInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        paintingImagesToAdd.forEach(image -> image.setPainting(paintingInDb));
+        paintingImageRepository.saveAll(paintingImagesToAdd);
+        paintingImagesToRemove.forEach(image -> image.setPainting(null));
+        paintingImageRepository.saveAll(paintingImagesToRemove);
+
+        smallPaintingImagesToAdd.forEach(image -> image.setPainting(paintingInDb));
+        smallPaintingImageRepository.saveAll(smallPaintingImagesToAdd);
+        smallPaintingImagesToRemove.forEach(image -> image.setPainting(null));
+        smallPaintingImageRepository.saveAll(smallPaintingImagesToRemove);
+    }
+
+    private List<SmallPaintingImage> getCorrespondingSmallPaintingImages(List<PaintingImage> paintingImages) {
+        Set<String> paintingImageNames = paintingImages.stream()
+                .map(image -> ImageResizeHandler.prepareResizedFileName(image.getName()))
+                .collect(Collectors.toSet());
+        QSmallPaintingImage qSmallPaintingImage = QSmallPaintingImage.smallPaintingImage;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(qSmallPaintingImage.name.in(paintingImageNames));
+        List<SmallPaintingImage> smallPaintingImages = smallPaintingImageRepository.findAll(booleanBuilder);
+        if (smallPaintingImages.size() != paintingImages.size()) {
+            throw new ResourceListNotFoundException(Sources.SMALL_IMAGES, Fields.NAMES);
+        }
+        return smallPaintingImages;
+    }
+
     private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdatePaintingDto dto, Painting paintingInDb) {
         List<Long> mythCharactersToAddIds = new ArrayList<>(dto.getMythCharactersToAdd());
         List<Long> mythCharactersToRemoveIds = new ArrayList<>(dto.getMythCharactersToRemove());
@@ -215,17 +261,23 @@ public class PaintingServiceImpl implements PaintingService {
             throw new DuplicateEntriesException(Sources.ADD_CHARACTERS, Sources.REMOVE_CHARACTERS);
         }
         //check if user tries to add mythCharacter that is already in the list
-        if (paintingInDb.getMythCharacters().stream().map(BaseEntity::getId).anyMatch(mythCharactersToAddIds::contains)) {
+        if (paintingInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .anyMatch(mythCharactersToAddIds::contains)) {
             throw new ResourceAlreadyExistsException(Sources.CHARACTER);
         }
         //check if user tries to remove mythCharacter that is not in the list
-        if (!paintingInDb.getMythCharacters().stream().map(BaseEntity::getId).collect(Collectors.toSet()).containsAll(mythCharactersToRemoveIds)) {
+        if (!paintingInDb.getMythCharacters().stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet())
+                .containsAll(mythCharactersToRemoveIds)) {
             throw new ResourceNotFoundException(Sources.CHARACTER);
         }
 
         List<MythCharacter> mythCharactersToAdd = mythCharacterRepository.findAllById(mythCharactersToAddIds);
         List<MythCharacter> mythCharactersToRemove = mythCharacterRepository.findAllById(mythCharactersToRemoveIds);
-        if (mythCharactersToAddIds.size() != mythCharactersToAdd.size() || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
+        if (mythCharactersToAddIds.size() != mythCharactersToAdd.size()
+                || mythCharactersToRemoveIds.size() != mythCharactersToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.CHARACTERS, Fields.IDS);
         }
         return new Tuple<>(mythCharactersToAdd, mythCharactersToRemove);

@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.paintingDtos;
 
+import javax.validation.constraints.Positive;
+
 import java.util.Set;
 
 import lombok.Getter;
@@ -11,11 +13,21 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdatePaintingDto {
     private String name;
+
+    @Positive
     private Long AuthorId;
+
+    @Positive
     private Long MythId;
+
+    @Positive
     private Long MuseumId;
-    private Set<Long> mythCharactersToAdd;
-    private Set<Long> mythCharactersToRemove;
-    private Set<Long> paintingImagesToAdd;
-    private Set<Long> paintingImagesToRemove;
+
+    private Set<@Positive Long> mythCharactersToAdd;
+
+    private Set<@Positive Long> mythCharactersToRemove;
+
+    private Set<@Positive Long> paintingImagesToAdd;
+
+    private Set<@Positive Long> paintingImagesToRemove;
 }

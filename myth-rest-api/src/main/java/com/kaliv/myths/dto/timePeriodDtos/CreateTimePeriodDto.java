@@ -1,6 +1,7 @@
 package com.kaliv.myths.dto.timePeriodDtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 import java.util.Set;
 
@@ -18,5 +19,5 @@ public class CreateTimePeriodDto {
     @NotBlank
     private String years;
 
-    private Set<Long> authorIds;
+    private Set<@Positive Long> authorIds;
 }

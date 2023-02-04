@@ -69,6 +69,6 @@ public class MythCharacter extends ArtworkPossessor {
     @PreRemove
     public void deleteMythCharacter() {
         this.getMyths()
-                .forEach(myth -> myth.setMythCharacters(null));
+                .forEach(myth -> myth.getMythCharacters().remove(this));
     }
 }

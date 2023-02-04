@@ -17,4 +17,5 @@ public class StatueDto extends BaseDto {
     private Long MuseumId;
     private Set<Long> mythCharacterIds;
     private Set<Long> statueImageIds;
+    private Set<Long> smallStatueImageIds;
 }

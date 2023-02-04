@@ -1,6 +1,7 @@
 package com.kaliv.myths.dto.mythDtos;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 import java.util.Set;
 
@@ -20,7 +21,9 @@ public class CreateMythDto extends CreateArtworkPossessorDto {
     @NotBlank
     private String plot;
 
+    @Positive
     private Long nationalityId;
 
-    private Set<Long> mythCharacterIds;
+
+    private Set<@Positive Long> mythCharacterIds;
 }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.statueDtos.*;
@@ -20,6 +21,8 @@ import com.kaliv.myths.entity.artefacts.Author;
 import com.kaliv.myths.entity.artefacts.Museum;
 import com.kaliv.myths.entity.artefacts.QStatue;
 import com.kaliv.myths.entity.artefacts.Statue;
+import com.kaliv.myths.entity.artefacts.images.QSmallStatueImage;
+import com.kaliv.myths.entity.artefacts.images.SmallStatueImage;
 import com.kaliv.myths.entity.artefacts.images.StatueImage;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
@@ -40,6 +43,7 @@ public class StatueServiceImpl implements StatueService {
     private final MuseumRepository museumRepository;
     private final MythCharacterRepository mythCharacterRepository;
     private final StatueImageRepository statueImageRepository;
+    private final SmallStatueImageRepository smallStatueImageRepository;
     private final StatueMapper mapper;
 
     public StatueServiceImpl(StatueRepository statueRepository,
@@ -48,6 +52,7 @@ public class StatueServiceImpl implements StatueService {
                              MuseumRepository museumRepository,
                              MythCharacterRepository mythCharacterRepository,
                              StatueImageRepository statueImageRepository,
+                             SmallStatueImageRepository smallStatueImageRepository,
                              StatueMapper mapper) {
         this.statueRepository = statueRepository;
         this.authorRepository = authorRepository;
@@ -55,6 +60,7 @@ public class StatueServiceImpl implements StatueService {
         this.museumRepository = museumRepository;
         this.mythCharacterRepository = mythCharacterRepository;
         this.statueImageRepository = statueImageRepository;
+        this.smallStatueImageRepository = smallStatueImageRepository;
         this.mapper = mapper;
     }
 
@@ -146,9 +152,12 @@ public class StatueServiceImpl implements StatueService {
             throw new ResourceListNotFoundException(Sources.IMAGES, Fields.IDS);
         }
 
+        List<SmallStatueImage> smallStatueImages = this.getCorrespondingSmallStatueImages(statueImages);
+
         Statue statue = mapper.dtoToStatue(dto);
         statue.setMythCharacters(new HashSet<>(mythCharacters));
         statue.setStatueImages(new HashSet<>(statueImages));
+        statue.setSmallStatueImages(new HashSet<>(smallStatueImages));
         Statue savedStatue = statueRepository.save(statue);
 
         return mapper.statueToDto(savedStatue);
@@ -185,18 +194,7 @@ public class StatueServiceImpl implements StatueService {
             statueInDb.setMuseum(museumInDb);
         }
 
-        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, statueInDb);
-        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
-        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
-        statueInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        statueInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
-
-        Tuple<List<StatueImage>, List<StatueImage>> statueImagesToUpdate = this.getValidStatueImages(dto, statueInDb);
-        List<StatueImage> statueImagesToAdd = statueImagesToUpdate.getFirst();
-        List<StatueImage> statueImagesToRemove = statueImagesToUpdate.getSecond();
-        statueInDb.getStatueImages().addAll(new HashSet<>(statueImagesToAdd));
-        statueInDb.getStatueImages().removeAll(new HashSet<>(statueImagesToRemove));
-
+        this.handleCollectionsToUpdate(dto, statueInDb);
         statueRepository.save(statueInDb);
         return mapper.statueToDto(statueInDb);
     }
@@ -206,6 +204,54 @@ public class StatueServiceImpl implements StatueService {
         Statue statueInDb = statueRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.STATUE, Fields.ID, id));
         statueRepository.delete(statueInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdateStatueDto dto, Statue statueInDb) {
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, statueInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        statueInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        statueInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+
+        Tuple<List<StatueImage>, List<StatueImage>> statueImagesToUpdate = this.getValidStatueImages(dto, statueInDb);
+        List<StatueImage> statueImagesToAdd = statueImagesToUpdate.getFirst();
+        List<StatueImage> statueImagesToRemove = statueImagesToUpdate.getSecond();
+        List<SmallStatueImage> smallStatueImagesToAdd = getCorrespondingSmallStatueImages(statueImagesToAdd);
+        List<SmallStatueImage> smallStatueImagesToRemove = getCorrespondingSmallStatueImages(statueImagesToRemove);
+
+        statueInDb.getStatueImages().addAll(new HashSet<>(statueImagesToAdd));
+        statueInDb.getStatueImages().removeAll(new HashSet<>(statueImagesToRemove));
+        statueInDb.getSmallStatueImages().addAll(new HashSet<>(smallStatueImagesToAdd));
+        statueInDb.getSmallStatueImages().removeAll(new HashSet<>(smallStatueImagesToRemove));
+
+        mythCharactersToAdd.forEach(character -> character.getStatues().add(statueInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(character -> character.getStatues().remove(statueInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
+
+        statueImagesToAdd.forEach(image -> image.setStatue(statueInDb));
+        statueImageRepository.saveAll(statueImagesToAdd);
+        statueImagesToRemove.forEach(image -> image.setStatue(null));
+        statueImageRepository.saveAll(statueImagesToRemove);
+
+        smallStatueImagesToAdd.forEach(image -> image.setStatue(statueInDb));
+        smallStatueImageRepository.saveAll(smallStatueImagesToAdd);
+        smallStatueImagesToRemove.forEach(image -> image.setStatue(null));
+        smallStatueImageRepository.saveAll(smallStatueImagesToRemove);
+    }
+
+    private List<SmallStatueImage> getCorrespondingSmallStatueImages(List<StatueImage> statueImages) {
+        Set<String> statueImageNames = statueImages.stream()
+                .map(image -> ImageResizeHandler.prepareResizedFileName(image.getName()))
+                .collect(Collectors.toSet());
+        QSmallStatueImage qSmallStatueImage = QSmallStatueImage.smallStatueImage;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        booleanBuilder.and(qSmallStatueImage.name.in(statueImageNames));
+        List<SmallStatueImage> smallStatueImages = smallStatueImageRepository.findAll(booleanBuilder);
+        if (smallStatueImages.size() != statueImages.size()) {
+            throw new ResourceListNotFoundException(Sources.SMALL_IMAGES, Fields.NAMES);
+        }
+        return smallStatueImages;
     }
 
     private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdateStatueDto dto, Statue statueInDb) {

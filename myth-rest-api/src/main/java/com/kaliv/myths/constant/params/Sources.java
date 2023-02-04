@@ -25,6 +25,7 @@ public class Sources {
     public static final String REMOVE_POEMS = "poemsToRemove";
     public static final String IMAGE = "Image";
     public static final String IMAGES = "Images";
+    public static final String SMALL_IMAGES = "Small images";
     public static final String MUSEUM = "Museum";
     public static final String STATUE = "Statue";
     public static final String STATUES = "Statues";

@@ -17,4 +17,5 @@ public class PaintingDto extends BaseDto {
     private Long MuseumId;
     private Set<Long> mythCharacterIds;
     private Set<Long> paintingImageIds;
+    private Set<Long> smallPaintingImageIds;
 }

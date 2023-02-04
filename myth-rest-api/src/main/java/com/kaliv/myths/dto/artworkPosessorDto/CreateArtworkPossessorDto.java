@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.artworkPosessorDto;
 
+import javax.validation.constraints.Positive;
+
 import java.util.Set;
 
 import lombok.Getter;
@@ -10,8 +12,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public abstract class CreateArtworkPossessorDto {
-    private Set<Long> statueIds;
-    private Set<Long> paintingIds;
-    private Set<Long> musicIds;
-    private Set<Long> poemIds;
+    private Set<@Positive Long> statueIds;
+    private Set<@Positive Long> paintingIds;
+    private Set<@Positive Long> musicIds;
+    private Set<@Positive Long> poemIds;
 }

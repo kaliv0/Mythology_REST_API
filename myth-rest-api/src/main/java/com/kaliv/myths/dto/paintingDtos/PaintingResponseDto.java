@@ -17,4 +17,5 @@ public class PaintingResponseDto extends BaseDto {
     private BaseDto Museum;
     private Set<BaseDto> mythCharacters;
     private Set<BaseDto> paintingImages;
+    private Set<BaseDto> smallPaintingImages;
 }

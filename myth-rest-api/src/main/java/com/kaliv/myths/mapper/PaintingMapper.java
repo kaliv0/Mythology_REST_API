@@ -28,6 +28,10 @@ public class PaintingMapper {
                 painting.getPaintingImages().stream()
                         .map(BaseEntity::getId)
                         .collect(Collectors.toSet()));
+        paintingDto.setSmallPaintingImageIds(
+                painting.getSmallPaintingImages().stream()
+                        .map(BaseEntity::getId)
+                        .collect(Collectors.toSet()));
         return paintingDto;
     }
 
@@ -39,6 +43,10 @@ public class PaintingMapper {
                         .collect(Collectors.toSet()));
         paintingResponseDto.setPaintingImages(
                 painting.getPaintingImages().stream()
+                        .map(image -> mapper.map(image, BaseDto.class))
+                        .collect(Collectors.toSet()));
+        paintingResponseDto.setSmallPaintingImages(
+                painting.getSmallPaintingImages().stream()
                         .map(image -> mapper.map(image, BaseDto.class))
                         .collect(Collectors.toSet()));
         return paintingResponseDto;

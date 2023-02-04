@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.mythDtos;
 
+import javax.validation.constraints.Positive;
+
 import java.util.Set;
 
 import com.kaliv.myths.dto.artworkPosessorDto.UpdateArtworkPossessorDto;
@@ -13,8 +15,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateMythDto extends UpdateArtworkPossessorDto {
     private String name;
+
     private String plot;
+
+    @Positive
     private Long nationalityId;
-    private Set<Long> mythCharactersToAdd;
-    private Set<Long> mythsCharactersToRemove;
+
+    private Set<@Positive Long> mythCharactersToAdd;
+
+    private Set<@Positive Long> mythsCharactersToRemove;
 }

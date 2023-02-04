@@ -1,5 +1,7 @@
 package com.kaliv.myths.dto.nationalityDtos;
 
+import javax.validation.constraints.Positive;
+
 import java.util.Set;
 
 import lombok.Getter;
@@ -11,8 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateNationalityDto {
     private String name;
-    private Set<Long> mythsToAdd;
-    private Set<Long> mythsToRemove;
-    private Set<Long> authorsToAdd;
-    private Set<Long> authorsToRemove;
+    private Set<@Positive Long> mythsToAdd;
+    private Set<@Positive Long> mythsToRemove;
+    private Set<@Positive Long> authorsToAdd;
+    private Set<@Positive Long> authorsToRemove;
 }

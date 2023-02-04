@@ -25,4 +25,16 @@ public class Poem extends Artwork {
 
     @ManyToMany(mappedBy = "poems")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
+
+    @PrePersist
+    public void addPoem() {
+        this.getMythCharacters()
+                .forEach(character -> character.getPoems().add(this));
+    }
+
+    @PreRemove
+    public void deletePoem() {
+        this.getMythCharacters()
+                .forEach(character -> character.setPoems(null));
+    }
 }

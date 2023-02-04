@@ -23,4 +23,16 @@ public class Music extends Artwork {
 
     @ManyToMany(mappedBy = "music")
     private Set<MythCharacter> mythCharacters = new HashSet<>();
+
+    @PrePersist
+    public void addMusic() {
+        this.getMythCharacters()
+                .forEach(character -> character.getMusic().add(this));
+    }
+
+    @PreRemove
+    public void deleteMusic() {
+        this.getMythCharacters()
+                .forEach(character -> character.setMusic(null));
+    }
 }

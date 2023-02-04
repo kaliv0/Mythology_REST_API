@@ -43,7 +43,7 @@ public class NationalityController {
         return new ResponseEntity<>(nationalityService.createNationality(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public NationalityDto updateNationality(@PathVariable("id") long id, @Valid @RequestBody UpdateNationalityDto dto) {
         return nationalityService.updateNationality(id, dto);
     }

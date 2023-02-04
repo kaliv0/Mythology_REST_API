@@ -159,13 +159,8 @@ public class PoemServiceImpl implements PoemService {
         Optional.ofNullable(dto.getFullTextUrl()).ifPresent(poemInDb::setFullTextUrl);
         Optional.ofNullable(dto.getExcerpt()).ifPresent(poemInDb::setExcerpt);
 
-        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, poemInDb);
-        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
-        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
-        poemInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        poemInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        this.handleCollectionsToUpdate(dto, poemInDb);
         poemRepository.save(poemInDb);
-
         return mapper.poemToDto(poemInDb);
     }
 
@@ -174,6 +169,19 @@ public class PoemServiceImpl implements PoemService {
         Poem poemInDb = poemRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.POEM, Fields.ID, id));
         poemRepository.delete(poemInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdatePoemDto dto, Poem poemInDb) {
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, poemInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        poemInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        poemInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+
+        mythCharactersToAdd.forEach(a -> a.getPoems().add(poemInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.getPoems().remove(poemInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
     }
 
     private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdatePoemDto dto, Poem poemInDb) {

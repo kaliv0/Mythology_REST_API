@@ -102,6 +102,19 @@ public class MuseumServiceImpl implements MuseumService {
             museumInDb.setName(dto.getName());
         }
 
+        this.handleCollectionsToUpdate(dto, museumInDb);
+        museumRepository.save(museumInDb);
+        return mapper.museumToDto(museumInDb);
+    }
+
+    @Override
+    public void deleteMuseum(long id) {
+        Museum museumInDb = museumRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSEUM, Fields.ID, id));
+        museumRepository.delete(museumInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdateMuseumDto dto, Museum museumInDb) {
         Tuple<List<Statue>, List<Statue>> statuesToUpdate = artworkHandler.getValidStatues(dto, museumInDb);
         List<Statue> statuesToAdd = statuesToUpdate.getFirst();
         List<Statue> statuesToRemove = statuesToUpdate.getSecond();
@@ -114,14 +127,14 @@ public class MuseumServiceImpl implements MuseumService {
         museumInDb.getPaintings().addAll(new HashSet<>(paintingsToAdd));
         museumInDb.getPaintings().removeAll(new HashSet<>(paintingsToRemove));
 
-        museumRepository.save(museumInDb);
-        return mapper.museumToDto(museumInDb);
-    }
+        statuesToAdd.forEach(statue -> statue.setMuseum(museumInDb));
+        statueRepository.saveAll(statuesToAdd);
+        statuesToRemove.forEach(statue -> statue.setMuseum(null));
+        statueRepository.saveAll(statuesToRemove);
 
-    @Override
-    public void deleteMuseum(long id) {
-        Museum museumInDb = museumRepository.findById(id)
-                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSEUM, Fields.ID, id));
-        museumRepository.delete(museumInDb);
+        paintingsToAdd.forEach(painting -> painting.setMuseum(museumInDb));
+        paintingRepository.saveAll(paintingsToAdd);
+        paintingsToRemove.forEach(painting -> painting.setMuseum(null));
+        paintingRepository.saveAll(paintingsToRemove);
     }
 }

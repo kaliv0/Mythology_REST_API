@@ -46,7 +46,7 @@ public class MythController {
         return new ResponseEntity<>(mythService.createMyth(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public MythDto updateMyth(@PathVariable("id") Long id, @Valid @RequestBody UpdateMythDto dto) {
         return mythService.updateMyth(id, dto);
     }

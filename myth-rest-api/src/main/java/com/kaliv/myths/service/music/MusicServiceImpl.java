@@ -128,7 +128,6 @@ public class MusicServiceImpl implements MusicService {
         Music music = mapper.dtoToMusic(dto);
         music.setMythCharacters(new HashSet<>(mythCharacters));
         Music savedMusic = musicRepository.save(music);
-
         return mapper.musicToDto(savedMusic);
     }
 
@@ -161,13 +160,8 @@ public class MusicServiceImpl implements MusicService {
 
         Optional.ofNullable(dto.getRecordingUrl()).ifPresent(musicInDb::setRecordingUrl);
 
-        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, musicInDb);
-        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
-        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
-        musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
-        musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+        this.handleCollectionsToUpdate(dto, musicInDb);
         musicRepository.save(musicInDb);
-
         return mapper.musicToDto(musicInDb);
     }
 
@@ -176,6 +170,19 @@ public class MusicServiceImpl implements MusicService {
         Music musicInDb = musicRepository.findById(id)
                 .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.MUSIC, Fields.ID, id));
         musicRepository.delete(musicInDb);
+    }
+
+    private void handleCollectionsToUpdate(UpdateMusicDto dto, Music musicInDb) {
+        Tuple<List<MythCharacter>, List<MythCharacter>> mythCharactersToUpdate = this.getValidMythCharacters(dto, musicInDb);
+        List<MythCharacter> mythCharactersToAdd = mythCharactersToUpdate.getFirst();
+        List<MythCharacter> mythCharactersToRemove = mythCharactersToUpdate.getSecond();
+        musicInDb.getMythCharacters().addAll(new HashSet<>(mythCharactersToAdd));
+        musicInDb.getMythCharacters().removeAll(new HashSet<>(mythCharactersToRemove));
+
+        mythCharactersToAdd.forEach(a -> a.getMusic().add(musicInDb));
+        mythCharacterRepository.saveAll(mythCharactersToAdd);
+        mythCharactersToRemove.forEach(a -> a.getMusic().remove(musicInDb));
+        mythCharacterRepository.saveAll(mythCharactersToRemove);
     }
 
     private Tuple<List<MythCharacter>, List<MythCharacter>> getValidMythCharacters(UpdateMusicDto dto, Music musicInDb) {

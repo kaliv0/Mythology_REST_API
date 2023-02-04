@@ -48,7 +48,7 @@ public class StatueController {
         return new ResponseEntity<>(statueService.createStatue(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public StatueDto updateStatue(@PathVariable("id") long id, @Valid @RequestBody UpdateStatueDto dto) {
         return statueService.updateStatue(id, dto);
     }

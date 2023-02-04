@@ -47,7 +47,7 @@ public class MusicController {
         return new ResponseEntity<>(musicService.createMusic(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public MusicDto updateMusic(@PathVariable("id") long id, @Valid @RequestBody UpdateMusicDto dto) {
         return musicService.updateMusic(id, dto);
     }

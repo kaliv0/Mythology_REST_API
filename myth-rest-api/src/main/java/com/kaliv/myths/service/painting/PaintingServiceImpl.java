@@ -202,7 +202,8 @@ public class PaintingServiceImpl implements PaintingService {
 
     @Override
     public void deletePainting(long id) {
-        Painting paintingInDb = paintingRepository.findById(id).orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
+        Painting paintingInDb = paintingRepository.findById(id)
+                .orElseThrow(() -> new ResourceWithGivenValuesNotFoundException(Sources.PAINTING, Fields.ID, id));
         paintingRepository.delete(paintingInDb);
     }
 
@@ -238,17 +239,23 @@ public class PaintingServiceImpl implements PaintingService {
             throw new DuplicateEntriesException(Sources.ADD_IMAGES, Sources.REMOVE_IMAGES);
         }
         //check if user tries to add paintingImage that is already in the list
-        if (paintingInDb.getPaintingImages().stream().map(BaseEntity::getId).anyMatch(paintingImagesToAddIds::contains)) {
+        if (paintingInDb.getPaintingImages().stream()
+                .map(BaseEntity::getId)
+                .anyMatch(paintingImagesToAddIds::contains)) {
             throw new ResourceAlreadyExistsException(Sources.IMAGE);
         }
         //check if user tries to remove paintingImage that is not in the list
-        if (!paintingInDb.getPaintingImages().stream().map(BaseEntity::getId).collect(Collectors.toSet()).containsAll(paintingImagesToRemoveIds)) {
+        if (!paintingInDb.getPaintingImages().stream()
+                .map(BaseEntity::getId)
+                .collect(Collectors.toSet())
+                .containsAll(paintingImagesToRemoveIds)) {
             throw new ResourceNotFoundException(Sources.IMAGE);
         }
 
         List<PaintingImage> paintingImagesToAdd = paintingImageRepository.findAllById(paintingImagesToAddIds);
         List<PaintingImage> paintingImagesToRemove = paintingImageRepository.findAllById(paintingImagesToRemoveIds);
-        if (paintingImagesToAddIds.size() != paintingImagesToAdd.size() || paintingImagesToRemoveIds.size() != paintingImagesToRemove.size()) {
+        if (paintingImagesToAddIds.size() != paintingImagesToAdd.size()
+                || paintingImagesToRemoveIds.size() != paintingImagesToRemove.size()) {
             throw new ResourceListNotFoundException(Sources.IMAGES, Fields.IDS);
         }
         return new Tuple<>(paintingImagesToAdd, paintingImagesToRemove);

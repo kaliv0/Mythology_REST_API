@@ -43,7 +43,7 @@ public class TimePeriodController {
         return new ResponseEntity<>(timePeriodService.createTimePeriod(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody UpdateTimePeriodDto dto) {
         return timePeriodService.updateTimePeriod(id, dto);
     }

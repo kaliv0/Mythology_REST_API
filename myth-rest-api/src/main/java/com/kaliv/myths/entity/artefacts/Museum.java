@@ -1,8 +1,6 @@
 package com.kaliv.myths.entity.artefacts;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,4 +22,20 @@ public class Museum extends VisualArtworkPossessor {
 
     @OneToMany(mappedBy = "museum")
     private Set<Painting> paintings = new HashSet<>();
+
+    @PrePersist
+    public void addMuseum() {
+        this.getStatues()
+                .forEach(statue -> statue.setMuseum(this));
+        this.getPaintings()
+                .forEach(painting -> painting.setMuseum(this));
+    }
+
+    @PreRemove
+    public void deleteMuseum() {
+        this.getStatues()
+                .forEach(statue -> statue.setMuseum(null));
+        this.getPaintings()
+                .forEach(painting -> painting.setMuseum(null));
+    }
 }

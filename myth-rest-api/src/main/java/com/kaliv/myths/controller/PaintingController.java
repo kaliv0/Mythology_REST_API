@@ -48,7 +48,7 @@ public class PaintingController {
         return new ResponseEntity<>(paintingService.createPainting(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public PaintingDto updatePainting(@PathVariable("id") long id, @Valid @RequestBody UpdatePaintingDto dto) {
         return paintingService.updatePainting(id, dto);
     }

@@ -47,7 +47,7 @@ public class PoemController {
         return new ResponseEntity<>(poemService.createPoem(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public PoemDto updatePoem(@PathVariable("id") long id, @Valid @RequestBody UpdatePoemDto dto) {
         return poemService.updatePoem(id, dto);
     }

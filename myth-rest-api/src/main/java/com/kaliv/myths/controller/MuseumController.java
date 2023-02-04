@@ -43,7 +43,7 @@ public class MuseumController {
         return new ResponseEntity<>(museumService.createMuseum(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public MuseumDto updateMuseum(@PathVariable("id") long id, @Valid @RequestBody UpdateMuseumDto dto) {
         return museumService.updateMuseum(id, dto);
     }

@@ -35,6 +35,6 @@ public class Poem extends Artwork {
     @PreRemove
     public void deletePoem() {
         this.getMythCharacters()
-                .forEach(character -> character.setPoems(null));
+                .forEach(character -> character.getPoems().remove(this));
     }
 }

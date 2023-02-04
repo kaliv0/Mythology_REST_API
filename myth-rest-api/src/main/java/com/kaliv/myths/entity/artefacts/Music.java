@@ -33,6 +33,6 @@ public class Music extends Artwork {
     @PreRemove
     public void deleteMusic() {
         this.getMythCharacters()
-                .forEach(character -> character.setMusic(null));
+                .forEach(character -> character.getMusic().remove(this));
     }
 }

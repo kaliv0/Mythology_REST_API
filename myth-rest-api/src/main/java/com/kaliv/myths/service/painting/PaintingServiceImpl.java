@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.common.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
@@ -246,7 +247,7 @@ public class PaintingServiceImpl implements PaintingService {
         QSmallPaintingImage qSmallPaintingImage = QSmallPaintingImage.smallPaintingImage;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(qSmallPaintingImage.name.in(paintingImageNames));
-        List<SmallPaintingImage> smallPaintingImages = smallPaintingImageRepository.findAll(booleanBuilder);
+        List<SmallPaintingImage> smallPaintingImages = Lists.newArrayList(smallPaintingImageRepository.findAll(booleanBuilder));
         if (smallPaintingImages.size() != paintingImages.size()) {
             throw new ResourceListNotFoundException(Sources.SMALL_IMAGES, Fields.NAMES);
         }

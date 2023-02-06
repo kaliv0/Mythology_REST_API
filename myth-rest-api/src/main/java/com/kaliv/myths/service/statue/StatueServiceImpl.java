@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.common.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
@@ -247,7 +248,7 @@ public class StatueServiceImpl implements StatueService {
         QSmallStatueImage qSmallStatueImage = QSmallStatueImage.smallStatueImage;
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(qSmallStatueImage.name.in(statueImageNames));
-        List<SmallStatueImage> smallStatueImages = smallStatueImageRepository.findAll(booleanBuilder);
+        List<SmallStatueImage> smallStatueImages = Lists.newArrayList(smallStatueImageRepository.findAll(booleanBuilder));
         if (smallStatueImages.size() != statueImages.size()) {
             throw new ResourceListNotFoundException(Sources.SMALL_IMAGES, Fields.NAMES);
         }

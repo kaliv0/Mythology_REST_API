@@ -20,10 +20,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "statues")
 public class Statue extends VisualArtwork {
-    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.ALL)
     private Set<StatueImage> statueImages = new HashSet<>();
 
-    @OneToMany(mappedBy = "statue", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "statue", cascade = CascadeType.ALL)
     private Set<SmallStatueImage> smallStatueImages = new HashSet<>();
 
     @ManyToMany(mappedBy = "statues")
@@ -31,20 +31,12 @@ public class Statue extends VisualArtwork {
 
     @PrePersist
     public void addPainting() {
-        this.getStatueImages()
-                .forEach(image -> image.setStatue(this));
-        this.getSmallStatueImages()
-                .forEach(painting -> painting.setStatue(this));
         this.getMythCharacters()
                 .forEach(character -> character.getStatues().add(this));
     }
 
     @PreRemove
     public void deleteStatue() {
-        this.getStatueImages()
-                .forEach(image -> image.setStatue(null));
-        this.getSmallStatueImages()
-                .forEach(painting -> painting.setStatue(null));
         this.getMythCharacters()
                 .forEach(character -> character.getStatues().remove(this));
     }

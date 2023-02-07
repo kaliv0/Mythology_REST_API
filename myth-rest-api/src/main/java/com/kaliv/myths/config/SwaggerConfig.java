@@ -33,7 +33,7 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .description(
-                                        "Provide the JWT token. JWT token can be obtained from the Login API. For testing, use the credentials <strong>john/password</strong>")
+                                        "Provide the JWT token. JWT token can be obtained from the Login API. For testing, use the credentials <strong>kaliv/pass123</strong>")
                                 .bearerFormat("JWT")));
     }
 }

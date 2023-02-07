@@ -3,7 +3,9 @@ package com.kaliv.myths.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.kaliv.myths.common.UserMapper;
 import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
 import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
 import com.kaliv.myths.dto.museumDtos.CreateMuseumDto;
@@ -115,5 +117,10 @@ public class MapperConfig {
                 .addMappings(m -> m.skip(BaseEntity::setId))
                 .implicitMappings();
         return new TimePeriodMapper(modelMapper);
+    }
+
+    @Bean
+    public static UserMapper userMapper(ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+        return new UserMapper(modelMapper, passwordEncoder);
     }
 }

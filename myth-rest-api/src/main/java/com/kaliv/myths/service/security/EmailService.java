@@ -26,7 +26,7 @@ public class EmailService
     private static final String FROM_EMAIL = "your Outlook email address";
     private static final String CC_EMAIL = "";
     private static final String EMAIL_SUBJECT = "The email subject goes here";
-    private static final String GMAIL_SMTP_SERVER = "smtp-mail.outlook.com";
+    private static final String GMAIL_SMTP_SERVER = "smtp-mail.gmail.com";
     private static final String SMTP_HOST = "mail.smtp.host";
     private static final String SMTP_AUTH = "mail.smtp.auth";
     private static final String SMTP_PORT = "mail.smtp.port";

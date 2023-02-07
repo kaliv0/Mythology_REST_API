@@ -1,6 +1,7 @@
 package com.kaliv.myths.controller;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kaliv.myths.common.JWTTokenProvider;
+import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.entity.domain.User;
 import com.kaliv.myths.entity.domain.UserPrincipal;
 import com.kaliv.myths.exception.security.ExceptionHandling;
@@ -43,20 +45,20 @@ public class UserController extends ExceptionHandling {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto userDto)
+            throws UserNotFoundException, EmailExistException, MessagingException, UsernameExistException {
+        User newUser = userService.register(userDto);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user) {
         authenticate(user.getUsername(), user.getPassword());
-        User loginUser = userService.findUserByUsername(user.getUsername());
+        User loginUser = userService.findUserByUsername(user.getUsername()).get();
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user)
-            throws UserNotFoundException, EmailExistException, MessagingException, UsernameExistException {
-        User newUser = userService.register(user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
-        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
 //    @PostMapping("/add")

@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.jwt;
 
 import java.util.Date;
 

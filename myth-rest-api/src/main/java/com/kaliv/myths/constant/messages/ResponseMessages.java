@@ -13,4 +13,5 @@ public class ResponseMessages {
     public static final String MUSEUM_DELETED = "Museum deleted successfully.";
     public static final String IMAGE_UPLOADED = "Image uploaded successfully";
     public static final String IMAGE_DELETED = "Image deleted successfully";
+    public static final String USER_DELETED = "User deleted successfully";
 }

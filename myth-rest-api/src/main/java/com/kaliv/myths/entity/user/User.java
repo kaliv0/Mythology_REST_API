@@ -3,8 +3,6 @@ package com.kaliv.myths.entity.user;
 import javax.persistence.*;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 import lombok.*;
 
@@ -24,9 +22,9 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private Date lastLoginDate;
-    private Date lastLoginDateDisplay;
     private ZonedDateTime joinDate;
+    private ZonedDateTime currentLoginDate;
+    private ZonedDateTime lastLoginDate;
     private String role;
 
     @SuppressWarnings("JpaAttributeTypeInspection")//=> converts to tinyblob in Db

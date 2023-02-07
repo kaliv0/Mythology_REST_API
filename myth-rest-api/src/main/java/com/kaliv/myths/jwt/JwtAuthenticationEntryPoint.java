@@ -11,7 +11,6 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaliv.myths.common.IdentityHttpResponse;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.FORBIDDEN_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;

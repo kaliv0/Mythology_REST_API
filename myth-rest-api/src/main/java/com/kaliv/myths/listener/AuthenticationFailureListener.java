@@ -5,7 +5,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
 
-import com.kaliv.myths.service.user.LoginAttemptService;
+import com.kaliv.myths.service.login.LoginAttemptService;
 
 @Component
 public class AuthenticationFailureListener {

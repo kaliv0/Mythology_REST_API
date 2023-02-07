@@ -1,8 +1,6 @@
 package com.kaliv.myths.dto.userDtos;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +16,8 @@ public class UserDto {
     private String username;
     private String email;
     private ZonedDateTime joinDate;
+    private ZonedDateTime currentLoginDate;
+    private ZonedDateTime lastLoginDate;
     private String role;
     private String[] authorities;
 }

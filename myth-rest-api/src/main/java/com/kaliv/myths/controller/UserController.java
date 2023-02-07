@@ -1,6 +1,6 @@
 package com.kaliv.myths.controller;
 
-import javax.validation.Valid;
+import java.util.List;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -8,12 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
 import com.kaliv.myths.exception.notFound.UserNotFoundException;
-import com.kaliv.myths.exception.security.ExceptionHandling;
 import com.kaliv.myths.jwt.JwtTokenProvider;
 import com.kaliv.myths.service.user.UserService;
 
@@ -22,8 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Users")
 @RestController
 @RequestMapping("/api/v1/users")
-public class UserController extends ExceptionHandling {
-    public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
+public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -32,8 +31,18 @@ public class UserController extends ExceptionHandling {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserDto userDto)
+    public ResponseEntity<UserDto> register(@RequestBody RegisterUserDto userDto)
             throws EmailExistException, UsernameExistException {
         UserDto newUser = userService.register(userDto);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
@@ -50,29 +59,17 @@ public class UserController extends ExceptionHandling {
 
     @PostMapping
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
-            throws UserNotFoundException, UsernameExistException, EmailExistException {
+    public ResponseEntity<UserDto> addNewUser(@RequestBody AddUserDto userDto)
+            throws UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
         return ResponseEntity.ok(newUser);
     }
-
 //    @PatchMapping
 //    public ResponseEntity<User> update(@RequestBody UpdateUserDto userDto)
 //            throws UserNotFoundException, UsernameExistException, EmailExistException {
 //        User updatedUser = userService.updateUser(userDto);
 //        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-//    }
 
-//    @GetMapping("/find/{username}")
-//    public ResponseEntity<User> getUser(@PathVariable("username") String username) {
-//        User user = userService.findUserByUsername(username);
-//        return new ResponseEntity<>(user, OK);
-//    }
-//
-//    @GetMapping("/list")
-//    public ResponseEntity<List<User>> getAllUsers() {
-//        List<User> users = userService.getUsers();
-//        return new ResponseEntity<>(users, OK);
 //    }
 
     @PatchMapping("/update-profile")
@@ -81,15 +78,11 @@ public class UserController extends ExceptionHandling {
         return ResponseEntity.ok(updatedUser);
     }
 
-//    @DeleteMapping("/delete/{username}")
+    @DeleteMapping("/{username}")
 //    @PreAuthorize("hasAnyAuthority('user:delete')")
-//    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException {
-//        userService.deleteUser(username);
-//        return response(OK, USER_DELETED_SUCCESSFULLY);
-//    }
-//
-//    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
-//        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
-//                message), httpStatus);
-//    }
+    public ResponseEntity<String> deleteUser(@PathVariable("username") String username)
+            throws UserNotFoundException {
+        userService.deleteUser(username);
+        return new ResponseEntity<>(ResponseMessages.USER_DELETED, HttpStatus.OK);
+    }
 }

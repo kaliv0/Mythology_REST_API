@@ -1,8 +1,8 @@
 package com.kaliv.myths.service.user;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.persistence.UserRepository;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
-import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND_BY_USERNAME;
+import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.USERNAME_ALREADY_EXISTS;
 
 @Service
@@ -41,33 +41,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto register(RegisterUserDto userDto) throws UsernameExistException, EmailExistException {
-        validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
+    public UserDto register(RegisterUserDto userDto) throws EmailExistException, UsernameExistException {
+        this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
         User user = userMapper.dtoToRegisteredUser(userDto);
         User savedUser = userRepository.save(user);
         return userMapper.userToDto(savedUser);
     }
 
     @Override
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream().map(userMapper::userToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDto getUserByUsername(String username) {
+        User user = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(NO_USER_FOUND, username)));
+        return userMapper.userToDto(user);
+    }
+
+    @Override
     public Tuple<UserDto, UserPrincipal> login(LoginUserDto userDto) {
-        this.authenticateUser(userDto.getUsername(), userDto.getPassword());
-        Optional<User> loginUser = userRepository.findUserByUsername(userDto.getUsername());
-        if (loginUser.isEmpty()) {
-            throw new UsernameNotFoundException(String.format(NO_USER_FOUND_BY_USERNAME, userDto.getUsername()));
-        }
-        UserDto userValue = userMapper.userToDto(loginUser.get());
-        UserPrincipal userPrincipal = new UserPrincipal(loginUser.get());
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword()));
+        User loginUser = userRepository.findUserByUsername(userDto.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(NO_USER_FOUND, userDto.getUsername())));
+        UserDto userValue = userMapper.userToDto(loginUser);
+        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
         return new Tuple<>(userValue, userPrincipal);
     }
 
     @Override
-    public UserDto addNewUser(AddUserDto userDto) throws UsernameExistException, EmailExistException {
+    public UserDto addNewUser(AddUserDto userDto) throws EmailExistException, UsernameExistException {
         this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
         User user = userMapper.dtoToAddedUser(userDto);
         User savedUser = userRepository.save(user);
         return userMapper.userToDto(savedUser);
     }
-
 //    @Override
 //    public User updateUser(UpdateUserDto userDto)
 //            throws UserNotFoundException, UsernameExistException, EmailExistException {
@@ -82,13 +96,18 @@ public class UserServiceImpl implements UserService {
 //        currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
 //        userRepository.save(currentUser);
 //        return currentUser;
+
 //    }
 
     @Override
     public UserDto updateProfile(UpdateUserProfileDto userDto) {
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        User loginUser = userRepository.findUserByUsername(currentUsername).orElseThrow();
-        if (userDto.getFirstName()!= null) {
+        String currentUsername = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal()
+                .toString();
+        User loginUser = userRepository.findUserByUsername(currentUsername)
+                .orElseThrow();
+        if (userDto.getFirstName() != null) {
             loginUser.setFirstName(userDto.getFirstName());
         }
         if (userDto.getLastName() != null) {
@@ -105,22 +124,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public void deleteUser(String username) {
+        User user = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(NO_USER_FOUND, username)));
+        userRepository.delete(user);
     }
-
-    @Override
-    public void deleteUser(String username) throws IOException {
-
-    }
-
-//    @Override
-//    public void deleteUser(String username) throws IOException {
-//        User user = userRepository.findUserByUsername(username);
-//        Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
-//        FileUtils.deleteDirectory(new File(userFolder.toString()));
-//        userRepository.deleteById(user.getId());
-//    }
 
     private void validateNewUserCredentials(String newUsername, String newEmail)
             throws UsernameExistException, EmailExistException {
@@ -159,8 +168,4 @@ public class UserServiceImpl implements UserService {
 //        }
 //        return null;
 //    }
-
-    private void authenticateUser(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-    }
 }

@@ -1,9 +1,5 @@
 package com.kaliv.myths.mapper;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -11,8 +7,8 @@ import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.util.Clock;
 
-import static com.kaliv.myths.constant.params.Args.EE_DATE_TIME;
 import static com.kaliv.myths.entity.user.Role.ROLE_USER;
 
 public class UserMapper {
@@ -31,7 +27,7 @@ public class UserMapper {
                 .lastName(userDto.getLastName())
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .joinDate(this.getZonedDateTime())
+                .joinDate(Clock.getZonedDateTime())
                 .isActive(true)
                 .isNotLocked(true)
                 .role(ROLE_USER.name())
@@ -46,7 +42,7 @@ public class UserMapper {
                 .lastName(userDto.getLastName())
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .joinDate(this.getZonedDateTime())
+                .joinDate(Clock.getZonedDateTime())
                 .isActive(userDto.isActive())
                 .isNotLocked(userDto.isNotLocked())
                 .role(userDto.getRole().name())
@@ -60,11 +56,5 @@ public class UserMapper {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
-    }
-
-    private ZonedDateTime getZonedDateTime() {
-        Instant nowUtc = Instant.now();
-        ZoneId europeSofiaId = ZoneId.of(EE_DATE_TIME);
-        return ZonedDateTime.ofInstant(nowUtc, europeSofiaId);
     }
 }

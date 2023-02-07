@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.authorDtos;
 
 import javax.validation.constraints.Positive;
 
-import com.kaliv.myths.dto.artworkPosessorDto.UpdateArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.UpdateArtworkPossessorDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

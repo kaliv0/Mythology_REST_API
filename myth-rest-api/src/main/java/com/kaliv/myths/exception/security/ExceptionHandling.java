@@ -88,17 +88,17 @@ public class ExceptionHandling implements ErrorController {
 //        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
 //    }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
-        HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
-        return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
-        LOGGER.error(exception.getMessage());
-        return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
-    }
+//    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+//    public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
+//        HttpMethod supportedMethod = Objects.requireNonNull(exception.getSupportedHttpMethods()).iterator().next();
+//        return createHttpResponse(METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
+//    }
+//
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
+//        LOGGER.error(exception.getMessage());
+//        return createHttpResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+//    }
 
     @ExceptionHandler(NotAnImageFileException.class)
     public ResponseEntity<HttpResponse> notAnImageFileException(NotAnImageFileException exception) {
@@ -106,17 +106,17 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(BAD_REQUEST, exception.getMessage());
     }
 
-    @ExceptionHandler(NoResultException.class)
-    public ResponseEntity<HttpResponse> notFoundException(NoResultException exception) {
-        LOGGER.error(exception.getMessage());
-        return createHttpResponse(NOT_FOUND, exception.getMessage());
-    }
-
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<HttpResponse> iOException(IOException exception) {
-        LOGGER.error(exception.getMessage());
-        return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
-    }
+//    @ExceptionHandler(NoResultException.class)
+//    public ResponseEntity<HttpResponse> notFoundException(NoResultException exception) {
+//        LOGGER.error(exception.getMessage());
+//        return createHttpResponse(NOT_FOUND, exception.getMessage());
+//    }
+//
+//    @ExceptionHandler(IOException.class)
+//    public ResponseEntity<HttpResponse> iOException(IOException exception) {
+//        LOGGER.error(exception.getMessage());
+//        return createHttpResponse(INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
+//    }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus,

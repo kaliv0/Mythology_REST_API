@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class HttpResponse {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss", timezone = "America/New_York")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss", timezone = "Bulgaria/Sofia")
     private Date timeStamp;
     private int httpStatusCode; // 200, 201, 400, 500
     private HttpStatus httpStatus;

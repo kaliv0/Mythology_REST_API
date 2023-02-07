@@ -5,21 +5,16 @@ import javax.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.jwt.JwtTokenProvider;
 import com.kaliv.myths.common.container.Tuple;
-import com.kaliv.myths.dto.userDtos.AddUserDto;
-import com.kaliv.myths.dto.userDtos.LoginUserDto;
-import com.kaliv.myths.dto.userDtos.RegisterUserDto;
-import com.kaliv.myths.dto.userDtos.UserDto;
-import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.user.UserPrincipal;
-import com.kaliv.myths.exception.security.ExceptionHandling;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
-import com.kaliv.myths.exception.notFound.UserNotFoundException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
+import com.kaliv.myths.exception.notFound.UserNotFoundException;
+import com.kaliv.myths.exception.security.ExceptionHandling;
+import com.kaliv.myths.jwt.JwtTokenProvider;
 import com.kaliv.myths.service.user.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,36 +40,29 @@ public class UserController extends ExceptionHandling {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginUserDto userDto) {
-        Tuple<User, UserPrincipal> userData = userService.login(userDto);
-        User loginUser = userData.getFirst();
+    public ResponseEntity<UserDto> login(@RequestBody LoginUserDto userDto) {
+        Tuple<UserDto, UserPrincipal> userData = userService.login(userDto);
+        UserDto loginUser = userData.getFirst();
         UserPrincipal userPrincipal = userData.getSecond();
         HttpHeaders jwtHeader = jwtTokenProvider.getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
             throws UserNotFoundException, UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
         return ResponseEntity.ok(newUser);
     }
 
-//    @PostMapping("/update")
-//    public ResponseEntity<User> update(@RequestParam("currentUsername") String currentUsername,
-//                                       @RequestParam("firstName") String firstName,
-//                                       @RequestParam("lastName") String lastName,
-//                                       @RequestParam("username") String username,
-//                                       @RequestParam("email") String email,
-//                                       @RequestParam("role") String role,
-//                                       @RequestParam("isActive") String isActive,
-//                                       @RequestParam("isNonLocked") String isNonLocked,
-//                                       @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-//        User updatedUser = userService.updateUser(currentUsername, firstName, lastName, username, email, role, Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
-//        return new ResponseEntity<>(updatedUser, OK);
+//    @PatchMapping
+//    public ResponseEntity<User> update(@RequestBody UpdateUserDto userDto)
+//            throws UserNotFoundException, UsernameExistException, EmailExistException {
+//        User updatedUser = userService.updateUser(userDto);
+//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 //    }
-//
+
 //    @GetMapping("/find/{username}")
 //    public ResponseEntity<User> getUser(@PathVariable("username") String username) {
 //        User user = userService.findUserByUsername(username);
@@ -86,13 +74,13 @@ public class UserController extends ExceptionHandling {
 //        List<User> users = userService.getUsers();
 //        return new ResponseEntity<>(users, OK);
 //    }
-//
-//    @GetMapping("/reset-password/{email}")
-//    public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws MessagingException, EmailNotFoundException {
-//        userService.resetPassword(email);
-//        return response(OK, EMAIL_SENT + email);
-//    }
-//
+
+    @PatchMapping("/update-profile")
+    public ResponseEntity<UserDto> updateProfile(UpdateUserProfileDto userDto) {
+        UserDto updatedUser = userService.updateProfile(userDto);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 //    @DeleteMapping("/delete/{username}")
 //    @PreAuthorize("hasAnyAuthority('user:delete')")
 //    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException {

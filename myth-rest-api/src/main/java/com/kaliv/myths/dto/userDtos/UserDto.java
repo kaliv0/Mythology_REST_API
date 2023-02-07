@@ -1,5 +1,6 @@
 package com.kaliv.myths.dto.userDtos;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,12 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserDto {
     private Long id;
-    private UUID userId;
     private String firstName;
     private String lastName;
     private String username;
     private String email;
-    private Date joinDate;
+    private ZonedDateTime joinDate;
     private String role;
     private String[] authorities;
 }

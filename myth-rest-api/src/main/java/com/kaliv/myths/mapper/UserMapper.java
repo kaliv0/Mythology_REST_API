@@ -1,7 +1,8 @@
 package com.kaliv.myths.mapper;
 
-import java.util.Date;
-import java.util.UUID;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,7 @@ import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.user.User;
 
+import static com.kaliv.myths.constant.params.Args.EE_DATE_TIME;
 import static com.kaliv.myths.entity.user.Role.ROLE_USER;
 
 public class UserMapper {
@@ -24,13 +26,12 @@ public class UserMapper {
 
     public User dtoToRegisteredUser(RegisterUserDto userDto) {
         return User.builder()
-                .userId(generateUserId())
                 .password(encodePassword(userDto.getPassword()))
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .joinDate(new Date())
+                .joinDate(this.getZonedDateTime())
                 .isActive(true)
                 .isNotLocked(true)
                 .role(ROLE_USER.name())
@@ -40,13 +41,12 @@ public class UserMapper {
 
     public User dtoToAddedUser(AddUserDto userDto) {
         return User.builder()
-                .userId(generateUserId())
                 .password(encodePassword(userDto.getPassword()))
                 .firstName(userDto.getFirstName())
                 .lastName(userDto.getLastName())
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .joinDate(new Date())
+                .joinDate(this.getZonedDateTime())
                 .isActive(userDto.isActive())
                 .isNotLocked(userDto.isNotLocked())
                 .role(userDto.getRole().name())
@@ -58,11 +58,13 @@ public class UserMapper {
         return mapper.map(user, UserDto.class);
     }
 
-    private UUID generateUserId() {
-        return UUID.randomUUID();
-    }
-
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    private ZonedDateTime getZonedDateTime() {
+        Instant nowUtc = Instant.now();
+        ZoneId europeSofiaId = ZoneId.of(EE_DATE_TIME);
+        return ZonedDateTime.ofInstant(nowUtc, europeSofiaId);
     }
 }

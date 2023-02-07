@@ -2,6 +2,7 @@ package com.kaliv.myths.entity.user;
 
 import javax.persistence.*;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -18,7 +19,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
     private Long id;
-    private UUID userId;
     private String firstName;
     private String lastName;
     private String username;
@@ -26,7 +26,7 @@ public class User {
     private String email;
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
-    private Date joinDate;
+    private ZonedDateTime joinDate;
     private String role;
 
     @SuppressWarnings("JpaAttributeTypeInspection")//=> converts to tinyblob in Db

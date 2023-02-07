@@ -1,7 +1,5 @@
 package com.kaliv.myths.service.user;
 
-import javax.mail.MessagingException;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -9,21 +7,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.kaliv.myths.common.container.Tuple;
-import com.kaliv.myths.dto.userDtos.AddUserDto;
-import com.kaliv.myths.dto.userDtos.LoginUserDto;
-import com.kaliv.myths.dto.userDtos.RegisterUserDto;
-import com.kaliv.myths.dto.userDtos.UserDto;
+import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.user.User;
 import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
-import com.kaliv.myths.exception.notFound.EmailNotFoundException;
-import com.kaliv.myths.exception.notFound.UserNotFoundException;
 import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.persistence.UserRepository;
 
@@ -56,19 +49,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Tuple<User, UserPrincipal> login(LoginUserDto userDto) {
+    public Tuple<UserDto, UserPrincipal> login(LoginUserDto userDto) {
         this.authenticateUser(userDto.getUsername(), userDto.getPassword());
-        Optional<User> loginUser = this.findUserByUsername(userDto.getUsername());
+        Optional<User> loginUser = userRepository.findUserByUsername(userDto.getUsername());
         if (loginUser.isEmpty()) {
             throw new UsernameNotFoundException(String.format(NO_USER_FOUND_BY_USERNAME, userDto.getUsername()));
         }
-        User userValue = loginUser.get();
-        UserPrincipal userPrincipal = new UserPrincipal(userValue);
+        UserDto userValue = userMapper.userToDto(loginUser.get());
+        UserPrincipal userPrincipal = new UserPrincipal(loginUser.get());
         return new Tuple<>(userValue, userPrincipal);
     }
 
     @Override
-    public UserDto addNewUser(AddUserDto userDto) throws EmailExistException, UsernameExistException {
+    public UserDto addNewUser(AddUserDto userDto) throws UsernameExistException, EmailExistException {
         this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
         User user = userMapper.dtoToAddedUser(userDto);
         User savedUser = userRepository.save(user);
@@ -76,7 +69,8 @@ public class UserServiceImpl implements UserService {
     }
 
 //    @Override
-//    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+//    public User updateUser(UpdateUserDto userDto)
+//            throws UserNotFoundException, UsernameExistException, EmailExistException {
 //        User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 //        currentUser.setFirstName(newFirstName);
 //        currentUser.setLastName(newLastName);
@@ -90,18 +84,25 @@ public class UserServiceImpl implements UserService {
 //        return currentUser;
 //    }
 
-//    @Override
-//    public void resetPassword(String email) throws MessagingException, EmailNotFoundException {
-//        User user = userRepository.findUserByEmail(email);
-//        if (user == null) {
-//            throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
-//        }
-//        String password = generatePassword();
-//        user.setPassword(encodePassword(password));
-//        userRepository.save(user);
-////        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
-//        emailService.sendVerificationEmail(user.getFirstName(), password, user.getEmail());
-//    }
+    @Override
+    public UserDto updateProfile(UpdateUserProfileDto userDto) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User loginUser = userRepository.findUserByUsername(currentUsername).orElseThrow();
+        if (userDto.getFirstName()!= null) {
+            loginUser.setFirstName(userDto.getFirstName());
+        }
+        if (userDto.getLastName() != null) {
+            loginUser.setLastName(userDto.getLastName());
+        }
+        if (userDto.getPassword() != null) {
+            loginUser.setPassword(userDto.getPassword());
+        }
+        if (userDto.getEmail() != null) {
+            loginUser.setEmail(userDto.getEmail());
+        }
+        userRepository.save(loginUser);
+        return userMapper.userToDto(loginUser);
+    }
 
     @Override
     public List<User> getUsers() {
@@ -109,22 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findUserByUsername(String username) {
-        return userRepository.findUserByUsername(username);
-    }
-
-    @Override
-    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException {
-        return null;
-    }
-
-    @Override
     public void deleteUser(String username) throws IOException {
-
-    }
-
-    @Override
-    public void resetPassword(String email) throws MessagingException, EmailNotFoundException {
 
     }
 
@@ -138,8 +124,8 @@ public class UserServiceImpl implements UserService {
 
     private void validateNewUserCredentials(String newUsername, String newEmail)
             throws UsernameExistException, EmailExistException {
-        Optional<User> userByNewUsername = this.findUserByUsername(newUsername);
-        Optional<User> userByNewEmail = this.findUserByEmail(newEmail);
+        Optional<User> userByNewUsername = userRepository.findUserByUsername(newUsername);
+        Optional<User> userByNewEmail = userRepository.findUserByEmail(newEmail);
         if (userByNewUsername.isPresent()) {
             throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
         }
@@ -147,7 +133,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailExistException(EMAIL_ALREADY_EXISTS);
         }
     }
-
+//
 //    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
 //            throws UserNotFoundException, UsernameExistException, EmailExistException {
 //        Optional<User> userByNewUsername = findUserByUsername(newUsername);
@@ -173,10 +159,6 @@ public class UserServiceImpl implements UserService {
 //        }
 //        return null;
 //    }
-
-    private Optional<User> findUserByEmail(String email) {
-        return userRepository.findUserByEmail(email);
-    }
 
     private void authenticateUser(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

@@ -11,7 +11,7 @@ import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.user.User;
 
-import static com.kaliv.myths.common.Role.ROLE_USER;
+import static com.kaliv.myths.entity.user.Role.ROLE_USER;
 
 public class UserMapper {
     private final ModelMapper mapper;

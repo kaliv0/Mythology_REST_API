@@ -2,8 +2,8 @@ package com.kaliv.myths.dto.userDtos;
 
 import javax.persistence.Enumerated;
 
-import com.kaliv.myths.common.Role;
-import com.kaliv.myths.common.validator.role.ValidRole;
+import com.kaliv.myths.entity.user.Role;
+import com.kaliv.myths.util.validator.role.ValidRole;
 
 import jdk.jfr.BooleanFlag;
 import lombok.AccessLevel;

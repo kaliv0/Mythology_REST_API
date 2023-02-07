@@ -14,8 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.common.image.ImageBuilder;
-import com.kaliv.myths.common.image.ImageResizeHandler;
+import com.kaliv.myths.util.image.ImageBuilder;
+import com.kaliv.myths.util.image.ImageResizeHandler;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;

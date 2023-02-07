@@ -1,8 +1,8 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.entity.user;
 
-import static com.kaliv.myths.constant.security.Authority.ADMIN_AUTHORITIES;
-import static com.kaliv.myths.constant.security.Authority.MANAGER_AUTHORITIES;
-import static com.kaliv.myths.constant.security.Authority.USER_AUTHORITIES;
+import static com.kaliv.myths.constant.AuthorityConstants.ADMIN_AUTHORITIES;
+import static com.kaliv.myths.constant.AuthorityConstants.MANAGER_AUTHORITIES;
+import static com.kaliv.myths.constant.AuthorityConstants.USER_AUTHORITIES;
 
 public enum Role {
     ROLE_USER(USER_AUTHORITIES),

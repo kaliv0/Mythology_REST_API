@@ -18,7 +18,7 @@ import com.kaliv.myths.jwt.JwtAccessDeniedHandler;
 import com.kaliv.myths.jwt.JwtAuthenticationEntryPoint;
 import com.kaliv.myths.jwt.JwtAuthorizationFilter;
 
-import static com.kaliv.myths.constant.security.SecurityConstants.PUBLIC_URLS;
+import static com.kaliv.myths.constant.SecurityConstants.PUBLIC_URLS;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 

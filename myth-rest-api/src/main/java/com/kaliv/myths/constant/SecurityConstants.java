@@ -1,4 +1,4 @@
-package com.kaliv.myths.constant.security;
+package com.kaliv.myths.constant;
 
 public class SecurityConstants {
     public static final long EXPIRATION_TIME = 432_000_000; // 5 days expressed in milliseconds

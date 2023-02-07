@@ -25,11 +25,11 @@ import com.kaliv.myths.entity.user.UserPrincipal;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.TOKEN_CANNOT_BE_VERIFIED;
-import static com.kaliv.myths.constant.security.SecurityConstants.*;
+import static com.kaliv.myths.constant.SecurityConstants.*;
 import static java.util.Arrays.stream;
 
 @Component
-public class JWTTokenProvider {
+public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;

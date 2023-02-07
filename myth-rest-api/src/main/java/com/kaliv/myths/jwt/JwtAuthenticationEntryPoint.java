@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.Http403ForbiddenEntryPoin
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kaliv.myths.common.HttpResponse;
+import com.kaliv.myths.common.IdentityHttpResponse;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.FORBIDDEN_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -24,7 +24,7 @@ public class JwtAuthenticationEntryPoint extends Http403ForbiddenEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException exception) throws IOException {
-        HttpResponse httpResponse = new HttpResponse(FORBIDDEN.value(),
+        IdentityHttpResponse httpResponse = new IdentityHttpResponse(FORBIDDEN.value(),
                 FORBIDDEN, FORBIDDEN.getReasonPhrase().toUpperCase(),
                 FORBIDDEN_MESSAGE);
         response.setContentType(APPLICATION_JSON_VALUE);

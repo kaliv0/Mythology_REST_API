@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.ArtworkHandler;
+import com.kaliv.myths.util.ArtworkHandler;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;

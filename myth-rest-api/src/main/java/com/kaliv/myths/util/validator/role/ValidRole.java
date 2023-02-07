@@ -1,11 +1,11 @@
-package com.kaliv.myths.common.validator.role;
+package com.kaliv.myths.util.validator.role;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
-import com.kaliv.myths.common.Role;
+import com.kaliv.myths.entity.user.Role;
 
 
 @Documented

@@ -1,11 +1,11 @@
-package com.kaliv.myths.common.validator.role;
+package com.kaliv.myths.util.validator.role;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import java.util.Arrays;
 
-import com.kaliv.myths.common.Role;
+import com.kaliv.myths.entity.user.Role;
 
 public class RoleValidator implements ConstraintValidator<ValidRole, Role> {
     private Role[] subset;

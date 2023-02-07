@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.util;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.common.validator.ValidFile;
+import com.kaliv.myths.common.validator.file.ValidFile;
 import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;

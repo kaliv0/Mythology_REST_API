@@ -1,4 +1,4 @@
-package com.kaliv.myths.common.validator;
+package com.kaliv.myths.common.validator.file;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

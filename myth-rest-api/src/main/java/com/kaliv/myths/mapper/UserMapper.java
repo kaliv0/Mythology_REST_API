@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.mapper;
 
 import java.util.Date;
 import java.util.UUID;
@@ -7,6 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.kaliv.myths.common.Role;
+import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.domain.User;
@@ -35,6 +37,22 @@ public class UserMapper {
                 .isNotLocked(true)
                 .role(ROLE_USER.name())
                 .authorities(ROLE_USER.getAuthorities())
+                .build();
+    }
+
+    public User dtoToAddedUser(AddUserDto userDto) {
+        return User.builder()
+                .userId(generateUserId())
+                .password(encodePassword(userDto.getPassword()))
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .username(userDto.getUsername())
+                .email(userDto.getEmail())
+                .joinDate(new Date())
+                .isActive(userDto.isActive())
+                .isNotLocked(userDto.isNotLocked())
+                .role(userDto.getRole().name())
+                .authorities(userDto.getRole().getAuthorities())
                 .build();
     }
 

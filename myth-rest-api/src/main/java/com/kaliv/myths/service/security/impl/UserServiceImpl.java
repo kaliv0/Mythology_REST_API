@@ -4,29 +4,28 @@ import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.kaliv.myths.common.Role;
-import com.kaliv.myths.common.UserMapper;
+import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.dto.userDtos.AddUserDto;
+import com.kaliv.myths.dto.userDtos.LoginUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
+import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.domain.User;
 import com.kaliv.myths.entity.domain.UserPrincipal;
 import com.kaliv.myths.exception.security.domain.*;
+import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.persistence.UserRepository;
-import com.kaliv.myths.service.security.EmailService;
-import com.kaliv.myths.service.security.LoginAttemptService;
 import com.kaliv.myths.service.security.UserService;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
@@ -36,71 +35,47 @@ import static com.kaliv.myths.constant.security.FileConstant.DEFAULT_USER_IMAGE_
 
 @Service
 @Transactional
-@Qualifier("userDetailsService")
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final LoginAttemptService loginAttemptService;
-    private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder,
-                           LoginAttemptService loginAttemptService,
-                           EmailService emailService,
+                           AuthenticationManager authenticationManager,
                            UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.loginAttemptService = loginAttemptService;
-        this.emailService = emailService;
+        this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username).get();
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format(NO_USER_FOUND_BY_USERNAME, username));
-        } else {
-            validateLoginAttempt(user);
-            user.setLastLoginDateDisplay(user.getLastLoginDate());
-            user.setLastLoginDate(new Date());
-            userRepository.save(user);
-            UserPrincipal userPrincipal = new UserPrincipal(user);
-            return userPrincipal;
-        }
+    public UserDto register(RegisterUserDto userDto) throws UsernameExistException, EmailExistException {
+        validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
+        User user = userMapper.dtoToRegisteredUser(userDto);
+        User savedUser = userRepository.save(user);
+        return userMapper.userToDto(savedUser);
     }
 
     @Override
-    public User register(RegisterUserDto userDto) throws UsernameExistException, EmailExistException {
-        validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
-
-        User user = userMapper.dtoToRegisteredUser(userDto);
-        User savedUser = userRepository.save(user);
-        //TODO: map to dto
-        return savedUser;
+    public Tuple<User, UserPrincipal> login(LoginUserDto userDto) {
+        this.authenticateUser(userDto.getUsername(), userDto.getPassword());
+        Optional<User> loginUser = this.findUserByUsername(userDto.getUsername());
+        if (loginUser.isEmpty()) {
+            throw new UsernameNotFoundException(String.format(NO_USER_FOUND_BY_USERNAME, userDto.getUsername()));
+        }
+        User userValue = loginUser.get();
+        UserPrincipal userPrincipal = new UserPrincipal(userValue);
+        return new Tuple<>(userValue, userPrincipal);
     }
 
-//    @Override
-//    public User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-//        validateNewUsernameAndEmail(EMPTY, username, email);
-//        User user = new User();
-//        String password = generatePassword();
-//        user.setUserId(generateUserId());
-//        user.setFirstName(firstName);
-//        user.setLastName(lastName);
-//        user.setJoinDate(new Date());
-//        user.setUsername(username);
-//        user.setEmail(email);
-//        user.setPassword(encodePassword(password));
-//        user.setActive(isActive);
-//        user.setNotLocked(isNonLocked);
-//        user.setRole(getRoleEnumName(role).name());
-//        user.setAuthorities(getRoleEnumName(role).getAuthorities());
-//        userRepository.save(user);
-//        return user;
-//    }
+    @Override
+    public UserDto addNewUser(AddUserDto userDto) throws EmailExistException, UsernameExistException {
+        this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
+        User user = userMapper.dtoToAddedUser(userDto);
+        User savedUser = userRepository.save(user);
+        return userMapper.userToDto(savedUser);
+    }
 
 //    @Override
 //    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
@@ -141,11 +116,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        return null;
-    }
-
-    @Override
     public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
         return null;
     }
@@ -168,30 +138,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //        userRepository.deleteById(user.getId());
 //    }
 
-    private Role getRoleEnumName(String role) {
-        return Role.valueOf(role.toUpperCase());
-    }
-
     private String getTemporaryProfileImageUrl(String username) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
     }
 
-    private void validateLoginAttempt(User user) {
-        if (user.isNotLocked()) {
-            if (loginAttemptService.hasExceededMaxAttempts(user.getUsername())) {
-                user.setNotLocked(false);
-            } else {
-                user.setNotLocked(true);
-            }
-        } else {
-            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
-        }
-    }
-
     private void validateNewUserCredentials(String newUsername, String newEmail)
             throws UsernameExistException, EmailExistException {
-        Optional<User> userByNewUsername = findUserByUsername(newUsername);
-        Optional<User> userByNewEmail = findUserByEmail(newEmail);
+        Optional<User> userByNewUsername = this.findUserByUsername(newUsername);
+        Optional<User> userByNewEmail = this.findUserByEmail(newEmail);
         if (userByNewUsername.isPresent()) {
             throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
         }
@@ -202,8 +156,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 //    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
 //            throws UserNotFoundException, UsernameExistException, EmailExistException {
-//        User userByNewUsername = findUserByUsername(newUsername);
-//        User userByNewEmail = findUserByEmail(newEmail);
+//        Optional<User> userByNewUsername = findUserByUsername(newUsername);
+//        Optional<User> userByNewEmail = findUserByEmail(newEmail);
 //        if (StringUtils.isNotBlank(currentUsername)) {
 //            User currentUser = findUserByUsername(currentUsername);
 //            if (currentUser == null) {
@@ -228,5 +182,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private Optional<User> findUserByEmail(String email) {
         return userRepository.findUserByEmail(email);
+    }
+
+    private void authenticateUser(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 }

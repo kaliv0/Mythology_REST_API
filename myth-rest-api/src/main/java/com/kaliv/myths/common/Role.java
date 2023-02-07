@@ -1,5 +1,8 @@
 package com.kaliv.myths.common;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import static com.kaliv.myths.constant.security.Authority.*;
 
 public enum Role {
@@ -9,7 +12,7 @@ public enum Role {
     ROLE_ADMIN(ADMIN_AUTHORITIES),
     ROLE_SUPER_ADMIN(SUPER_ADMIN_AUTHORITIES);
 
-    private String[] authorities;
+    public final String[] authorities;
 
     Role(String... authorities) {
         this.authorities = authorities;

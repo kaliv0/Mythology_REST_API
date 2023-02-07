@@ -16,11 +16,8 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String username;
-//    private String password;
     private String email;
     private Date joinDate;
     private String role;
-
-    @SuppressWarnings("JpaAttributeTypeInspection")//=> converts to tinyblob in Db
     private String[] authorities;
 }

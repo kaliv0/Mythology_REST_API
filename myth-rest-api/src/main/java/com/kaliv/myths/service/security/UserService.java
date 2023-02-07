@@ -8,20 +8,27 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kaliv.myths.common.Role;
+import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.dto.userDtos.AddUserDto;
+import com.kaliv.myths.dto.userDtos.LoginUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
+import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.domain.User;
+import com.kaliv.myths.entity.domain.UserPrincipal;
 import com.kaliv.myths.exception.security.domain.*;
 
 public interface UserService {
 
-    User register(RegisterUserDto userDto)
-            throws UserNotFoundException, UsernameExistException, EmailExistException, MessagingException;
+    UserDto register(RegisterUserDto userDto) throws UsernameExistException, EmailExistException;
+
+    Tuple<User, UserPrincipal> login(LoginUserDto userDto);
 
     List<User> getUsers();
 
     Optional<User> findUserByUsername(String username);
 
-    User addNewUser(String firstName, String lastName, String username, String email, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
+    UserDto addNewUser(AddUserDto userDto) throws UserNotFoundException, UsernameExistException, EmailExistException;
 
     User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
 

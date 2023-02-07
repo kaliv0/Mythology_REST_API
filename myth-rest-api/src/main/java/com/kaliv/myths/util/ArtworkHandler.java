@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +12,9 @@ import com.kaliv.myths.common.container.Quadruple;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
-import com.kaliv.myths.dto.artworkPosessorDto.CreateArtworkPossessorDto;
-import com.kaliv.myths.dto.artworkPosessorDto.UpdateArtworkPossessorDto;
-import com.kaliv.myths.dto.artworkPosessorDto.UpdateVisualArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.CreateArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.UpdateArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.UpdateVisualArtworkPossessorDto;
 import com.kaliv.myths.entity.BaseEntity;
 import com.kaliv.myths.entity.artefacts.*;
 import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;

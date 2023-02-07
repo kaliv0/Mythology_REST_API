@@ -15,10 +15,12 @@ import com.kaliv.myths.dto.timePeriodDtos.TimePeriodResponseDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.service.timePeriod.TimePeriodService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Time periods")
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/v1/time-periods")
 public class TimePeriodController {
 

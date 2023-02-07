@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.authorDtos;
 
-import com.kaliv.myths.dto.artworkPosessorDto.ArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.ArtworkPossessorDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

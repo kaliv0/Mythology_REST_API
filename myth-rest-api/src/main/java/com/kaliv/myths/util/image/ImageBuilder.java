@@ -1,4 +1,4 @@
-package com.kaliv.myths.common.image;
+package com.kaliv.myths.util.image;
 
 import java.io.IOException;
 

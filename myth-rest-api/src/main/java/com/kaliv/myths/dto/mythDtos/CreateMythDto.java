@@ -5,7 +5,7 @@ import javax.validation.constraints.Positive;
 
 import java.util.Set;
 
-import com.kaliv.myths.dto.artworkPosessorDto.CreateArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.CreateArtworkPossessorDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

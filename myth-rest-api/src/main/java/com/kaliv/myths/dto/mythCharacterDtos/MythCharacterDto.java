@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.mythCharacterDtos;
 
 import java.util.Set;
 
-import com.kaliv.myths.dto.artworkPosessorDto.ArtworkPossessorDto;
+import com.kaliv.myths.dto.artworkPosessorDtos.ArtworkPossessorDto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

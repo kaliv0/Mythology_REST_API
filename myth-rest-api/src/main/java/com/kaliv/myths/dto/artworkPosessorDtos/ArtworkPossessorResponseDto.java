@@ -1,4 +1,4 @@
-package com.kaliv.myths.dto.artworkPosessorDto;
+package com.kaliv.myths.dto.artworkPosessorDtos;
 
 import java.util.Set;
 

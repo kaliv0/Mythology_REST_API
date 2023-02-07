@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.dto.userDtos.*;
+import com.kaliv.myths.entity.user.Role;
 import com.kaliv.myths.entity.user.User;
 import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
@@ -25,7 +27,6 @@ import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.USERNAME_ALREADY_EXISTS;
 
 @Service
-//@Transactional //TODO: check if needed
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto register(RegisterUserDto userDto) throws EmailExistException, UsernameExistException {
-        this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
+        this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
         User user = userMapper.dtoToRegisteredUser(userDto);
         User savedUser = userRepository.save(user);
         return userMapper.userToDto(savedUser);
@@ -77,50 +78,72 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addNewUser(AddUserDto userDto) throws EmailExistException, UsernameExistException {
-        this.validateNewUserCredentials(userDto.getUsername(), userDto.getEmail());
+        this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
         User user = userMapper.dtoToAddedUser(userDto);
         User savedUser = userRepository.save(user);
         return userMapper.userToDto(savedUser);
     }
-//    @Override
-//    public User updateUser(UpdateUserDto userDto)
-//            throws UserNotFoundException, UsernameExistException, EmailExistException {
-//        User currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
-//        currentUser.setFirstName(newFirstName);
-//        currentUser.setLastName(newLastName);
-//        currentUser.setUsername(newUsername);
-//        currentUser.setEmail(newEmail);
-//        currentUser.setActive(isActive);
-//        currentUser.setNotLocked(isNonLocked);
-//        currentUser.setRole(getRoleEnumName(role).name());
-//        currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
-//        userRepository.save(currentUser);
-//        return currentUser;
-
-//    }
 
     @Override
-    public UserDto updateProfile(UpdateUserProfileDto userDto) {
+    public UserDto updateUser(String username, UpdateUserDto userDto) throws EmailExistException {
+        User userToUpdate = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(NO_USER_FOUND, username)));
+
+        this.updateBasicUserCredentials(userDto, userToUpdate);
+
+        Boolean isActive = userDto.isActive();
+        Boolean isNotLocked = userDto.isNotLocked();
+        Role role = userDto.getRole();
+        if (isActive != null && isActive != userToUpdate.isActive()) {
+            userToUpdate.setActive(isActive);
+        }
+        if (isNotLocked != null && isNotLocked != userToUpdate.isNotLocked()) {
+            userToUpdate.setNotLocked(isNotLocked);
+        }
+        if (role != null && !role.name().equals(userToUpdate.getRole())) {
+            userToUpdate.setRole(role.name());
+            userToUpdate.setAuthorities(role.getAuthorities());
+        }
+        userRepository.save(userToUpdate);
+        return userMapper.userToDto(userToUpdate);
+    }
+
+    @Override
+    public UserDto updateProfile(UpdateUserProfileDto userDto) throws EmailExistException {
         String currentUsername = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getPrincipal()
                 .toString();
         User loginUser = userRepository.findUserByUsername(currentUsername)
                 .orElseThrow();
-        if (userDto.getFirstName() != null) {
-            loginUser.setFirstName(userDto.getFirstName());
-        }
-        if (userDto.getLastName() != null) {
-            loginUser.setLastName(userDto.getLastName());
-        }
-        if (userDto.getPassword() != null) {
-            loginUser.setPassword(userDto.getPassword());
-        }
-        if (userDto.getEmail() != null) {
-            loginUser.setEmail(userDto.getEmail());
-        }
+
+        this.updateBasicUserCredentials(userDto, loginUser);
         userRepository.save(loginUser);
         return userMapper.userToDto(loginUser);
+    }
+
+    private void updateBasicUserCredentials(UpdateUserProfileDto userDto, User user) throws EmailExistException {
+        String firstName = userDto.getFirstName();
+        String lastName = userDto.getLastName();
+        String password = userDto.getPassword();
+        String email = userDto.getEmail();
+        if (StringUtils.isNotBlank(firstName) && !firstName.equals(user.getFirstName())) {
+            user.setFirstName(firstName);
+        }
+        if (StringUtils.isNotBlank(lastName) && !lastName.equals(user.getLastName())) {
+            user.setLastName(lastName);
+        }
+        if (StringUtils.isNotBlank(password) && !password.equals(user.getPassword())) {
+            user.setPassword(password);
+        }
+        if (StringUtils.isNotBlank(email) && !email.equals(user.getEmail())) {
+            Optional<User> userByEmail = userRepository.findUserByEmail(email);
+            if (userByEmail.isPresent()) {
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+            user.setEmail(email);
+        }
     }
 
     @Override
@@ -131,41 +154,15 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    private void validateNewUserCredentials(String newUsername, String newEmail)
+    private void validateUserCredentials(String username, String email)
             throws UsernameExistException, EmailExistException {
-        Optional<User> userByNewUsername = userRepository.findUserByUsername(newUsername);
-        Optional<User> userByNewEmail = userRepository.findUserByEmail(newEmail);
-        if (userByNewUsername.isPresent()) {
+        Optional<User> userByUsername = userRepository.findUserByUsername(username);
+        Optional<User> userByEmail = userRepository.findUserByEmail(email);
+        if (userByUsername.isPresent()) {
             throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
         }
-        if (userByNewEmail.isPresent()) {
+        if (userByEmail.isPresent()) {
             throw new EmailExistException(EMAIL_ALREADY_EXISTS);
         }
     }
-//
-//    private User validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-//            throws UserNotFoundException, UsernameExistException, EmailExistException {
-//        Optional<User> userByNewUsername = findUserByUsername(newUsername);
-//        Optional<User> userByNewEmail = findUserByEmail(newEmail);
-//        if (StringUtils.isNotBlank(currentUsername)) {
-//            User currentUser = findUserByUsername(currentUsername);
-//            if (currentUser == null) {
-//                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
-//            }
-//            if (userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
-//                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-//            }
-//            if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
-//                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-//            }
-//            return currentUser;
-//        }
-//        if (userByNewUsername != null) {
-//            throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-//        }
-//        if (userByNewEmail != null) {
-//            throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-//        }
-//        return null;
-//    }
 }

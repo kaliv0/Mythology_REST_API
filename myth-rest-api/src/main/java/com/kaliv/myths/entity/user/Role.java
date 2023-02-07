@@ -9,7 +9,7 @@ public enum Role {
     ROLE_STAFF(STAFF_AUTHORITIES),
     ROLE_ADMIN(ADMIN_AUTHORITIES);
 
-    public final String[] authorities;
+    private final String[] authorities;
 
     Role(String... authorities) {
         this.authorities = authorities;

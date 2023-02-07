@@ -19,9 +19,9 @@ public interface UserService {
 
     UserDto addNewUser(AddUserDto userDto) throws UsernameExistException, EmailExistException;
 
-//    User updateUser(UpdateUserDto userDto);
+    UserDto updateUser(String username, UpdateUserDto userDto) throws EmailExistException;
 
-    UserDto updateProfile(UpdateUserProfileDto userDto);
+    UserDto updateProfile(UpdateUserProfileDto userDto) throws EmailExistException;
 
     void deleteUser(String username);
 }

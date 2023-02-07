@@ -1,5 +1,7 @@
 package com.kaliv.myths.controller;
 
+import javax.validation.Valid;
+
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
@@ -13,7 +15,6 @@ import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
-import com.kaliv.myths.exception.notFound.UserNotFoundException;
 import com.kaliv.myths.jwt.JwtTokenProvider;
 import com.kaliv.myths.service.user.UserService;
 
@@ -42,14 +43,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody RegisterUserDto userDto)
+    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserDto userDto)
             throws EmailExistException, UsernameExistException {
         UserDto newUser = userService.register(userDto);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody LoginUserDto userDto) {
+    public ResponseEntity<UserDto> login(@Valid @RequestBody LoginUserDto userDto) {
         Tuple<UserDto, UserPrincipal> userData = userService.login(userDto);
         UserDto loginUser = userData.getFirst();
         UserPrincipal userPrincipal = userData.getSecond();
@@ -59,29 +60,31 @@ public class UserController {
 
     @PostMapping
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserDto> addNewUser(@RequestBody AddUserDto userDto)
+    public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
             throws UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
         return ResponseEntity.ok(newUser);
     }
-//    @PatchMapping
-//    public ResponseEntity<User> update(@RequestBody UpdateUserDto userDto)
-//            throws UserNotFoundException, UsernameExistException, EmailExistException {
-//        User updatedUser = userService.updateUser(userDto);
-//        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 
-//    }
+    @PatchMapping("/{username}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<UserDto> update(@PathVariable(name = "username") String username,
+                                          @Valid @RequestBody UpdateUserDto userDto) throws EmailExistException {
+        UserDto updatedUser = userService.updateUser(username, userDto);
+        return ResponseEntity.ok(updatedUser);
+
+    }
 
     @PatchMapping("/update-profile")
-    public ResponseEntity<UserDto> updateProfile(UpdateUserProfileDto userDto) {
+    public ResponseEntity<UserDto> updateProfile(@Valid @RequestBody UpdateUserProfileDto userDto)
+            throws EmailExistException {
         UserDto updatedUser = userService.updateProfile(userDto);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{username}")
-//    @PreAuthorize("hasAnyAuthority('user:delete')")
-    public ResponseEntity<String> deleteUser(@PathVariable("username") String username)
-            throws UserNotFoundException {
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return new ResponseEntity<>(ResponseMessages.USER_DELETED, HttpStatus.OK);
     }

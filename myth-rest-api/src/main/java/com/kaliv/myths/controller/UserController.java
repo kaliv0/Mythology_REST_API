@@ -8,24 +8,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.common.JWTTokenProvider;
-import com.kaliv.myths.common.Role;
+import com.kaliv.myths.jwt.JWTTokenProvider;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.LoginUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
-import com.kaliv.myths.entity.domain.User;
-import com.kaliv.myths.entity.domain.UserPrincipal;
+import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.exception.security.ExceptionHandling;
-import com.kaliv.myths.exception.security.domain.EmailExistException;
-import com.kaliv.myths.exception.security.domain.UserNotFoundException;
-import com.kaliv.myths.exception.security.domain.UsernameExistException;
-import com.kaliv.myths.service.security.UserService;
+import com.kaliv.myths.exception.alreadyExists.EmailExistException;
+import com.kaliv.myths.exception.notFound.UserNotFoundException;
+import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
+import com.kaliv.myths.service.user.UserService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import static com.kaliv.myths.constant.security.SecurityConstant.JWT_TOKEN_HEADER;
 
 @Tag(name = "Users")
 @RestController
@@ -52,7 +49,7 @@ public class UserController extends ExceptionHandling {
         Tuple<User, UserPrincipal> userData = userService.login(userDto);
         User loginUser = userData.getFirst();
         UserPrincipal userPrincipal = userData.getSecond();
-        HttpHeaders jwtHeader = this.getJwtHeader(userPrincipal);
+        HttpHeaders jwtHeader = jwtTokenProvider.getJwtHeader(userPrincipal);
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
@@ -107,10 +104,4 @@ public class UserController extends ExceptionHandling {
 //        return new ResponseEntity<>(new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(),
 //                message), httpStatus);
 //    }
-
-    private HttpHeaders getJwtHeader(UserPrincipal user) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(user));
-        return headers;
-    }
 }

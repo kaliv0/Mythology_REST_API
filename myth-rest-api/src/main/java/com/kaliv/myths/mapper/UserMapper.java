@@ -3,15 +3,13 @@ package com.kaliv.myths.mapper;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.kaliv.myths.common.Role;
 import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
-import com.kaliv.myths.entity.domain.User;
+import com.kaliv.myths.entity.user.User;
 
 import static com.kaliv.myths.common.Role.ROLE_USER;
 
@@ -66,9 +64,5 @@ public class UserMapper {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
-    }
-
-    private String generatePassword() {
-        return RandomStringUtils.randomAlphanumeric(10);
     }
 }

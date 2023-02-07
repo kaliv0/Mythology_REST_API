@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.security;
+package com.kaliv.myths.service.user;
 
 import java.util.concurrent.ExecutionException;
 

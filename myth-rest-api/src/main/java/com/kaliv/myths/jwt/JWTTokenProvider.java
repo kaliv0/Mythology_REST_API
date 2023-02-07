@@ -1,4 +1,4 @@
-package com.kaliv.myths.common;
+package com.kaliv.myths.jwt;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,10 +21,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.kaliv.myths.entity.domain.UserPrincipal;
+import com.kaliv.myths.entity.user.UserPrincipal;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static com.kaliv.myths.constant.security.SecurityConstant.*;
+import static com.kaliv.myths.constant.messages.ExceptionMessages.TOKEN_CANNOT_BE_VERIFIED;
+import static com.kaliv.myths.constant.security.SecurityConstants.*;
 import static java.util.Arrays.stream;
 
 @Component
@@ -34,7 +36,7 @@ public class JWTTokenProvider {
 
     public String generateJwtToken(UserPrincipal userPrincipal) {
         String[] claims = getClaimsFromUser(userPrincipal);
-        return JWT.create().withIssuer(GET_ARRAYS_LLC).withAudience(GET_ARRAYS_ADMINISTRATION)
+        return JWT.create().withIssuer(PANDA_SOFT_LLC).withAudience(PANDA_SOFT_ADMINISTRATION)
                 .withIssuedAt(new Date()).withSubject(userPrincipal.getUsername())
                 .withArrayClaim(AUTHORITIES, claims).withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .sign(HMAC512(secret.getBytes()));
@@ -62,6 +64,12 @@ public class JWTTokenProvider {
         return verifier.verify(token).getSubject();
     }
 
+    public HttpHeaders getJwtHeader(UserPrincipal user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, this.generateJwtToken(user));
+        return headers;
+    }
+
     private boolean isTokenExpired(JWTVerifier verifier, String token) {
         Date expiration = verifier.verify(token).getExpiresAt();
         return expiration.before(new Date());
@@ -76,8 +84,8 @@ public class JWTTokenProvider {
         JWTVerifier verifier;
         try {
             Algorithm algorithm = HMAC512(secret);
-            verifier = JWT.require(algorithm).withIssuer(GET_ARRAYS_LLC).build();
-        }catch (JWTVerificationException exception) {
+            verifier = JWT.require(algorithm).withIssuer(PANDA_SOFT_LLC).build();
+        } catch (JWTVerificationException exception) {
             throw new JWTVerificationException(TOKEN_CANNOT_BE_VERIFIED);
         }
         return verifier;
@@ -85,7 +93,7 @@ public class JWTTokenProvider {
 
     private String[] getClaimsFromUser(UserPrincipal user) {
         List<String> authorities = new ArrayList<>();
-        for (GrantedAuthority grantedAuthority : user.getAuthorities()){
+        for (GrantedAuthority grantedAuthority : user.getAuthorities()) {
             authorities.add(grantedAuthority.getAuthority());
         }
         return authorities.toArray(new String[0]);

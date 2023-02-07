@@ -1,4 +1,4 @@
-package com.kaliv.myths.service.security;
+package com.kaliv.myths.service.user;
 
 import javax.transaction.Transactional;
 
@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.entity.domain.User;
-import com.kaliv.myths.entity.domain.UserPrincipal;
+import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.entity.user.UserPrincipal;
 import com.kaliv.myths.persistence.UserRepository;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND_BY_USERNAME;

@@ -14,4 +14,7 @@ public class ExceptionMessages {
     public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
     public static final String NO_USER_FOUND_BY_USERNAME = "No user found by username: %s";
     public static final String NO_USER_FOUND_BY_EMAIL = "No user found for email: %s";
+    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token cannot be verified";
+    public static final String FORBIDDEN_MESSAGE = "You need to log in to access this page";
+    public static final String ACCESS_DENIED_MESSAGE = "You do not have permission to access this page";
 }

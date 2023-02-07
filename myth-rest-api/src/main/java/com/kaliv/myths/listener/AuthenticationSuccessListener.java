@@ -5,8 +5,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.stereotype.Component;
 
-import com.kaliv.myths.entity.domain.UserPrincipal;
-import com.kaliv.myths.service.security.LoginAttemptService;
+import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.service.user.LoginAttemptService;
 
 @Component
 public class AuthenticationSuccessListener {

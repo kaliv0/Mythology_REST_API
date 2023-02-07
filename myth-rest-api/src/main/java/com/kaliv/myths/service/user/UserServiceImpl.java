@@ -1,7 +1,6 @@
-package com.kaliv.myths.service.security.impl;
+package com.kaliv.myths.service.user;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,28 +12,27 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.kaliv.myths.common.Role;
 import com.kaliv.myths.common.container.Tuple;
 import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.LoginUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
-import com.kaliv.myths.entity.domain.User;
-import com.kaliv.myths.entity.domain.UserPrincipal;
-import com.kaliv.myths.exception.security.domain.*;
+import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.exception.alreadyExists.EmailExistException;
+import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
+import com.kaliv.myths.exception.notFound.EmailNotFoundException;
+import com.kaliv.myths.exception.notFound.UserNotFoundException;
 import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.persistence.UserRepository;
-import com.kaliv.myths.service.security.UserService;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND_BY_USERNAME;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.USERNAME_ALREADY_EXISTS;
-import static com.kaliv.myths.constant.security.FileConstant.DEFAULT_USER_IMAGE_PATH;
 
 @Service
-@Transactional
+//@Transactional //TODO: check if needed
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
@@ -116,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+    public User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException {
         return null;
     }
 
@@ -137,10 +135,6 @@ public class UserServiceImpl implements UserService {
 //        FileUtils.deleteDirectory(new File(userFolder.toString()));
 //        userRepository.deleteById(user.getId());
 //    }
-
-    private String getTemporaryProfileImageUrl(String username) {
-        return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
-    }
 
     private void validateNewUserCredentials(String newUsername, String newEmail)
             throws UsernameExistException, EmailExistException {

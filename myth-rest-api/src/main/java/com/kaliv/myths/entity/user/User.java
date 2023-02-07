@@ -1,4 +1,4 @@
-package com.kaliv.myths.entity.domain;
+package com.kaliv.myths.entity.user;
 
 import javax.persistence.*;
 

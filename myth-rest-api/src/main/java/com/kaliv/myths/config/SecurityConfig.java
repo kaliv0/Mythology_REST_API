@@ -14,11 +14,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.kaliv.myths.filter.JwtAccessDeniedHandler;
-import com.kaliv.myths.filter.JwtAuthenticationEntryPoint;
-import com.kaliv.myths.filter.JwtAuthorizationFilter;
+import com.kaliv.myths.jwt.JwtAccessDeniedHandler;
+import com.kaliv.myths.jwt.JwtAuthenticationEntryPoint;
+import com.kaliv.myths.jwt.JwtAuthorizationFilter;
 
-import static com.kaliv.myths.constant.security.SecurityConstant.PUBLIC_URLS;
+import static com.kaliv.myths.constant.security.SecurityConstants.PUBLIC_URLS;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 
@@ -35,9 +35,7 @@ public class SecurityConfig {
     public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter,
                           JwtAccessDeniedHandler jwtAccessDeniedHandler,
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          @Qualifier("userDetailsService") UserDetailsService userDetailsService
-//                          BCryptPasswordEncoder bCryptPasswordEncoder
-    ) {
+                          @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;

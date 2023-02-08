@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.user.UserPrincipal;

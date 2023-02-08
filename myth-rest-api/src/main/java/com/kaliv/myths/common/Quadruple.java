@@ -1,4 +1,4 @@
-package com.kaliv.myths.common.container;
+package com.kaliv.myths.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tuple<T, U> {
+public class Quadruple<T, U, V, W> {
     private T first;
     private U second;
+
+    private V third;
+    private W fourth;
 }

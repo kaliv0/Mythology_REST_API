@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.persistence.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.util.ArtworkHandler;
-import com.kaliv.myths.common.container.Quadruple;
+import com.kaliv.myths.common.Quadruple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.authorDtos.*;

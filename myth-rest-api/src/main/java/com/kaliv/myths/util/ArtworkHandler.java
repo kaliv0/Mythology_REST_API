@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.kaliv.myths.common.container.Quadruple;
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Quadruple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.artworkPosessorDtos.CreateArtworkPossessorDto;

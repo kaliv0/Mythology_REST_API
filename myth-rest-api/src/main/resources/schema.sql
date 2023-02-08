@@ -152,6 +152,23 @@
         primary key (id)
     ) engine=InnoDB;
 
+    create table users (
+       id bigint not null auto_increment,
+        authorities tinyblob,
+        current_login_date datetime,
+        email varchar(255),
+        first_name varchar(255),
+        is_active bit not null,
+        is_not_locked bit not null,
+        join_date datetime,
+        last_login_date datetime,
+        last_name varchar(255),
+        password varchar(255),
+        role varchar(255),
+        username varchar(255),
+        primary key (id)
+    ) engine=InnoDB;
+
     alter table authors 
        add constraint UK_9mhkwvnfaarcalo4noabrin5j unique (name);
 

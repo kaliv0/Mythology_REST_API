@@ -7,6 +7,8 @@ import java.lang.annotation.*;
 
 import com.kaliv.myths.entity.users.Role;
 
+import static com.kaliv.myths.constant.messages.ExceptionMessages.INVALID_USER_ROLE;
+
 
 @Documented
 @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.TYPE})
@@ -15,7 +17,7 @@ import com.kaliv.myths.entity.users.Role;
 public @interface ValidRole {
     Role[] anyOf();
 
-    String message() default "Added user role must be any of {anyOf}";
+    String message() default INVALID_USER_ROLE;
 
     Class<?>[] groups() default {};
 

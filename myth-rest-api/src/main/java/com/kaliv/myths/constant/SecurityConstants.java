@@ -1,7 +1,7 @@
 package com.kaliv.myths.constant;
 
 public class SecurityConstants {
-    public static final long EXPIRATION_TIME = 432_000_000; // 5 days expressed in milliseconds
+    public static final long EXPIRATION_TIME = 3_600_000;
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
     public static final String PANDA_SOFT_LLC = "Panda Soft, LLC";

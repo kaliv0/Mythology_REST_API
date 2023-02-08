@@ -10,6 +10,7 @@ public class ExceptionMessages {
     public static final String INVALID_PARENT = "Myth character cannot be a parent of themselves";
     public static final String INVALID_IMAGE = "Invalid or empty image";
     public static final String INVALID_FILE_TYPE = "Invalid file type";
+    public static final String INVALID_USER_ROLE = "Added user role must be any of {anyOf}";
     public static final String USERNAME_ALREADY_EXISTS = "Username already exists";
     public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
     public static final String NO_USER_FOUND = "No user found by username: %s";

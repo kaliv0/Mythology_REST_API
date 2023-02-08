@@ -1,4 +1,4 @@
-package com.kaliv.myths.entity.user;
+package com.kaliv.myths.entity.users;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

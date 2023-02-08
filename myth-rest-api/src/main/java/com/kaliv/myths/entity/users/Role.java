@@ -1,4 +1,4 @@
-package com.kaliv.myths.entity.user;
+package com.kaliv.myths.entity.users;
 
 import static com.kaliv.myths.constant.AuthorityConstants.ADMIN_AUTHORITIES;
 import static com.kaliv.myths.constant.AuthorityConstants.STAFF_AUTHORITIES;

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.util.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;

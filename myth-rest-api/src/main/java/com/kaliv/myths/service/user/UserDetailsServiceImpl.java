@@ -8,8 +8,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.entity.user.User;
-import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.entity.users.User;
+import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.persistence.UserRepository;
 import com.kaliv.myths.service.login.LoginAttemptService;
 import com.kaliv.myths.util.Clock;

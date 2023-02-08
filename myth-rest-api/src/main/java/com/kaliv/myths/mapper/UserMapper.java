@@ -6,10 +6,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
-import com.kaliv.myths.entity.user.User;
+import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.util.Clock;
 
-import static com.kaliv.myths.entity.user.Role.ROLE_USER;
+import static com.kaliv.myths.entity.users.Role.ROLE_USER;
 
 public class UserMapper {
     private final ModelMapper mapper;

@@ -2,7 +2,7 @@ package com.kaliv.myths.dto.userDtos;
 
 import javax.persistence.Enumerated;
 
-import com.kaliv.myths.entity.user.Role;
+import com.kaliv.myths.entity.users.Role;
 import com.kaliv.myths.util.validator.role.ValidRole;
 
 import jdk.jfr.BooleanFlag;

@@ -12,11 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.dto.userDtos.*;
-import com.kaliv.myths.entity.user.Role;
-import com.kaliv.myths.entity.user.User;
-import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.entity.users.Role;
+import com.kaliv.myths.entity.users.User;
+import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
 import com.kaliv.myths.mapper.UserMapper;
@@ -123,6 +123,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToDto(loginUser);
     }
 
+    @Override
+    public void deleteUser(String username) {
+        User user = userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        String.format(NO_USER_FOUND, username)));
+        userRepository.delete(user);
+    }
+
     private void updateBasicUserCredentials(UpdateUserProfileDto userDto, User user) throws EmailExistException {
         String firstName = userDto.getFirstName();
         String lastName = userDto.getLastName();
@@ -144,14 +152,6 @@ public class UserServiceImpl implements UserService {
             }
             user.setEmail(email);
         }
-    }
-
-    @Override
-    public void deleteUser(String username) {
-        User user = userRepository.findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format(NO_USER_FOUND, username)));
-        userRepository.delete(user);
     }
 
     private void validateUserCredentials(String username, String email)

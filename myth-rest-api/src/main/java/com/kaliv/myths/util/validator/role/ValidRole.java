@@ -5,7 +5,7 @@ import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
-import com.kaliv.myths.entity.user.Role;
+import com.kaliv.myths.entity.users.Role;
 
 
 @Documented

@@ -2,9 +2,9 @@ package com.kaliv.myths.service.user;
 
 import java.util.List;
 
-import com.kaliv.myths.common.container.Tuple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.dto.userDtos.*;
-import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
 

@@ -21,7 +21,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.kaliv.myths.entity.user.UserPrincipal;
+import com.kaliv.myths.entity.users.UserPrincipal;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.TOKEN_CANNOT_BE_VERIFIED;

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.messages.ResponseMessages;
@@ -41,16 +42,19 @@ public class TimePeriodController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateTimePeriodDto dto) {
         return new ResponseEntity<>(timePeriodService.createTimePeriod(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody UpdateTimePeriodDto dto) {
         return timePeriodService.updateTimePeriod(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteTimePeriod(@PathVariable(name = "id") long id) {
         timePeriodService.deleteTimePeriod(id);
         return new ResponseEntity<>(ResponseMessages.TIME_PERIOD_DELETED, HttpStatus.OK);

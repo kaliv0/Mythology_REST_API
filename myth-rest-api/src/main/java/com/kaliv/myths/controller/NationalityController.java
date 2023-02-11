@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.messages.ResponseMessages;
@@ -39,16 +40,19 @@ public class NationalityController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<NationalityDto> createNationality(@Valid @RequestBody CreateNationalityDto dto) {
         return new ResponseEntity<>(nationalityService.createNationality(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public NationalityDto updateNationality(@PathVariable("id") long id, @Valid @RequestBody UpdateNationalityDto dto) {
         return nationalityService.updateNationality(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteNationality(@PathVariable(name = "id") long id) {
         nationalityService.deleteNationality(id);
         return new ResponseEntity<>(ResponseMessages.NATIONALITY_DELETED, HttpStatus.OK);

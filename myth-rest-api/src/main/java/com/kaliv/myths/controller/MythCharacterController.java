@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -44,16 +45,19 @@ public class MythCharacterController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<MythCharacterDto> createMythCharacter(@Valid @RequestBody CreateMythCharacterDto dto) {
         return new ResponseEntity<>(mythCharacterService.createMythCharacter(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public MythCharacterDto updateMythCharacter(@PathVariable("id") long id, @Valid @RequestBody UpdateMythCharacterDto dto) {
         return mythCharacterService.updateMythCharacter(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteMythCharacter(@PathVariable(name = "id") long id) {
         mythCharacterService.deleteMythCharacter(id);
         return new ResponseEntity<>(ResponseMessages.MYTH_CHARACTER_DELETED, HttpStatus.OK);

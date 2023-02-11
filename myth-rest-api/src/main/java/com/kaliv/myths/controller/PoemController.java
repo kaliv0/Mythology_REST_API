@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -43,16 +44,19 @@ public class PoemController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<PoemDto> createPoem(@Valid @RequestBody CreatePoemDto dto) {
         return new ResponseEntity<>(poemService.createPoem(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public PoemDto updatePoem(@PathVariable("id") long id, @Valid @RequestBody UpdatePoemDto dto) {
         return poemService.updatePoem(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deletePoem(@PathVariable(name = "id") long id) {
         poemService.deletePoem(id);
         return new ResponseEntity<>(ResponseMessages.POEM_DELETED, HttpStatus.OK);

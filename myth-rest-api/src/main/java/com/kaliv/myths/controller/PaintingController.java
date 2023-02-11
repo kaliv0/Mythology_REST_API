@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -44,16 +45,19 @@ public class PaintingController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<PaintingDto> createPainting(@Valid @RequestBody CreatePaintingDto dto) {
         return new ResponseEntity<>(paintingService.createPainting(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public PaintingDto updatePainting(@PathVariable("id") long id, @Valid @RequestBody UpdatePaintingDto dto) {
         return paintingService.updatePainting(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deletePainting(@PathVariable(name = "id") long id) {
         paintingService.deletePainting(id);
         return new ResponseEntity<>(ResponseMessages.PAINTING_DELETED, HttpStatus.OK);

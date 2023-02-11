@@ -3,6 +3,7 @@ package com.kaliv.myths.service.nationality;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.Tuple;
@@ -29,12 +30,12 @@ import com.kaliv.myths.persistence.NationalityRepository;
 
 @Service
 public class NationalityServiceImpl implements NationalityService {
-
     private final NationalityRepository nationalityRepository;
     private final MythRepository mythRepository;
     private final AuthorRepository authorRepository;
     private final NationalityMapper mapper;
 
+    @Autowired
     public NationalityServiceImpl(NationalityRepository nationalityRepository,
                                   MythRepository mythRepository,
                                   AuthorRepository authorRepository,

@@ -3,6 +3,7 @@ package com.kaliv.myths.mapper;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.kaliv.myths.dto.BaseDto;
 import com.kaliv.myths.dto.categoryDtos.CategoryDto;
@@ -14,6 +15,7 @@ import com.kaliv.myths.entity.Category;
 public class CategoryMapper {
     private final ModelMapper mapper;
 
+    @Autowired
     public CategoryMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }

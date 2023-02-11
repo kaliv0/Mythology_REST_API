@@ -3,6 +3,7 @@ package com.kaliv.myths.service.statue;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.kaliv.myths.common.Tuple;
-import com.kaliv.myths.util.image.ImageResizeHandler;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.statueDtos.*;
@@ -33,11 +33,11 @@ import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.StatueMapper;
 import com.kaliv.myths.persistence.*;
+import com.kaliv.myths.util.image.ImageResizeHandler;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class StatueServiceImpl implements StatueService {
-
     private final StatueRepository statueRepository;
     private final AuthorRepository authorRepository;
     private final MythRepository mythRepository;
@@ -47,6 +47,7 @@ public class StatueServiceImpl implements StatueService {
     private final SmallStatueImageRepository smallStatueImageRepository;
     private final StatueMapper mapper;
 
+    @Autowired
     public StatueServiceImpl(StatueRepository statueRepository,
                              AuthorRepository authorRepository,
                              MythRepository mythRepository,

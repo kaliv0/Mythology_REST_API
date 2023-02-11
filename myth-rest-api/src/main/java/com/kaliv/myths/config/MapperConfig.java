@@ -24,7 +24,6 @@ import com.kaliv.myths.mapper.*;
 
 @Configuration
 public class MapperConfig {
-
     @Bean
     public static ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();

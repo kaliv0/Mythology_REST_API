@@ -10,11 +10,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import static com.kaliv.myths.constant.params.Args.EE_TIME_ZONE;
+import static com.kaliv.myths.constant.params.Args.JSON_DATE_TIME_PATTERN;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class IdentityHttpResponse {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss", timezone = "Europe/Sofia")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = JSON_DATE_TIME_PATTERN, timezone = EE_TIME_ZONE)
     private Date timeStamp;
     private int httpStatusCode;
     private HttpStatus httpStatus;

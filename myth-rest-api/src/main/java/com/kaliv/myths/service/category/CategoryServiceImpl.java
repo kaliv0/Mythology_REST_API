@@ -3,6 +3,7 @@ package com.kaliv.myths.service.category;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.Tuple;
@@ -27,11 +28,11 @@ import com.kaliv.myths.persistence.MythCharacterRepository;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-
     private final CategoryRepository categoryRepository;
     private final MythCharacterRepository mythCharacterRepository;
     private final CategoryMapper mapper;
 
+    @Autowired
     public CategoryServiceImpl(CategoryRepository categoryRepository,
                                MythCharacterRepository mythCharacterRepository,
                                CategoryMapper mapper) {

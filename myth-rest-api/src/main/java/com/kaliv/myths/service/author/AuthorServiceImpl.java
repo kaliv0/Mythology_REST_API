@@ -5,16 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.kaliv.myths.common.Tuple;
-import com.kaliv.myths.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.util.ArtworkHandler;
 import com.kaliv.myths.common.Quadruple;
+import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
 import com.kaliv.myths.dto.authorDtos.*;
@@ -24,6 +23,8 @@ import com.kaliv.myths.entity.artefacts.*;
 import com.kaliv.myths.exception.alreadyExists.ResourceWithGivenValuesExistsException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.AuthorMapper;
+import com.kaliv.myths.persistence.*;
+import com.kaliv.myths.util.ArtworkHandler;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
@@ -38,6 +39,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final ArtworkHandler artworkHandler;
     private final AuthorMapper mapper;
 
+    @Autowired
     public AuthorServiceImpl(AuthorRepository authorRepository,
                              TimePeriodRepository timePeriodRepository,
                              NationalityRepository nationalityRepository,

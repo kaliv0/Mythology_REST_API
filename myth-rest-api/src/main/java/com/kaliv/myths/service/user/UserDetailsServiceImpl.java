@@ -2,6 +2,7 @@ package com.kaliv.myths.service.user;
 
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,10 +21,10 @@ import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
 @Qualifier("userDetailsService")
 @Transactional
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private final UserRepository userRepository;
     private final LoginAttemptService loginAttemptService;
 
+    @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository,
                                   LoginAttemptService loginAttemptService) {
         this.userRepository = userRepository;

@@ -2,8 +2,10 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -20,6 +22,7 @@ public class StatueController {
 
     private final StatueService statueService;
 
+    @Autowired
     public StatueController(StatueService statueService) {
         this.statueService = statueService;
     }
@@ -44,16 +47,19 @@ public class StatueController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<StatueDto> createStatue(@Valid @RequestBody CreateStatueDto dto) {
         return new ResponseEntity<>(statueService.createStatue(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public StatueDto updateStatue(@PathVariable("id") long id, @Valid @RequestBody UpdateStatueDto dto) {
         return statueService.updateStatue(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteStatue(@PathVariable(name = "id") long id) {
         statueService.deleteStatue(id);
         return new ResponseEntity<>(ResponseMessages.PAINTING_DELETED, HttpStatus.OK);

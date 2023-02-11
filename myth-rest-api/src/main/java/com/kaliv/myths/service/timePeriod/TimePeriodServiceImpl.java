@@ -3,6 +3,7 @@ package com.kaliv.myths.service.timePeriod;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.Tuple;
@@ -27,11 +28,11 @@ import com.kaliv.myths.persistence.TimePeriodRepository;
 
 @Service
 public class TimePeriodServiceImpl implements TimePeriodService {
-
     private final TimePeriodRepository timePeriodRepository;
     private final AuthorRepository authorRepository;
     private final TimePeriodMapper mapper;
 
+    @Autowired
     public TimePeriodServiceImpl(TimePeriodRepository timePeriodRepository,
                                  AuthorRepository authorRepository,
                                  TimePeriodMapper mapper) {

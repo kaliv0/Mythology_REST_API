@@ -1,6 +1,7 @@
 package com.kaliv.myths.mapper;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.kaliv.myths.dto.userDtos.AddUserDto;
@@ -15,6 +16,7 @@ public class UserMapper {
     private final ModelMapper mapper;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
     public UserMapper(ModelMapper mapper, BCryptPasswordEncoder passwordEncoder) {
         this.mapper = mapper;
         this.passwordEncoder = passwordEncoder;

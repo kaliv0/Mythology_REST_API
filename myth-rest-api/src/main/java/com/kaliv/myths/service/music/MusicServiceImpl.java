@@ -3,6 +3,7 @@ package com.kaliv.myths.service.music;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,13 +35,13 @@ import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class MusicServiceImpl implements MusicService {
-
     private final MusicRepository musicRepository;
     private final AuthorRepository authorRepository;
     private final MythRepository mythRepository;
     private final MythCharacterRepository mythCharacterRepository;
     private final MusicMapper mapper;
 
+    @Autowired
     public MusicServiceImpl(MusicRepository musicRepository,
                             AuthorRepository authorRepository,
                             MythRepository mythRepository,

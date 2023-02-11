@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kaliv.myths.common.Quadruple;
@@ -16,7 +17,10 @@ import com.kaliv.myths.dto.artworkPosessorDtos.CreateArtworkPossessorDto;
 import com.kaliv.myths.dto.artworkPosessorDtos.UpdateArtworkPossessorDto;
 import com.kaliv.myths.dto.artworkPosessorDtos.UpdateVisualArtworkPossessorDto;
 import com.kaliv.myths.entity.BaseEntity;
-import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.artefacts.Music;
+import com.kaliv.myths.entity.artefacts.Painting;
+import com.kaliv.myths.entity.artefacts.Poem;
+import com.kaliv.myths.entity.artefacts.Statue;
 import com.kaliv.myths.entity.artefacts.contracts.possessors.ArtworkPossessor;
 import com.kaliv.myths.entity.artefacts.contracts.possessors.VisualArtworkPossessor;
 import com.kaliv.myths.exception.alreadyExists.ResourceAlreadyExistsException;
@@ -35,6 +39,7 @@ public class ArtworkHandler {
     private final MusicRepository musicRepository;
     private final PoemRepository poemRepository;
 
+    @Autowired
     public ArtworkHandler(StatueRepository statueRepository,
                           PaintingRepository paintingRepository,
                           MusicRepository musicRepository,

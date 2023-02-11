@@ -2,6 +2,8 @@ package com.kaliv.myths.service.login;
 
 import java.util.concurrent.ExecutionException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.google.common.cache.CacheBuilder;
@@ -16,11 +18,12 @@ public class LoginAttemptServiceImpl implements LoginAttemptService {
     private static final int ATTEMPT_INCREMENT = 1;
     private final LoadingCache<String, Integer> loginAttemptCache;
 
+    @Autowired
     public LoginAttemptServiceImpl() {
         super();
         loginAttemptCache = CacheBuilder.newBuilder().expireAfterWrite(15, MINUTES)
-                .maximumSize(100).build(new CacheLoader<String, Integer>() {
-                    public Integer load(String key) {
+                .maximumSize(100).build(new CacheLoader<>() {
+                    public Integer load(@NonNull String key) {
                         return 0;
                     }
                 });

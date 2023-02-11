@@ -3,6 +3,7 @@ package com.kaliv.myths.mapper;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.kaliv.myths.dto.BaseDto;
 import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
@@ -14,6 +15,7 @@ import com.kaliv.myths.entity.artefacts.Statue;
 public class StatueMapper {
     private final ModelMapper mapper;
 
+    @Autowired
     public StatueMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }

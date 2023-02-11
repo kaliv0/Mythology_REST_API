@@ -3,21 +3,23 @@ package com.kaliv.myths.controller;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.util.validator.file.ValidFile;
 import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.service.image.ImageService;
+import com.kaliv.myths.util.validator.file.ValidFile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -29,6 +31,7 @@ public class PaintingImageController {
 
     private final ImageService paintingImageService;
 
+    @Autowired
     public PaintingImageController(@Qualifier("paintingImageService") ImageService imageService) {
         this.paintingImageService = imageService;
     }
@@ -44,6 +47,7 @@ public class PaintingImageController {
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<UploadImageResponseDto> uploadPaintingImage(
             @ValidFile @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(paintingImageService.uploadImage(file));
@@ -80,6 +84,7 @@ public class PaintingImageController {
     }
 
     @DeleteMapping("/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deletePaintingImage(@PathVariable(name = "name") String name) {
         paintingImageService.deleteImage(name);
         return new ResponseEntity<>(ResponseMessages.IMAGE_DELETED, HttpStatus.OK);

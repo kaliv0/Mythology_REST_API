@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ImageCompressor {
-
     public static byte[] compressImage(byte[] data) throws IOException {
         Deflater deflater = new Deflater();
         deflater.setLevel(Deflater.BEST_COMPRESSION);

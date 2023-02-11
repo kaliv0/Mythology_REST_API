@@ -2,8 +2,10 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -17,9 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/api/v1/authors")
 public class AuthorController {
-
+    
     private final AuthorService authorService;
 
+    @Autowired
     public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
@@ -42,16 +45,19 @@ public class AuthorController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody CreateAuthorDto dto) {
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public AuthorDto updateAuthor(@PathVariable("id") long id, @Valid @RequestBody UpdateAuthorDto dto) {
         return authorService.updateAuthor(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteAuthor(@PathVariable(name = "id") long id) {
         authorService.deleteAuthor(id);
         return new ResponseEntity<>(ResponseMessages.AUTHOR_DELETED, HttpStatus.OK);

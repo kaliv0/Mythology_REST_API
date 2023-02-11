@@ -3,13 +3,13 @@ package com.kaliv.myths.service.myth;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.util.ArtworkHandler;
 import com.kaliv.myths.common.Quadruple;
 import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
@@ -28,11 +28,11 @@ import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.exception.notFound.ResourceWithGivenValuesNotFoundException;
 import com.kaliv.myths.mapper.MythMapper;
 import com.kaliv.myths.persistence.*;
+import com.kaliv.myths.util.ArtworkHandler;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
 public class MythServiceImpl implements MythService {
-
     private final MythRepository mythRepository;
     private final NationalityRepository nationalityRepository;
     private final MythCharacterRepository mythCharacterRepository;
@@ -43,6 +43,7 @@ public class MythServiceImpl implements MythService {
     private final ArtworkHandler artworkHandler;
     private final MythMapper mapper;
 
+    @Autowired
     public MythServiceImpl(MythRepository mythRepository,
                            NationalityRepository nationalityRepository,
                            MythCharacterRepository mythCharacterRepository,

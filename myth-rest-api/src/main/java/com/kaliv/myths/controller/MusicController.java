@@ -2,8 +2,10 @@ package com.kaliv.myths.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.constant.CriteriaConstants;
@@ -20,6 +22,7 @@ public class MusicController {
 
     private final MusicService musicService;
 
+    @Autowired
     public MusicController(MusicService musicService) {
         this.musicService = musicService;
     }
@@ -43,16 +46,19 @@ public class MusicController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<MusicDto> createMusic(@Valid @RequestBody CreateMusicDto dto) {
         return new ResponseEntity<>(musicService.createMusic(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public MusicDto updateMusic(@PathVariable("id") long id, @Valid @RequestBody UpdateMusicDto dto) {
         return musicService.updateMusic(id, dto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteMusic(@PathVariable(name = "id") long id) {
         musicService.deleteMusic(id);
         return new ResponseEntity<>(ResponseMessages.MUSIC_DELETED, HttpStatus.OK);

@@ -4,9 +4,11 @@ import javax.validation.Valid;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.common.Tuple;
@@ -27,6 +29,7 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Autowired
     public UserController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -59,7 +62,7 @@ public class UserController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
             throws UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
@@ -67,7 +70,7 @@ public class UserController {
     }
 
     @PatchMapping("/{username}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> update(@PathVariable(name = "username") String username,
                                           @Valid @RequestBody UpdateUserDto userDto) throws EmailExistException {
         UserDto updatedUser = userService.updateUser(username, userDto);
@@ -83,7 +86,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{username}")
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return new ResponseEntity<>(ResponseMessages.USER_DELETED, HttpStatus.OK);

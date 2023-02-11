@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.util.ArtworkHandler;
 import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
 import com.kaliv.myths.constant.params.Sources;
@@ -26,16 +26,17 @@ import com.kaliv.myths.mapper.MuseumMapper;
 import com.kaliv.myths.persistence.MuseumRepository;
 import com.kaliv.myths.persistence.PaintingRepository;
 import com.kaliv.myths.persistence.StatueRepository;
+import com.kaliv.myths.util.ArtworkHandler;
 
 @Service
 public class MuseumServiceImpl implements MuseumService {
-
     private final MuseumRepository museumRepository;
     private final StatueRepository statueRepository;
     private final PaintingRepository paintingRepository;
     private final ArtworkHandler artworkHandler;
     private final MuseumMapper mapper;
 
+    @Autowired
     public MuseumServiceImpl(MuseumRepository museumRepository,
                              StatueRepository statueRepository,
                              PaintingRepository paintingRepository,

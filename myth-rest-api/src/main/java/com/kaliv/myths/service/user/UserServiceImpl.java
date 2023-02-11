@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,9 +13,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.kaliv.myths.common.Tuple;
+import com.kaliv.myths.constant.types.RoleType;
 import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.users.Role;
-import com.kaliv.myths.constant.types.RoleType;
 import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            AuthenticationManager authenticationManager,

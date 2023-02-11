@@ -3,13 +3,13 @@ package com.kaliv.myths.service.mythCharacter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.util.ArtworkHandler;
 import com.kaliv.myths.common.Quadruple;
 import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.constant.params.Fields;
@@ -31,6 +31,7 @@ import com.kaliv.myths.mapper.MythCharacterMapper;
 import com.kaliv.myths.persistence.CategoryRepository;
 import com.kaliv.myths.persistence.MythCharacterRepository;
 import com.kaliv.myths.persistence.MythRepository;
+import com.kaliv.myths.util.ArtworkHandler;
 import com.querydsl.core.BooleanBuilder;
 
 @Service
@@ -41,6 +42,7 @@ public class MythCharacterServiceImpl implements MythCharacterService {
     private final MythCharacterMapper mapper;
     private final ArtworkHandler artworkHandler;
 
+    @Autowired
     public MythCharacterServiceImpl(MythCharacterRepository mythCharacterRepository,
                                     CategoryRepository categoryRepository,
                                     MythRepository mythRepository,

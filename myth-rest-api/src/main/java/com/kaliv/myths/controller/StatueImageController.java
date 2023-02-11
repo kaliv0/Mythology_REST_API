@@ -3,21 +3,23 @@ package com.kaliv.myths.controller;
 import java.io.IOException;
 import java.util.zip.DataFormatException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.util.validator.file.ValidFile;
 import com.kaliv.myths.constant.CriteriaConstants;
 import com.kaliv.myths.constant.messages.ResponseMessages;
 import com.kaliv.myths.dto.imageDtos.ImageDetailsDto;
 import com.kaliv.myths.dto.imageDtos.PaginatedImageResponseDto;
 import com.kaliv.myths.dto.imageDtos.UploadImageResponseDto;
 import com.kaliv.myths.service.image.ImageService;
+import com.kaliv.myths.util.validator.file.ValidFile;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -29,6 +31,7 @@ public class StatueImageController {
 
     private final ImageService statueImageService;
 
+    @Autowired
     public StatueImageController(@Qualifier("statueImageServiceImpl") ImageService imageService) {
         this.statueImageService = imageService;
     }
@@ -44,6 +47,7 @@ public class StatueImageController {
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
     public ResponseEntity<UploadImageResponseDto> uploadStatueImage(
             @ValidFile @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(statueImageService.uploadImage(file));
@@ -80,6 +84,7 @@ public class StatueImageController {
     }
 
     @DeleteMapping("/{name}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteStatueImage(@PathVariable(name = "name") String name) {
         statueImageService.deleteImage(name);
         return new ResponseEntity<>(ResponseMessages.IMAGE_DELETED, HttpStatus.OK);

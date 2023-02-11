@@ -3,8 +3,6 @@ package com.kaliv.myths.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -33,7 +31,8 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .description(
-                                        "Provide the JWT token. JWT token can be obtained from the Login API. For testing, use the credentials <strong>kaliv/pass123</strong>")
+                                        "Provide the JWT token. JWT token can be obtained from the Login API. " +
+                                                "For testing, use the credentials <strong>kaliv0/123pass</strong>")
                                 .bearerFormat("JWT")));
     }
 }

@@ -5,10 +5,10 @@ import javax.validation.ConstraintValidatorContext;
 
 import java.util.Arrays;
 
-import com.kaliv.myths.entity.users.Role;
+import com.kaliv.myths.entity.users.RoleType;
 
-public class RoleValidator implements ConstraintValidator<ValidRole, Role> {
-    private Role[] subset;
+public class RoleValidator implements ConstraintValidator<ValidRole, RoleType> {
+    private RoleType[] subset;
 
     @Override
     public void initialize(ValidRole constraint) {
@@ -16,7 +16,7 @@ public class RoleValidator implements ConstraintValidator<ValidRole, Role> {
     }
 
     @Override
-    public boolean isValid(Role value, ConstraintValidatorContext context) {
+    public boolean isValid(RoleType value, ConstraintValidatorContext context) {
         return value == null || Arrays.asList(subset).contains(value);
     }
 }

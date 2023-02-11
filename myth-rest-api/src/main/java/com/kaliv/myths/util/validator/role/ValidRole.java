@@ -5,7 +5,7 @@ import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
-import com.kaliv.myths.entity.users.Role;
+import com.kaliv.myths.entity.users.RoleType;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.INVALID_USER_ROLE;
 
@@ -15,7 +15,7 @@ import static com.kaliv.myths.constant.messages.ExceptionMessages.INVALID_USER_R
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = RoleValidator.class)
 public @interface ValidRole {
-    Role[] anyOf();
+    RoleType[] anyOf();
 
     String message() default INVALID_USER_ROLE;
 

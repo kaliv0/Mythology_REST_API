@@ -1,21 +1,28 @@
 package com.kaliv.myths.entity.users;
 
-import static com.kaliv.myths.constant.AuthorityConstants.ADMIN_AUTHORITIES;
-import static com.kaliv.myths.constant.AuthorityConstants.STAFF_AUTHORITIES;
-import static com.kaliv.myths.constant.AuthorityConstants.USER_AUTHORITIES;
+import javax.persistence.*;
 
-public enum Role {
-    ROLE_USER(USER_AUTHORITIES),
-    ROLE_STAFF(STAFF_AUTHORITIES),
-    ROLE_ADMIN(ADMIN_AUTHORITIES);
+import java.util.HashSet;
+import java.util.Set;
 
-    private final String[] authorities;
+import com.kaliv.myths.entity.BaseEntity;
 
-    Role(String... authorities) {
-        this.authorities = authorities;
-    }
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    public String[] getAuthorities() {
-        return authorities;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity(name = "roles")
+public class Role extends BaseEntity {
+
+    @ManyToMany
+    @JoinTable(name = "roles_authorities",
+            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+    private Set<Authority> authorities = new HashSet<>();
+
+    @OneToMany(mappedBy = "role")
+    private Set<User> users = new HashSet<>();
 }

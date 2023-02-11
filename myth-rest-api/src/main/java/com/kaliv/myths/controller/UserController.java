@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @PostMapping
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
             throws UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
@@ -67,7 +67,7 @@ public class UserController {
     }
 
     @PatchMapping("/{username}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> update(@PathVariable(name = "username") String username,
                                           @Valid @RequestBody UpdateUserDto userDto) throws EmailExistException {
         UserDto updatedUser = userService.updateUser(username, userDto);
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{username}")
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return new ResponseEntity<>(ResponseMessages.USER_DELETED, HttpStatus.OK);

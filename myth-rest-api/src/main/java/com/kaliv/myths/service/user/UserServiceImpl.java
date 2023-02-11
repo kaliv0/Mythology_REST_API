@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,38 +14,36 @@ import org.springframework.stereotype.Service;
 import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.users.Role;
+import com.kaliv.myths.entity.users.RoleType;
 import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;
 import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
+import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.mapper.UserMapper;
+import com.kaliv.myths.persistence.RoleRepository;
 import com.kaliv.myths.persistence.UserRepository;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.USERNAME_ALREADY_EXISTS;
+import static com.kaliv.myths.constant.params.Sources.ROLE;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
-    @Autowired
     public UserServiceImpl(UserRepository userRepository,
+                           RoleRepository roleRepository,
                            AuthenticationManager authenticationManager,
                            UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
-    }
-
-    @Override
-    public UserDto register(RegisterUserDto userDto) throws EmailExistException, UsernameExistException {
-        this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
-        User user = userMapper.dtoToRegisteredUser(userDto);
-        User savedUser = userRepository.save(user);
-        return userMapper.userToDto(savedUser);
     }
 
     @Override
@@ -77,9 +74,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto register(RegisterUserDto userDto) throws EmailExistException, UsernameExistException {
+        this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
+        Role role = roleRepository.findByName(RoleType.USER.name()).orElseThrow();
+        User user = userMapper.dtoToRegisteredUser(userDto, role);
+        User savedUser = userRepository.save(user);
+        return userMapper.userToDto(savedUser);
+    }
+
+    @Override
     public UserDto addNewUser(AddUserDto userDto) throws EmailExistException, UsernameExistException {
         this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
-        User user = userMapper.dtoToAddedUser(userDto);
+        Role role = roleRepository.findByName(userDto.getRole().name()).orElseThrow();
+        User user = userMapper.dtoToAddedUser(userDto, role);
         User savedUser = userRepository.save(user);
         return userMapper.userToDto(savedUser);
     }
@@ -94,16 +101,17 @@ public class UserServiceImpl implements UserService {
 
         Boolean isActive = userDto.isActive();
         Boolean isNotLocked = userDto.isNotLocked();
-        Role role = userDto.getRole();
+        RoleType roleType = userDto.getRole();
         if (isActive != null && isActive != userToUpdate.isActive()) {
             userToUpdate.setActive(isActive);
         }
         if (isNotLocked != null && isNotLocked != userToUpdate.isNotLocked()) {
             userToUpdate.setNotLocked(isNotLocked);
         }
-        if (role != null && !role.name().equals(userToUpdate.getRole())) {
-            userToUpdate.setRole(role.name());
-            userToUpdate.setAuthorities(role.getAuthorities());
+        if (roleType != null && !roleType.name().equals(userToUpdate.getRole().getName())) {
+            Role role = roleRepository.findByName(roleType.name())
+                    .orElseThrow(() -> new ResourceNotFoundException(ROLE));
+            userToUpdate.setRole(role);
         }
         userRepository.save(userToUpdate);
         return userMapper.userToDto(userToUpdate);
@@ -117,7 +125,6 @@ public class UserServiceImpl implements UserService {
                 .toString();
         User loginUser = userRepository.findUserByUsername(currentUsername)
                 .orElseThrow();
-
         this.updateBasicUserCredentials(userDto, loginUser);
         userRepository.save(loginUser);
         return userMapper.userToDto(loginUser);

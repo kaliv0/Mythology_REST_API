@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.dto.authorDtos.CreateAuthorDto;
 import com.kaliv.myths.dto.categoryDtos.CreateCategoryDto;
 import com.kaliv.myths.dto.museumDtos.CreateMuseumDto;
@@ -17,8 +16,10 @@ import com.kaliv.myths.dto.paintingDtos.CreatePaintingDto;
 import com.kaliv.myths.dto.poemDtos.CreatePoemDto;
 import com.kaliv.myths.dto.statueDtos.CreateStatueDto;
 import com.kaliv.myths.dto.timePeriodDtos.CreateTimePeriodDto;
+import com.kaliv.myths.dto.userDtos.UserDto;
 import com.kaliv.myths.entity.*;
 import com.kaliv.myths.entity.artefacts.*;
+import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.mapper.*;
 
 @Configuration
@@ -121,6 +122,11 @@ public class MapperConfig {
 
     @Bean
     public static UserMapper userMapper(ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
+        modelMapper.typeMap(User.class, UserDto.class)
+                .addMappings(m -> m.map(
+                        user -> user.getRole().getName(),
+                        UserDto::setRole))
+                .implicitMappings();
         return new UserMapper(modelMapper, passwordEncoder);
     }
 }

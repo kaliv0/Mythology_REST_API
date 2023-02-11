@@ -1,4 +1,4 @@
-package com.kaliv.myths.constant;
+package com.kaliv.myths.constant.types;
 
 import org.springframework.http.MediaType;
 

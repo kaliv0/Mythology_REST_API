@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.kaliv.myths.constant.ImageContentType.SUPPORTED_CONTENT_TYPES;
+import static com.kaliv.myths.constant.types.ImageContentType.SUPPORTED_CONTENT_TYPES;
 
 
 public class FileValidator implements ConstraintValidator<ValidFile, MultipartFile> {

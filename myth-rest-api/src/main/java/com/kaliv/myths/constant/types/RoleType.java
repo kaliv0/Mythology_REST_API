@@ -1,4 +1,4 @@
-package com.kaliv.myths.entity.users;
+package com.kaliv.myths.constant.types;
 
 public enum RoleType {
     USER,

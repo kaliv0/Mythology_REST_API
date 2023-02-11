@@ -5,7 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import java.util.Arrays;
 
-import com.kaliv.myths.entity.users.RoleType;
+import com.kaliv.myths.constant.types.RoleType;
 
 public class RoleValidator implements ConstraintValidator<ValidRole, RoleType> {
     private RoleType[] subset;

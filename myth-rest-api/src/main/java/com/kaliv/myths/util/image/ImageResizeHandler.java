@@ -10,7 +10,7 @@ import org.imgscalr.Scalr;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kaliv.myths.constant.ImageContentType;
+import com.kaliv.myths.constant.types.ImageContentType;
 import com.kaliv.myths.constant.params.Args;
 import com.kaliv.myths.exception.invalidInput.InvalidImageInputException;
 

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import com.kaliv.myths.common.Tuple;
 import com.kaliv.myths.dto.userDtos.*;
 import com.kaliv.myths.entity.users.Role;
-import com.kaliv.myths.entity.users.RoleType;
+import com.kaliv.myths.constant.types.RoleType;
 import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.entity.users.UserPrincipal;
 import com.kaliv.myths.exception.alreadyExists.EmailExistException;

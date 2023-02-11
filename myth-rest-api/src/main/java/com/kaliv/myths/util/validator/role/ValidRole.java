@@ -5,7 +5,7 @@ import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
-import com.kaliv.myths.entity.users.RoleType;
+import com.kaliv.myths.constant.types.RoleType;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.INVALID_USER_ROLE;
 

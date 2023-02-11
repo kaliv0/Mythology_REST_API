@@ -37,4 +37,5 @@ public class Sources {
     public static final String REMOVE_PAINTINGS = "paintingsToRemove";
     public static final String ADD_IMAGES = "imagesToAdd";
     public static final String REMOVE_IMAGES = "imagesToRemove";
+    public static final String ROLE = "User role";
 }

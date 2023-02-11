@@ -6,10 +6,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.kaliv.myths.dto.userDtos.AddUserDto;
 import com.kaliv.myths.dto.userDtos.RegisterUserDto;
 import com.kaliv.myths.dto.userDtos.UserDto;
+import com.kaliv.myths.entity.BaseEntity;
+import com.kaliv.myths.entity.users.Role;
 import com.kaliv.myths.entity.users.User;
 import com.kaliv.myths.util.Clock;
-
-import static com.kaliv.myths.entity.users.Role.ROLE_USER;
 
 public class UserMapper {
     private final ModelMapper mapper;
@@ -20,7 +20,7 @@ public class UserMapper {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User dtoToRegisteredUser(RegisterUserDto userDto) {
+    public User dtoToRegisteredUser(RegisterUserDto userDto, Role role) {
         return User.builder()
                 .password(encodePassword(userDto.getPassword()))
                 .firstName(userDto.getFirstName())
@@ -30,12 +30,11 @@ public class UserMapper {
                 .joinDate(Clock.getZonedDateTime())
                 .isActive(true)
                 .isNotLocked(true)
-                .role(ROLE_USER.name())
-                .authorities(ROLE_USER.getAuthorities())
+                .role(role)
                 .build();
     }
 
-    public User dtoToAddedUser(AddUserDto userDto) {
+    public User dtoToAddedUser(AddUserDto userDto, Role role) {
         return User.builder()
                 .password(encodePassword(userDto.getPassword()))
                 .firstName(userDto.getFirstName())
@@ -45,13 +44,17 @@ public class UserMapper {
                 .joinDate(Clock.getZonedDateTime())
                 .isActive(userDto.isActive())
                 .isNotLocked(userDto.isNotLocked())
-                .role(userDto.getRole().name())
-                .authorities(userDto.getRole().getAuthorities())
+                .role(role)
                 .build();
     }
 
     public UserDto userToDto(User user) {
-        return mapper.map(user, UserDto.class);
+        UserDto userDto = mapper.map(user, UserDto.class);
+        userDto.setAuthorities(
+                user.getRole()
+                        .getAuthorities().stream()
+                        .map(BaseEntity::getName).toArray(String[]::new));
+        return userDto;
     }
 
     private String encodePassword(String password) {

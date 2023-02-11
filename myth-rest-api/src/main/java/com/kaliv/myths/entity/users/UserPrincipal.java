@@ -9,16 +9,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
 
-import static java.util.Arrays.stream;
-
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
     private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return stream(this.user.getAuthorities())
-                .map(SimpleGrantedAuthority::new)
+        return this.user.getRole()
+                .getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
                 .collect(Collectors.toList());
     }
 

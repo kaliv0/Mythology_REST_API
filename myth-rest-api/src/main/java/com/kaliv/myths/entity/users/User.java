@@ -15,20 +15,22 @@ import lombok.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
     private Long id;
+
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
     private String firstName;
     private String lastName;
-    private String username;
     private String password;
     private String email;
     private ZonedDateTime joinDate;
     private ZonedDateTime currentLoginDate;
     private ZonedDateTime lastLoginDate;
-    private String role;
 
-    @SuppressWarnings("JpaAttributeTypeInspection")//=> converts to tinyblob in Db
-    private String[] authorities;
+    @ManyToOne
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
+    private Role role;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

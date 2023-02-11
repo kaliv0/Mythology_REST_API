@@ -16,9 +16,6 @@ public class AuthorMapper {
 
     public AuthorMapper(ModelMapper mapper) {
         this.mapper = mapper;
-        this.mapper.typeMap(CreateAuthorDto.class, Author.class)
-                .addMappings(m -> m.skip(BaseEntity::setId))
-                .implicitMappings();
     }
 
     public AuthorDto authorToDto(Author author) {

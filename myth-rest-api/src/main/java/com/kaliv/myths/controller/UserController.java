@@ -20,6 +20,7 @@ import com.kaliv.myths.exception.alreadyExists.UsernameExistException;
 import com.kaliv.myths.jwt.JwtTokenProvider;
 import com.kaliv.myths.service.user.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Users")
@@ -45,6 +46,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
+    @Operation(summary = "Allows new users to self-register with basic read-only privileges")
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserDto userDto)
             throws EmailExistException, UsernameExistException {
@@ -61,6 +63,7 @@ public class UserController {
         return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
+    @Operation(summary = "Allows ADMIN to register new users with chosen privileges")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
@@ -69,6 +72,7 @@ public class UserController {
         return ResponseEntity.ok(newUser);
     }
 
+    @Operation(summary = "Allows ADMIN to update user information and give higher privileges")
     @PatchMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDto> update(@PathVariable(name = "username") String username,
@@ -78,6 +82,7 @@ public class UserController {
 
     }
 
+    @Operation(summary = "Allows users to update personal information (without changing privileges)")
     @PatchMapping("/update-profile")
     public ResponseEntity<UserDto> updateProfile(@Valid @RequestBody UpdateUserProfileDto userDto)
             throws EmailExistException {
@@ -85,6 +90,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @Operation(summary = "Allows ADMIN to delete user records")
     @DeleteMapping("/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {

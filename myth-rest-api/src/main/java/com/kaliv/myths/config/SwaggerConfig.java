@@ -31,7 +31,7 @@ public class SwaggerConfig {
                                 .scheme("bearer")
                                 .description(
                                         "Provide the JWT token. JWT token can be obtained from the Login API. " +
-                                                "For testing, use the credentials <strong>kaliv0/123pass</strong>")
+                                                "For testing, use the credentials <strong>kaliv0 / 123pass</strong>")
                                 .bearerFormat("JWT")));
     }
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +41,7 @@ public class SecurityConfig {
     public SecurityConfig(JwtAuthorizationFilter jwtAuthorizationFilter,
                           JwtAccessDeniedHandler jwtAccessDeniedHandler,
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          @Qualifier("userDetailsService") UserDetailsService userDetailsService) {
+                          UserDetailsService userDetailsService) {
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;

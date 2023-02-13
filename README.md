@@ -1,3 +1,9 @@
 # Mythology_REST_API
 
-This repository contains a Spring Boot REST Api for mаnaging data about ancient myths, legendary characters and artworks based on those.
+This repository contains a Spring Boot REST Api for managing data about 
+ancient myths, legendary characters and artworks based on those.
+<br>The application supports advanced features among which are:
+<br>- automatic resizing and compression of uploaded images
+<br>- protection against brute force login attacks
+<br>- multi-level permission policy
+<br>- dynamic update of nested collections of related entities

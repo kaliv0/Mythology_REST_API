@@ -1,7 +1,8 @@
 package com.kaliv.myths.dto.userDtos;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import com.kaliv.myths.util.validator.email.ValidEmail;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,6 @@ public class RegisterUserDto {
     private String password;
 
     @NotBlank
-    @Email
+    @ValidEmail
     private String email;
 }

@@ -1,6 +1,6 @@
 package com.kaliv.myths.dto.userDtos;
 
-import javax.validation.constraints.Email;
+import com.kaliv.myths.util.validator.email.ValidEmail;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,6 @@ public class UpdateUserProfileDto {
     String firstName;
     String lastName;
     String password;
-    @Email
+    @ValidEmail
     String email;
 }

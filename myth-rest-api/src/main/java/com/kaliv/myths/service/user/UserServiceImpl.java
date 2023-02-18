@@ -24,6 +24,7 @@ import com.kaliv.myths.exception.notFound.ResourceNotFoundException;
 import com.kaliv.myths.mapper.UserMapper;
 import com.kaliv.myths.persistence.RoleRepository;
 import com.kaliv.myths.persistence.UserRepository;
+import com.kaliv.myths.service.email.EmailService;
 
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
@@ -34,16 +35,20 @@ import static com.kaliv.myths.constant.params.Sources.ROLE;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
+                           EmailService emailService,
                            AuthenticationManager authenticationManager,
                            UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.emailService = emailService;
+
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
     }
@@ -81,6 +86,8 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByName(RoleType.USER.name()).orElseThrow();
         User user = userMapper.dtoToRegisteredUser(userDto, role);
         User savedUser = userRepository.save(user);
+        emailService.sendSimpleMessage(userDto.getEmail(), "Successful registration", userDto);
+        //TODO: extract mail subject in enum
         return userMapper.userToDto(savedUser);
     }
 
@@ -90,6 +97,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByName(userDto.getRole().name()).orElseThrow();
         User user = userMapper.dtoToAddedUser(userDto, role);
         User savedUser = userRepository.save(user);
+        //TODO: send email
         return userMapper.userToDto(savedUser);
     }
 
@@ -116,6 +124,7 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setRole(role);
         }
         userRepository.save(userToUpdate);
+        //TODO: send email
         return userMapper.userToDto(userToUpdate);
     }
 
@@ -129,6 +138,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow();
         this.updateBasicUserCredentials(userDto, loginUser);
         userRepository.save(loginUser);
+        //TODO: send email
         return userMapper.userToDto(loginUser);
     }
 

@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AddUserDto extends RegisterUserDto {
     @Enumerated
-    @ValidRole(anyOf = {RoleType.USER, RoleType.STAFF})
+    @ValidRole(anyOf = {RoleType.ROLE_USER, RoleType.ROLE_STAFF})
     RoleType role;
 
     @Getter(AccessLevel.NONE)

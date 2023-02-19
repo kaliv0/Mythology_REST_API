@@ -20,7 +20,7 @@ public class SwaggerConfig {
                 .info(new Info().title("Spring Boot Myth REST API")
                         .description("Spring Boot Myth REST API Documentation")
                         .version("1.0")
-                        .contact(new Contact().name("Kaloyan Ivanov").email("kaloyan.ivanov88@gmail.com"))
+                        .contact(new Contact().name("Kaloyan Ivanov").email("provinsky0@gmail.com"))
                         .description("Myth API Wiki Documentation"))
                 .addSecurityItem(new SecurityRequirement()
                         .addList(securitySchemeName))

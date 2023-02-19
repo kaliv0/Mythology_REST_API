@@ -47,7 +47,7 @@ public class StatueImageController {
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<UploadImageResponseDto> uploadStatueImage(
             @ValidFile @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(statueImageService.uploadImage(file));
@@ -84,7 +84,7 @@ public class StatueImageController {
     }
 
     @DeleteMapping("/{name}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteStatueImage(@PathVariable(name = "name") String name) {
         statueImageService.deleteImage(name);
         return new ResponseEntity<>(ResponseMessages.IMAGE_DELETED, HttpStatus.OK);

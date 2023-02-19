@@ -46,19 +46,19 @@ public class MusicController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<MusicDto> createMusic(@Valid @RequestBody CreateMusicDto dto) {
         return new ResponseEntity<>(musicService.createMusic(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public MusicDto updateMusic(@PathVariable("id") long id, @Valid @RequestBody UpdateMusicDto dto) {
         return musicService.updateMusic(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteMusic(@PathVariable(name = "id") long id) {
         musicService.deleteMusic(id);
         return new ResponseEntity<>(ResponseMessages.MUSIC_DELETED, HttpStatus.OK);

@@ -42,19 +42,19 @@ public class NationalityController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<NationalityDto> createNationality(@Valid @RequestBody CreateNationalityDto dto) {
         return new ResponseEntity<>(nationalityService.createNationality(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public NationalityDto updateNationality(@PathVariable("id") long id, @Valid @RequestBody UpdateNationalityDto dto) {
         return nationalityService.updateNationality(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteNationality(@PathVariable(name = "id") long id) {
         nationalityService.deleteNationality(id);
         return new ResponseEntity<>(ResponseMessages.NATIONALITY_DELETED, HttpStatus.OK);

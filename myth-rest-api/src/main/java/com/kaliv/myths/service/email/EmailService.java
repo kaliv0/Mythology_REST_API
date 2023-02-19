@@ -1,8 +1,8 @@
 package com.kaliv.myths.service.email;
 
 
-import com.kaliv.myths.dto.userDtos.RegisterUserDto;
+import com.kaliv.myths.entity.users.User;
 
 public interface EmailService {
-    void sendSimpleMessage(String to, String subject, RegisterUserDto userData);
+    void sendSimpleMessage(String subject, String actionType, User user);
 }

@@ -14,6 +14,7 @@ public class ResponseMessages {
     public static final String IMAGE_UPLOADED = "Image uploaded successfully";
     public static final String IMAGE_DELETED = "Image deleted successfully";
     public static final String USER_DELETED = "User deleted successfully";
-    public static final String SUCCESSFUL_REGISTER =
-            "You successfully registered with the following credentials:\nUsername: %s\nPassword: %s";
+    public static final String EMAIL_CONFIRMATION = "Your account was successfully %s with the following profile data:" +
+            "\nFirst name: %s\nLast name: %s\nUsername: %s\nAccount role: %s" +
+            "\nYour profile is %s and %s";
 }

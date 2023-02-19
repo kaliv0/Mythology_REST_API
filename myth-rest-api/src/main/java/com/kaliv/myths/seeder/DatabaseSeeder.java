@@ -49,19 +49,19 @@ public class DatabaseSeeder implements CommandLineRunner {
         authorityRepository.save(deleteAuthority);
 
         Role userRole = new Role();
-        userRole.setName("USER");
+        userRole.setName("ROLE_USER");
         userRole.getAuthorities().add(readAuthority);
         roleRepository.save(userRole);
 
         Role staffRole = new Role();
-        staffRole.setName("STAFF");
+        staffRole.setName("ROLE_STAFF");
         staffRole.getAuthorities().add(readAuthority);
         staffRole.getAuthorities().add(writeAuthority);
         staffRole.getAuthorities().add(updateAuthority);
         roleRepository.save(staffRole);
 
         Role adminRole = new Role();
-        adminRole.setName("ADMIN");
+        adminRole.setName("ROLE_ADMIN");
         adminRole.getAuthorities().add(readAuthority);
         adminRole.getAuthorities().add(writeAuthority);
         adminRole.getAuthorities().add(updateAuthority);
@@ -71,7 +71,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         User defaultAdmin = new User();
         defaultAdmin.setFirstName("Kaloyan");
         defaultAdmin.setLastName("Ivanov");
-        defaultAdmin.setEmail("kaloyan.ivanov88@gmail.com");
+        defaultAdmin.setEmail("provinsky0@gmail.com");
         defaultAdmin.setUsername("kaliv0");
         defaultAdmin.setPassword(passwordEncoder.encode("123pass"));
         defaultAdmin.setRole(savedAdminRole);

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import com.kaliv.myths.common.Tuple;
@@ -65,7 +65,7 @@ public class UserController {
 
     @Operation(summary = "Allows ADMIN to register new users with chosen privileges")
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<UserDto> addNewUser(@Valid @RequestBody AddUserDto userDto)
             throws UsernameExistException, EmailExistException {
         UserDto newUser = userService.addNewUser(userDto);
@@ -74,7 +74,7 @@ public class UserController {
 
     @Operation(summary = "Allows ADMIN to update user information and give higher privileges")
     @PatchMapping("/{username}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<UserDto> update(@PathVariable(name = "username") String username,
                                           @Valid @RequestBody UpdateUserDto userDto) throws EmailExistException {
         UserDto updatedUser = userService.updateUser(username, userDto);
@@ -92,7 +92,7 @@ public class UserController {
 
     @Operation(summary = "Allows ADMIN to delete user records")
     @DeleteMapping("/{username}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<String> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return new ResponseEntity<>(ResponseMessages.USER_DELETED, HttpStatus.OK);

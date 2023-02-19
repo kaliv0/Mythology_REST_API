@@ -47,19 +47,19 @@ public class StatueController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<StatueDto> createStatue(@Valid @RequestBody CreateStatueDto dto) {
         return new ResponseEntity<>(statueService.createStatue(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public StatueDto updateStatue(@PathVariable("id") long id, @Valid @RequestBody UpdateStatueDto dto) {
         return statueService.updateStatue(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteStatue(@PathVariable(name = "id") long id) {
         statueService.deleteStatue(id);
         return new ResponseEntity<>(ResponseMessages.PAINTING_DELETED, HttpStatus.OK);

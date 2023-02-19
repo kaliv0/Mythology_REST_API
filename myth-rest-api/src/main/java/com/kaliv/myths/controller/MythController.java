@@ -45,19 +45,19 @@ public class MythController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<MythDto> createMyth(@Valid @RequestBody CreateMythDto dto) {
         return new ResponseEntity<>(mythService.createMyth(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public MythDto updateMyth(@PathVariable("id") Long id, @Valid @RequestBody UpdateMythDto dto) {
         return mythService.updateMyth(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteMyth(@PathVariable(name = "id") long id) {
         mythService.deleteMyth(id);
         return new ResponseEntity<>(ResponseMessages.MYTH_DELETED, HttpStatus.OK);

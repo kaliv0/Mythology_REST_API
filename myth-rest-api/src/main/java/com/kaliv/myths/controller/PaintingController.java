@@ -47,19 +47,19 @@ public class PaintingController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<PaintingDto> createPainting(@Valid @RequestBody CreatePaintingDto dto) {
         return new ResponseEntity<>(paintingService.createPainting(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public PaintingDto updatePainting(@PathVariable("id") long id, @Valid @RequestBody UpdatePaintingDto dto) {
         return paintingService.updatePainting(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deletePainting(@PathVariable(name = "id") long id) {
         paintingService.deletePainting(id);
         return new ResponseEntity<>(ResponseMessages.PAINTING_DELETED, HttpStatus.OK);

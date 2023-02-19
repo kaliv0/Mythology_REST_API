@@ -46,19 +46,19 @@ public class PoemController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<PoemDto> createPoem(@Valid @RequestBody CreatePoemDto dto) {
         return new ResponseEntity<>(poemService.createPoem(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public PoemDto updatePoem(@PathVariable("id") long id, @Valid @RequestBody UpdatePoemDto dto) {
         return poemService.updatePoem(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deletePoem(@PathVariable(name = "id") long id) {
         poemService.deletePoem(id);
         return new ResponseEntity<>(ResponseMessages.POEM_DELETED, HttpStatus.OK);

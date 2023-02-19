@@ -47,7 +47,7 @@ public class PaintingImageController {
     }
 
     @PostMapping(path = "/upload/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<UploadImageResponseDto> uploadPaintingImage(
             @ValidFile @RequestParam("image") MultipartFile file) throws Exception {
         return ResponseEntity.ok(paintingImageService.uploadImage(file));
@@ -84,7 +84,7 @@ public class PaintingImageController {
     }
 
     @DeleteMapping("/{name}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deletePaintingImage(@PathVariable(name = "name") String name) {
         paintingImageService.deleteImage(name);
         return new ResponseEntity<>(ResponseMessages.IMAGE_DELETED, HttpStatus.OK);

@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.kaliv.myths.constant.SecurityConstants.VALID_EMAIL_PATTERN;
+import static com.kaliv.myths.constant.EmailConstants.VALID_EMAIL_PATTERN;
 
 public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
     private static final Pattern PATTERN = Pattern.compile(VALID_EMAIL_PATTERN, Pattern.CASE_INSENSITIVE);

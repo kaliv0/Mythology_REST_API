@@ -17,12 +17,10 @@ import com.kaliv.myths.dto.timePeriodDtos.TimePeriodResponseDto;
 import com.kaliv.myths.dto.timePeriodDtos.UpdateTimePeriodDto;
 import com.kaliv.myths.service.timePeriod.TimePeriodService;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Time periods")
 @RestController
-@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/v1/time-periods")
 public class TimePeriodController {
 
@@ -44,19 +42,19 @@ public class TimePeriodController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<TimePeriodDto> createTimePeriod(@Valid @RequestBody CreateTimePeriodDto dto) {
         return new ResponseEntity<>(timePeriodService.createTimePeriod(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public TimePeriodDto updateTimePeriod(@PathVariable("id") long id, @Valid @RequestBody UpdateTimePeriodDto dto) {
         return timePeriodService.updateTimePeriod(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteTimePeriod(@PathVariable(name = "id") long id) {
         timePeriodService.deleteTimePeriod(id);
         return new ResponseEntity<>(ResponseMessages.TIME_PERIOD_DELETED, HttpStatus.OK);

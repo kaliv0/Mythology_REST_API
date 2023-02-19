@@ -42,19 +42,19 @@ public class MuseumController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<MuseumDto> createMuseum(@Valid @RequestBody CreateMuseumDto dto) {
         return new ResponseEntity<>(museumService.createMuseum(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public MuseumDto updateMuseum(@PathVariable("id") long id, @Valid @RequestBody UpdateMuseumDto dto) {
         return museumService.updateMuseum(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteMuseum(@PathVariable(name = "id") long id) {
         museumService.deleteMuseum(id);
         return new ResponseEntity<>(ResponseMessages.MUSEUM_DELETED, HttpStatus.OK);

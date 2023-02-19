@@ -1,7 +1,7 @@
 package com.kaliv.myths.constant.types;
 
 public enum RoleType {
-    USER,
-    STAFF,
-    ADMIN
+    ROLE_USER,
+    ROLE_STAFF,
+    ROLE_ADMIN
 }

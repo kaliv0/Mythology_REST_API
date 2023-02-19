@@ -16,12 +16,13 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 public class LoginAttemptServiceImpl implements LoginAttemptService {
     private static final int MAXIMUM_NUMBER_OF_ATTEMPTS = 5;
     private static final int ATTEMPT_INCREMENT = 1;
+    private static final long CACHE_EXPIRATION_PERIOD = 15;
     private final LoadingCache<String, Integer> loginAttemptCache;
 
     @Autowired
     public LoginAttemptServiceImpl() {
         super();
-        loginAttemptCache = CacheBuilder.newBuilder().expireAfterWrite(15, MINUTES)
+        loginAttemptCache = CacheBuilder.newBuilder().expireAfterWrite(CACHE_EXPIRATION_PERIOD, MINUTES)
                 .maximumSize(100).build(new CacheLoader<>() {
                     public Integer load(@NonNull String key) {
                         return 0;

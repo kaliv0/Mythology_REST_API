@@ -26,6 +26,7 @@ import com.kaliv.myths.persistence.RoleRepository;
 import com.kaliv.myths.persistence.UserRepository;
 import com.kaliv.myths.service.email.EmailService;
 
+import static com.kaliv.myths.constant.EmailConstants.*;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.EMAIL_ALREADY_EXISTS;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.NO_USER_FOUND;
 import static com.kaliv.myths.constant.messages.ExceptionMessages.USERNAME_ALREADY_EXISTS;
@@ -83,11 +84,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto register(RegisterUserDto userDto) throws EmailExistException, UsernameExistException {
         this.validateUserCredentials(userDto.getUsername(), userDto.getEmail());
-        Role role = roleRepository.findByName(RoleType.USER.name()).orElseThrow();
+        Role role = roleRepository.findByName(RoleType.ROLE_USER.name()).orElseThrow();
         User user = userMapper.dtoToRegisteredUser(userDto, role);
         User savedUser = userRepository.save(user);
-        emailService.sendSimpleMessage(userDto.getEmail(), "Successful registration", userDto);
-        //TODO: extract mail subject in enum
+        emailService.sendSimpleMessage(SUCCESSFUL_REGISTRATION, ADD_PROFILE, user);
         return userMapper.userToDto(savedUser);
     }
 
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByName(userDto.getRole().name()).orElseThrow();
         User user = userMapper.dtoToAddedUser(userDto, role);
         User savedUser = userRepository.save(user);
-        //TODO: send email
+        emailService.sendSimpleMessage(SUCCESSFUL_REGISTRATION, ADD_PROFILE, user);
         return userMapper.userToDto(savedUser);
     }
 
@@ -124,7 +124,7 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setRole(role);
         }
         userRepository.save(userToUpdate);
-        //TODO: send email
+        emailService.sendSimpleMessage(SUCCESSFUL_PROFILE_UPDATE, EDIT_PROFILE, userToUpdate);
         return userMapper.userToDto(userToUpdate);
     }
 
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow();
         this.updateBasicUserCredentials(userDto, loginUser);
         userRepository.save(loginUser);
-        //TODO: send email
+        emailService.sendSimpleMessage(SUCCESSFUL_PROFILE_UPDATE, EDIT_PROFILE, loginUser);
         return userMapper.userToDto(loginUser);
     }
 

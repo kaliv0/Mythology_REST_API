@@ -6,10 +6,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.kaliv.myths.dto.userDtos.RegisterUserDto;
+import com.kaliv.myths.entity.users.User;
 
-import static com.kaliv.myths.constant.SecurityConstants.NO_REPLY_ADDRESS;
-import static com.kaliv.myths.constant.messages.ResponseMessages.SUCCESSFUL_REGISTER;
+import static com.kaliv.myths.constant.EmailConstants.*;
+import static com.kaliv.myths.constant.messages.ResponseMessages.EMAIL_CONFIRMATION;
 
 @Service("EmailService")
 public class EmailServiceImpl implements EmailService {
@@ -20,12 +20,21 @@ public class EmailServiceImpl implements EmailService {
         this.emailSender = emailSender;
     }
 
-    public void sendSimpleMessage(String to, String subject, RegisterUserDto userData) throws MailException {
+    public void sendSimpleMessage(String subject, String actionType, User user) throws MailException {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(NO_REPLY_ADDRESS);
-        message.setTo(to);
+        message.setTo(user.getEmail());
         message.setSubject(subject);
-        message.setText(String.format(SUCCESSFUL_REGISTER, userData.getUsername(), userData.getPassword()));
+        message.setText(String.format(
+                EMAIL_CONFIRMATION,
+                actionType,
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUsername(),
+                user.getRole().getName(),
+                user.isActive() ? ACTIVE : INACTIVE,
+                user.isNotLocked() ? UNLOCKED : LOCKED
+        ));
         emailSender.send(message);
     }
 }

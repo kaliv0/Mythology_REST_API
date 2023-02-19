@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateUserDto extends UpdateUserProfileDto {
     @Enumerated
-    @ValidRole(anyOf = {RoleType.USER, RoleType.STAFF, RoleType.ADMIN})
+    @ValidRole(anyOf = {RoleType.ROLE_USER, RoleType.ROLE_STAFF, RoleType.ROLE_ADMIN})
     RoleType role;
 
     @Getter(AccessLevel.NONE)

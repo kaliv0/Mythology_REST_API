@@ -45,19 +45,19 @@ public class AuthorController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('WRITE')")
     public ResponseEntity<AuthorDto> createAuthor(@Valid @RequestBody CreateAuthorDto dto) {
         return new ResponseEntity<>(authorService.createAuthor(dto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole({'STAFF','ADMIN'})")
+    @PreAuthorize("hasAnyAuthority('UPDATE')")
     public AuthorDto updateAuthor(@PathVariable("id") long id, @Valid @RequestBody UpdateAuthorDto dto) {
         return authorService.updateAuthor(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('DELETE')")
     public ResponseEntity<String> deleteAuthor(@PathVariable(name = "id") long id) {
         authorService.deleteAuthor(id);
         return new ResponseEntity<>(ResponseMessages.AUTHOR_DELETED, HttpStatus.OK);

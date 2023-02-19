@@ -1,8 +1,6 @@
 package com.kaliv.myths.constant;
 
 public class SecurityConstants {
-    public static final String VALID_EMAIL_PATTERN = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
-    public static final String NO_REPLY_ADDRESS = "provinsky0@gmail.com";
     public static final long EXPIRATION_TIME = 3_600_000;
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";

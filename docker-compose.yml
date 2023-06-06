@@ -12,6 +12,13 @@ services:
       MYSQL_USER: ${MYSQLDB_USERNAME}
       MYSQL_PASSWORD: ${MYSQLDB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
+    networks:
+      - myths
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3306" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   api_service:
     build: .
@@ -25,5 +32,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQLDB_PASSWORD}
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ${HIBERNATE_DIALECT}
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${HIBERNATE_DDL_AUTO}
+    networks:
+      - myths
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
+
+networks:
+  myths:

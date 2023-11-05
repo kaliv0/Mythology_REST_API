@@ -20,7 +20,7 @@ public class SwaggerConfig {
                 .info(new Info().title("Spring Boot Myth REST API")
                         .description("Spring Boot Myth REST API Documentation")
                         .version("1.0")
-                        .contact(new Contact().name("Kaloyan Ivanov").email("provinsky0@gmail.com"))
+                        .contact(new Contact().name("Kaloyan Ivanov")
                         .description("Myth API Wiki Documentation"))
                 .addSecurityItem(new SecurityRequirement()
                         .addList(securitySchemeName))
@@ -30,8 +30,7 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .description(
-                                        "Provide the JWT token. JWT token can be obtained from the Login API. " +
-                                                "For testing, use the credentials <strong>kaliv0 / 123pass</strong>")
+                                        "Provide the JWT token. JWT token can be obtained from the Login API.")
                                 .bearerFormat("JWT")));
     }
 }
